@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'features/simulator/simulator_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -69,7 +70,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AMAZING SECURITY APP',
+      title: 'ThreatWise',
       debugShowCheckedModeBanner: false,
       // Change the primary color of the whole app here
       theme: ThemeData(
@@ -243,28 +244,41 @@ class HomePage extends StatelessWidget {
                     mainAxisSpacing: 12,
                     children: [
                       _buildFeatureCard(
+                        context: context,
                         icon: Icons.chat,
                         title: 'AI chatbot',
                         subtitle: 'Learn about threats',
                         color: Colors.blue,
+                        onTap: () {},
                       ),
                       _buildFeatureCard(
+                        context: context,
                         icon: Icons.warning,
                         title: 'Attack simulator',
                         subtitle: 'Simulate attacks',
                         color: Colors.red,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const EmailPage()),
+                          );
+                        },
                       ),
                       _buildFeatureCard(
+                        context: context,
                         icon: Icons.vpn_key,
                         title: 'Password checker',
                         subtitle: 'Check password strength',
                         color: Colors.amber,
+                        onTap: () {},
                       ),
                       _buildFeatureCard(
+                        context: context,
                         icon: Icons.update,
                         title: 'Mini games',
                         subtitle: 'Spot the threat',
                         color: Colors.purple,
+                        onTap: () {},
                       ),
                     ],
                   ),
@@ -320,17 +334,19 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildFeatureCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String subtitle,
     required MaterialColor color,
+    required VoidCallback onTap,
   }) {
     return Card(
       color: const Color(0xFF141B2D),
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
