@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'features/simulator/simulator_page.dart';
+import 'features/password_system/password_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -270,7 +271,12 @@ class HomePage extends StatelessWidget {
                         title: 'Password checker',
                         subtitle: 'Check password strength',
                         color: Colors.amber,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PasswordPage()),
+                          );
+                        },
                       ),
                       _buildFeatureCard(
                         context: context,
