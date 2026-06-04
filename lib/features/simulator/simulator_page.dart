@@ -58,46 +58,54 @@ class _EmailPageState extends State<EmailPage> {
           SizedBox(
             width: 250,
             child: Drawer(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Compose new email')),
-                          );
-                        },
-                        icon: const Icon(Icons.edit),
-                        label: const Text('Compose'),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 45),
-                        ),
+              child: Column(
+                children: [
+                  // Compose button kept static at the top
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Compose new email')),
+                        );
+                      },
+                      icon: const Icon(Icons.edit),
+                      label: const Text('Compose'),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 45),
                       ),
                     ),
-                    const Divider(),
-                    _buildFolderItem('Inbox', Icons.inbox, 0),
-                    _buildFolderItem('Starred', Icons.star, 0),
-                    _buildFolderItem('Sent', Icons.send, 0),
-                    _buildFolderItem('Drafts', Icons.drafts, 0),
-                    _buildFolderItem('All Mail', Icons.mail, 5),
-                    _buildFolderItem('Trash', Icons.delete, 0),
-                    _buildFolderItem('Spam', Icons.warning, 2),
-                    const Divider(),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        'Labels',
-                        style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const Divider(),
+                  // The rest of the drawer becomes scrollable
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _buildFolderItem('Inbox', Icons.inbox, 0),
+                          _buildFolderItem('Starred', Icons.star, 0),
+                          _buildFolderItem('Sent', Icons.send, 0),
+                          _buildFolderItem('Drafts', Icons.drafts, 0),
+                          _buildFolderItem('All Mail', Icons.mail, 5),
+                          _buildFolderItem('Trash', Icons.delete, 0),
+                          _buildFolderItem('Spam', Icons.warning, 2),
+                          const Divider(),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text(
+                              'Labels',
+                              style: Theme.of(context).textTheme.labelLarge,
+                            ),
+                          ),
+                          _buildLabelItem('Work', Colors.blue),
+                          _buildLabelItem('Personal', Colors.green),
+                          _buildLabelItem('Urgent', Colors.red),
+                          _buildLabelItem('Follow Up', Colors.orange),
+                        ],
                       ),
                     ),
-                    _buildLabelItem('Work', Colors.blue),
-                    _buildLabelItem('Personal', Colors.green),
-                    _buildLabelItem('Urgent', Colors.red),
-                    _buildLabelItem('Follow Up', Colors.orange),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -105,7 +113,7 @@ class _EmailPageState extends State<EmailPage> {
           Expanded(
             child: Column(
               children: [
-                // Top Bar with Search
+                // Top Bar with Search and back button
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -118,6 +126,14 @@ class _EmailPageState extends State<EmailPage> {
                   ),
                   child: Row(
                     children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        tooltip: 'Back',
+                        onPressed: () {
+                          Navigator.of(context).maybePop();
+                        },
+                      ),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: TextField(
                           decoration: InputDecoration(
@@ -157,10 +173,33 @@ class _EmailPageState extends State<EmailPage> {
                   ),
                 ),
                 // Email List or Detail View
+                // Wrap the list/detail in a rounded, elevated box
                 Expanded(
-                  child: _selectedEmailIndex == -1
-                      ? _buildEmailList()
-                      : _buildEmailDetail(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Colors.grey[200]!,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: _selectedEmailIndex == -1
+                            ? _buildEmailList()
+                            : _buildEmailDetail(),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -180,7 +219,7 @@ class _EmailPageState extends State<EmailPage> {
       title: Text(
         name,
         style: TextStyle(
-          color: isSelected ? Colors.blue : Colors.black,
+          color: isSelected ? Colors.blue : const Color.fromARGB(255, 255, 255, 255),
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
@@ -234,7 +273,7 @@ class _EmailPageState extends State<EmailPage> {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: Colors.grey[200]!,
+                color: Colors.white.withOpacity(0.5),
                 width: 1,
               ),
             ),
