@@ -1,7 +1,20 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import '../../core/avatar.dart';
+
+String getInitials(String name) {
+  final parts = name.trim().split(RegExp(r'\s+'));
+  if (parts.isEmpty) return '';
+  if (parts.length == 1) {
+    final w = parts.first;
+    return (w.length >= 2 ? w.substring(0, 2) : w.substring(0, 1)).toUpperCase();
+  }
+  return (parts.first[0] + parts.last[0]).toUpperCase();
+}
 
 class EmailPage extends StatefulWidget {
-  const EmailPage({Key? key}) : super(key: key);
+  static const routeName = '/simulator';
+
+  const EmailPage({super.key});
 
   @override
   State<EmailPage> createState() => _EmailPageState();
@@ -54,13 +67,11 @@ class _EmailPageState extends State<EmailPage> {
     return Scaffold(
       body: Row(
         children: [
-          // Sidebar Navigation
           SizedBox(
             width: 250,
             child: Drawer(
               child: Column(
                 children: [
-                  // Compose button kept static at the top
                   Container(
                     padding: const EdgeInsets.all(16),
                     child: ElevatedButton.icon(
@@ -77,7 +88,6 @@ class _EmailPageState extends State<EmailPage> {
                     ),
                   ),
                   const Divider(),
-                  // The rest of the drawer becomes scrollable
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -109,11 +119,9 @@ class _EmailPageState extends State<EmailPage> {
               ),
             ),
           ),
-          // Main Content Area
           Expanded(
             child: Column(
               children: [
-                // Top Bar with Search and back button
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -172,8 +180,6 @@ class _EmailPageState extends State<EmailPage> {
                     ],
                   ),
                 ),
-                // Email List or Detail View
-                // Wrap the list/detail in a rounded, elevated box
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -183,7 +189,7 @@ class _EmailPageState extends State<EmailPage> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -194,9 +200,7 @@ class _EmailPageState extends State<EmailPage> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: _selectedEmailIndex == -1
-                            ? _buildEmailList()
-                            : _buildEmailDetail(),
+                        child: _selectedEmailIndex == -1 ? _buildEmailList() : _buildEmailDetail(),
                       ),
                     ),
                   ),
@@ -210,7 +214,7 @@ class _EmailPageState extends State<EmailPage> {
   }
 
   Widget _buildFolderItem(String name, IconData icon, int count) {
-    bool isSelected = _selectedFolder == name;
+    final bool isSelected = _selectedFolder == name;
     return ListTile(
       leading: Icon(
         icon,
@@ -219,7 +223,7 @@ class _EmailPageState extends State<EmailPage> {
       title: Text(
         name,
         style: TextStyle(
-          color: isSelected ? Colors.blue : const Color.fromARGB(255, 255, 255, 255),
+          color: isSelected ? Colors.blue : Colors.grey[800],
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
@@ -227,23 +231,18 @@ class _EmailPageState extends State<EmailPage> {
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 count.toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(color: Colors.black, fontSize: 12),
               ),
             )
           : null,
       onTap: () {
         setState(() {
           _selectedFolder = name;
-          _selectedEmailIndex = -1;
         });
       },
     );
@@ -251,10 +250,7 @@ class _EmailPageState extends State<EmailPage> {
 
   Widget _buildLabelItem(String label, Color color) {
     return ListTile(
-      leading: Icon(
-        Icons.label,
-        color: color,
-      ),
+      leading: CircleAvatar(backgroundColor: color, radius: 10),
       title: Text(label),
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -273,57 +269,43 @@ class _EmailPageState extends State<EmailPage> {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.grey[200]!,
                 width: 1,
               ),
             ),
           ),
           child: ListTile(
-            leading: CircleAvatar(
-              child: Text(
-                email['sender']![0].toUpperCase(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+            leading: Avatar(
+              initials: getInitials(email['sender']!),
+              size: 40,
+              textColor: Colors.white,
             ),
-            title: Text(
-              email['sender']!,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            title: Row(
               children: [
-                Text(
-                  email['subject']!,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        email['sender']!,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        '${email['sender']!.toLowerCase().replaceAll(' ', '.')}@example.com',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  email['preview']!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
+                Text(email['date']!, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
               ],
             ),
-            trailing: Text(
-              email['date']!,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
-              ),
-            ),
+            subtitle: Text(email['preview']!),
             onTap: () {
               setState(() {
                 _selectedEmailIndex = index;
               });
             },
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
           ),
         );
       },
@@ -333,8 +315,8 @@ class _EmailPageState extends State<EmailPage> {
   Widget _buildEmailDetail() {
     final email = emails[_selectedEmailIndex];
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Email Header
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -355,48 +337,26 @@ class _EmailPageState extends State<EmailPage> {
                   });
                 },
               ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       email['subject']!,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      email['date']!,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                   ],
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.archive),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Email archived')),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Email deleted')),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.star_border),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Email starred')),
-                  );
-                },
-              ),
             ],
           ),
         ),
-        // Email Body
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -405,78 +365,41 @@ class _EmailPageState extends State<EmailPage> {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 24,
-                      child: Text(
-                        email['sender']![0].toUpperCase(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
+                    Avatar(initials: getInitials(email['sender']!), size: 56),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(email['sender']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                          const SizedBox(height: 4),
                           Text(
-                            email['sender']!,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            email['sender']!.toLowerCase().replaceAll(' ', '.') +
-                                '@example.com',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                            ),
+                            '${email['sender']!.toLowerCase().replaceAll(' ', '.')}@example.com',
+                            style: TextStyle(color: Colors.grey[600], fontSize: 12),
                           ),
                         ],
-                      ),
-                    ),
-                    Text(
-                      email['date']!,
-                      style: TextStyle(
-                        color: Colors.grey[600],
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                Text(
-                  email['body']!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    height: 1.6,
-                  ),
-                ),
+                Text(email['body']!, style: const TextStyle(fontSize: 14, height: 1.6)),
               ],
             ),
           ),
         ),
-        // Reply Bar
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(
-                color: Colors.grey[300]!,
-                width: 1,
-              ),
+              top: BorderSide(color: Colors.grey[300]!, width: 1),
             ),
           ),
           child: Row(
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Reply compose window opened')),
-                  );
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reply compose window opened')));
                 },
                 icon: const Icon(Icons.reply),
                 label: const Text('Reply'),
@@ -484,9 +407,7 @@ class _EmailPageState extends State<EmailPage> {
               const SizedBox(width: 8),
               ElevatedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Reply all compose window opened')),
-                  );
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reply all compose window opened')));
                 },
                 icon: const Icon(Icons.reply_all),
                 label: const Text('Reply All'),
@@ -494,9 +415,7 @@ class _EmailPageState extends State<EmailPage> {
               const SizedBox(width: 8),
               ElevatedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Forward compose window opened')),
-                  );
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Forward compose window opened')));
                 },
                 icon: const Icon(Icons.forward),
                 label: const Text('Forward'),
