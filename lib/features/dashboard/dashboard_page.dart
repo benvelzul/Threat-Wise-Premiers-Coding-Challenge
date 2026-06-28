@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/avatar.dart';
+import '../chatbot/chatbot_page.dart';
+import '../minigames/quiz_page.dart';
 import '../password_system/password_page.dart';
 import '../simulator/simulator_page.dart';
+import '../incident_report/report_page.dart';
 
 class DashboardPage extends StatelessWidget {
   static const routeName = '/';
@@ -153,7 +156,9 @@ class DashboardPage extends StatelessWidget {
                         title: 'AI chatbot',
                         subtitle: 'Learn about threats',
                         color: Colors.blue,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, ChatbotPage.routeName);
+                        },
                       ),
                       _buildFeatureCard(
                         context: context,
@@ -181,11 +186,70 @@ class DashboardPage extends StatelessWidget {
                         title: 'Mini games',
                         subtitle: 'Spot the threat',
                         color: Colors.purple,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, MinigamesPage.routeName);
+                        },
                       ),
                     ],
                   ),
                   const SizedBox(height: 32),
+                  const Text(
+                    'Tools & Resources',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 2.75,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.book),
+                        label: const Text('Resource Library'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.checklist),
+                        label: const Text('Security Checklist'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(context, ReportPage.routeName);
+                        },
+                        icon: const Icon(Icons.report),
+                        label: const Text('Incident Report Form'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.analytics),
+                        label: const Text('My stats & progress'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                          foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -205,6 +269,7 @@ class DashboardPage extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
+
     );
   }
 
@@ -246,33 +311,6 @@ class DashboardPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildActivityItem({
-    required IconData icon,
-    required String title,
-    required String time,
-    required Color statusColor,
-  }) {
-    return Card(
-      color: const Color(0xFF141B2D),
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: ListTile(
-        leading: Icon(icon, color: statusColor),
-        title: Text(
-          title,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-        ),
-        subtitle: Text(
-          time,
-          style: TextStyle(color: Colors.grey[500], fontSize: 12),
-        ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-        onTap: () {},
       ),
     );
   }
