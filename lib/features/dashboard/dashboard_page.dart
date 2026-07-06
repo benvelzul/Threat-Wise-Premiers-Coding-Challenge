@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/avatar.dart';
+import '../../core/theme.dart';
 import '../chatbot/chatbot_page.dart';
 import '../minigames/quiz_page.dart';
 import '../password_system/password_page.dart';
@@ -13,67 +13,49 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppColors>();
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E17),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            backgroundColor: const Color(0xFF3A0CA3),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             elevation: 0,
-            floating: true,
-            pinned: false,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.security, color: Theme.of(context).colorScheme.primary),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Welcome back {name}',
-                      style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () {},
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Avatar(
-                  initials: 'BV',
-                  size: 45,
-                  backgroundColor: stringToColor('BV'),
-                  textColor: Colors.white,
-                ),
-              ),
-            ],
+            floating: false,
+            pinned: true,
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(60),
-              child: Container(
-                width: double.infinity,
-                color: const Color(0xFF7209B7),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              preferredSize: const Size.fromHeight(14),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
                 child: Row(
                   children: [
-                    Text(
-                      'Continue Learning',
-                      style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSecondary),
-                    ),
-                    const SizedBox(width: 8),
                     Expanded(
-                      child: LinearProgressIndicator(
-                        value: 0.5,
-                        backgroundColor: Theme.of(context).colorScheme.tertiary,
-                        valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.secondaryContainer),
+                      child: _buildStatItem(
+                        icon: Icons.local_fire_department,
+                        value: '7',
+                        color: appColors?.statItem ?? Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildStatItem(
+                        icon: Icons.groups_3,
+                        value: 'A1',
+                        color: appColors?.statItem ?? Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildStatItem(
+                        icon: Icons.monetization_on,
+                        value: '250',
+                        color: appColors?.statItem ?? Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildStatItem(
+                        icon: Icons.bolt,
+                        value: '85',
+                        color: appColors?.statItem ?? Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                   ],
@@ -101,14 +83,14 @@ class DashboardPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.shield, size: 48, color: Colors.white),
+                        Icon(Icons.shield, size: 48, color: Theme.of(context).colorScheme.onPrimary),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           '{Headline of an article or course}',
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -134,12 +116,12 @@ class DashboardPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  const Text(
+                  Text(
                     'Security Modules',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -152,40 +134,44 @@ class DashboardPage extends StatelessWidget {
                     children: [
                       _buildFeatureCard(
                         context: context,
+                        appColors: appColors,
                         icon: Icons.chat,
                         title: 'AI chatbot',
                         subtitle: 'Learn about threats',
-                        color: Colors.blue,
+                        color: appColors?.featureChat ?? Theme.of(context).colorScheme.primary,
                         onTap: () {
                           Navigator.pushNamed(context, ChatbotPage.routeName);
                         },
                       ),
                       _buildFeatureCard(
                         context: context,
+                        appColors: appColors,
                         icon: Icons.warning,
                         title: 'Attack simulator',
                         subtitle: 'Simulate attacks',
-                        color: Colors.red,
+                        color: appColors?.featureSimulator ?? Theme.of(context).colorScheme.error,
                         onTap: () {
                           Navigator.pushNamed(context, EmailPage.routeName);
                         },
                       ),
                       _buildFeatureCard(
                         context: context,
+                        appColors: appColors,
                         icon: Icons.vpn_key,
                         title: 'Password checker',
                         subtitle: 'Check password strength',
-                        color: Colors.amber,
+                        color: appColors?.featurePassword ?? Theme.of(context).colorScheme.secondary,
                         onTap: () {
                           Navigator.pushNamed(context, PasswordPage.routeName);
                         },
                       ),
                       _buildFeatureCard(
                         context: context,
+                        appColors: appColors,
                         icon: Icons.update,
                         title: 'Mini games',
                         subtitle: 'Spot the threat',
-                        color: Colors.purple,
+                        color: appColors?.featureGames ?? Theme.of(context).colorScheme.tertiary,
                         onTap: () {
                           Navigator.pushNamed(context, MinigamesPage.routeName);
                         },
@@ -193,12 +179,12 @@ class DashboardPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 32),
-                  const Text(
+                  Text(
                     'Tools & Resources',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -273,16 +259,35 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
+  Widget _buildStatItem({
+    required IconData icon,
+    required String value,
+    required Color color,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: color, size: 25),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
+        ),
+      ],
+    );
+  }
+
   Widget _buildFeatureCard({
     required BuildContext context,
+    required AppColors? appColors,
     required IconData icon,
     required String title,
     required String subtitle,
-    required MaterialColor color,
+    required Color color,
     required VoidCallback onTap,
   }) {
     return Card(
-      color: const Color(0xFF141B2D),
+      color: appColors?.cardBackground ?? Theme.of(context).colorScheme.surface,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
@@ -293,20 +298,20 @@ class DashboardPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: color[400], size: 32),
+              Icon(icon, color: color, size: 32),
               const Spacer(),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                style: TextStyle(fontSize: 12, color: appColors?.featureSubtitle ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
               ),
             ],
           ),

@@ -11,7 +11,6 @@ class MinigamesPage extends StatelessWidget {
       {'title': 'Local Multiplayer', 'subtitle': 'Play with a friend', 'icon': Icons.groups},
       {'title': 'Quiz', 'subtitle': 'Answer security questions', 'icon': Icons.quiz},
       {'title': 'Pairs', 'subtitle': 'Match the cards', 'icon': Icons.grid_view},
-      {'title': 'Spot the Phish', 'subtitle': 'Identify threats fast', 'icon': Icons.phishing},
       {'title': 'Password Puzzle', 'subtitle': 'Crack the code', 'icon': Icons.lock_open},
       {'title': 'Threat Hunt', 'subtitle': 'Find suspicious items', 'icon': Icons.search},
     ];
