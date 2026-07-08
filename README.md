@@ -38,6 +38,7 @@ Our dashboard serves as the central hub, granting quick access to our core inter
 | Component | Technology | Description |
 | :--- | :--- | :--- |
 | **Frontend Framework** | Flutter & Dart | Cross-platform UI development |
+| **Animation and Graphics design** | Adobe Illustrator | A digital design software to make the mascots and some icons |
 
 ```text
 lib/
@@ -66,9 +67,14 @@ lib/
 ---
 
 ## Challenges Faced & Learnings
-**The Challenge**: We initially struggled with handling layout constraints when placing a dynamic `GridView` inside a scrolling `CustomScrollView`, causing the layout to crash or freeze.
+* 
+    **The Challenge**: We initially struggled with handling responsive layout because the buttons in the dashboard page would just become massive in big screens. 
 
-**The Solution**: We researched Flutter's sliver architecture and solved the issue by setting shrinkWrap: true and applying `NeverScrollableScrollPhysics()` to the grid, allowing the parent `CustomScrollView` to handle the scroll physics smoothly.
+    **The Solution**: We researched other ways to make responsive layouts and we found that we could use `GridView.builder` to make them responsive and follow a better path. And now its probably one of the most used methods of our page.  
+* 
+    **The Challenge**: We struggled with adding an image to the app because we were new to this. And because we wanted to make it have a shadow but it kept showing a box instead of the siluete. 
+
+    **The Solution**: We reserached how we could make the shadow a silluete instead of the box behind it. We found you could use a function to make the image blurred behind the actual image (with an offset) and it now works. 
 
 ---
 
