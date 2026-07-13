@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
+import 'dart:ui';
 import '../../core/theme.dart';
 import '../chatbot/chatbot_page.dart';
 import '../minigames/quiz_page.dart';
@@ -6,10 +8,7 @@ import '../password_system/password_page.dart';
 import '../simulator/simulator_page.dart';
 import '../incident_report/report_page.dart';
 import '../widgets/make_image.dart';
-import 'dart:math' as math;
-import 'dart:ui';
 
-// 1. Changed to StatefulWidget
 class DashboardPage extends StatefulWidget {
   static const routeName = '/';
 
@@ -19,7 +18,9 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
+class _DashboardPageState extends State<DashboardPage> with TickerProviderStateMixin {
+  late final TabController _tabController;
+
   OverlayEntry? _overlayEntry;
   late final AnimationController _floatController;
 
@@ -33,6 +34,9 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
+
+    _tabController = TabController(length: 2, vsync: this);
+
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showFloatingImage(context);
@@ -134,333 +138,275 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
     Overlay.of(context).insert(_overlayEntry!);
   }
 
+  Widget _buildStatItem({
+    required IconData icon,
+    required String value,
+    required Color color,
+    String? connectedPage,
+  }) {
+    return InkWell(
+      onTap: connectedPage != null
+          ? () {
+              Navigator.pushNamed(context, connectedPage);
+            }
+          : () {},
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 4),
+          Text(
+          value,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appColors = Theme.of(context).extension<AppColors>();
+    final colorScheme = Theme.of(context).colorScheme;
+
+    // Static mockup datasets for UI building blocks
+    final courses = [
+      {'title': 'Introduction to Cyber Threats', 'desc': 'Chat with AI to learn security fundamentals.', 'icon': Icons.chat_bubble_outline, 'progress': 1.0, 'color': appColors?.featureChat ?? colorScheme.secondary},
+      {'title': 'Social Engineering Tactics', 'desc': 'Understand human exploitation frameworks.', 'icon': Icons.people_outline, 'progress': 0.3, 'color': appColors?.featureGames ?? colorScheme.tertiary},
+      {'title': 'Network Security Foundations', 'desc': 'Deep dive into data streams and encryption.', 'icon': Icons.lan_outlined, 'progress': 0.0, 'color': appColors?.featureSimulator ?? colorScheme.primary},
+    ];
+
+    final tools = [
+      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': appColors?.featureChat ?? colorScheme.secondary, 'connectedPage': EmailPage.routeName},
+      {'title': 'Password Checker', 'subtitle': 'Test password strength', 'icon': Icons.lock_outline, 'color': appColors?.featurePassword ?? colorScheme.primary, 'connectedPage': PasswordPage.routeName},
+      {'title': 'Mini Games', 'subtitle': 'Spot the security threat', 'icon': Icons.sports_esports_outlined, 'color': appColors?.featureGames ?? colorScheme.tertiary, 'connectedPage': MinigamesPage.routeName},
+      {'title': 'Incident Report', 'subtitle': 'File a simulated breach', 'icon': Icons.assignment_late_outlined, 'color': appColors?.featureSimulator ?? colorScheme.secondary, 'connectedPage': ReportPage.routeName},
+      {'title': 'Chatbot', 'subtitle': 'Ask security questions', 'icon': Icons.smart_toy_outlined, 'color': appColors?.featureChat ?? colorScheme.tertiary, 'connectedPage': ChatbotPage.routeName},
+    ];
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            elevation: 0,
-            floating: false,
-            pinned: true,
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(14),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.primaryContainer,
+        elevation: 0,
+        titleSpacing: 12,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            children: [
+              Text(
+                'ThreatWise',
+                style: TextStyle(color: colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
                 child: Row(
                   children: [
                     Expanded(
                       child: _buildStatItem(
                         icon: Icons.local_fire_department,
                         value: '7',
-                        color: appColors?.statItem ?? Theme.of(context).colorScheme.onPrimary,
+                        color: appColors?.featurePassword ?? colorScheme.primary,
                       ),
                     ),
                     Expanded(
                       child: _buildStatItem(
                         icon: Icons.groups_3,
                         value: 'A1',
-                        color: appColors?.statItem ?? Theme.of(context).colorScheme.onPrimary,
+                        color: appColors?.featureChat ?? colorScheme.secondary,
                       ),
                     ),
                     Expanded(
                       child: _buildStatItem(
                         icon: Icons.monetization_on,
                         value: '250',
-                        color: appColors?.statItem ?? Theme.of(context).colorScheme.onPrimary,
+                        color: appColors?.featureGames ?? colorScheme.tertiary,
                       ),
                     ),
                     Expanded(
                       child: _buildStatItem(
                         icon: Icons.bolt,
                         value: '85',
-                        color: appColors?.statItem ?? Theme.of(context).colorScheme.onPrimary,
+                        color: colorScheme.primary,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.secondary],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
+        ),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: colorScheme.secondary,
+          labelColor: colorScheme.onPrimaryContainer,
+          unselectedLabelColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
+          tabs: const [
+            Tab(text: 'COURSES'),
+            Tab(text: 'PRACTICE TOOLS'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          Stack(
+            children: [
+              ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                itemCount: courses.length,
+                itemBuilder: (context, index) {
+                  final course = courses[index];
+                  final double progress = course['progress'] as double;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.shield, size: 48, color: Theme.of(context).colorScheme.onPrimary),
-                        const SizedBox(height: 16),
-                        Text(
-                          '{Headline of an article or course}',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'A brief description of the content goes here, enticing users to click and learn more.',
-                          style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onPrimary),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
+                        // Timeline Indicator Block
+                        Column(
                           children: [
-                            ElevatedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.play_arrow),
-                              label: const Text('Get Started'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                                foregroundColor: Theme.of(context).colorScheme.primary,
+                            Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                color: course['color'] as Color,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: progress == 1.0 ? colorScheme.primary : course['color'] as Color,
+                                  width: 3,
+                                ),
                               ),
+                              child: Center(
+                                child: Icon(course['icon'] as IconData, color: colorScheme.onPrimary, size: 26),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              progress == 1.0 ? 'Done' : '${(progress * 100).toInt()}%', 
+                              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7), fontSize: 11),
                             ),
                           ],
                         ),
+                        const SizedBox(width: 16),
+                        // Module Information Card
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: appColors?.cardBackground ?? colorScheme.surface,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: colorScheme.outline),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  course['title'] as String, 
+                                  style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 15),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  course['desc'] as String, 
+                                  style: TextStyle(color: appColors?.featureSubtitle ?? colorScheme.onSurface.withOpacity(0.7), fontSize: 12),
+                                ),
+                                const SizedBox(height: 12),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: LinearProgressIndicator(
+                                    value: progress, 
+                                    backgroundColor: colorScheme.onSurface.withOpacity(0.15),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      progress == 1.0 ? colorScheme.primary : course['color'] as Color,
+                                    ),
+                                    minHeight: 4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    'Security Modules',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 4,
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 350, // Buttons will never grow wider than 250px
-                      mainAxisSpacing: 10,     // Spacing between rows
-                      crossAxisSpacing: 10,    // Spacing between columns
-                      childAspectRatio: 1.2,     // Keeps a nice button shape (Width / Height)
-                    ),
-                    itemBuilder: (context, index) {
-                      switch (index) {
-                        case 0:
-                          return _buildFeatureCard(
-                            context: context,
-                            appColors: appColors,
-                            icon: Icons.chat,
-                            title: 'AI chatbot',
-                            subtitle: 'Learn about threats',
-                            color: appColors?.featureChat ?? Theme.of(context).colorScheme.primary,
-                            onTap: () {
-                              Navigator.pushNamed(context, ChatbotPage.routeName);
-                            },
-                          );
-                        case 1:
-                          return _buildFeatureCard(
-                            context: context,
-                            appColors: appColors,
-                            icon: Icons.warning,
-                            title: 'Attack simulator',
-                            subtitle: 'Simulate attacks',
-                            color: appColors?.featureSimulator ?? Theme.of(context).colorScheme.error,
-                            onTap: () {
-                              // Note: Fixed your typo here where it used EmailPage instead of SimulatorPage
-                              Navigator.pushNamed(context, EmailPage.routeName);
-                            },
-                          );
-                        case 2:
-                          return _buildFeatureCard(
-                            context: context,
-                            appColors: appColors,
-                            icon: Icons.vpn_key,
-                            title: 'Password checker',
-                            subtitle: 'Check password strength',
-                            color: appColors?.featurePassword ?? Theme.of(context).colorScheme.secondary,
-                            onTap: () {
-                              Navigator.pushNamed(context, PasswordPage.routeName);
-                            },
-                          );
-                        case 3:
-                        default:
-                          return _buildFeatureCard(
-                            context: context,
-                            appColors: appColors,
-                            icon: Icons.update,
-                            title: 'Mini games',
-                            subtitle: 'Spot the threat',
-                            color: appColors?.featureGames ?? Theme.of(context).colorScheme.tertiary,
-                            onTap: () {
-                              Navigator.pushNamed(context, MinigamesPage.routeName);
-                            },
-                          );
-                        
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    'Tools & Resources',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 300, // Buttons will never grow wider than 250px
-                      mainAxisSpacing: 10,     // Spacing between rows
-                      crossAxisSpacing: 10,    // Spacing between columns
-                      childAspectRatio: 1.2, 
-                    ),
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      switch (index) {
-                        case 0:
-                          return ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.book),
-                            label: const Text('Resource Library'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                              foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                            ),
-                          );
-                        case 1:
-                          return ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.analytics),
-                            label: const Text('My Stats and Progress'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                              foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                            ),
-                          );
-                        case 2:
-                          return ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.checklist),
-                            label: const Text('Security Checklist'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                              foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                            ),
-                          );
-                        case 3:
-                        default:
-                          return ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.pushNamed(context, ReportPage.routeName);
-                            },
-                            icon: const Icon(Icons.report),
-                            label: const Text('Incident Report Form'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                              foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                            ),
-                          );
-                      }
-                    },
-                  ),
-                ],
+                  );
+                },
               ),
+            ],
+          ),
+
+          GridView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: tools.length,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 300,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 1.1,
             ),
+            itemBuilder: (context, index) {
+              final tool = tools[index];
+              return Ink(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: appColors?.cardBackground ?? colorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: colorScheme.outline),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    // Navigate to the connected page if it exists
+                    final String? connectedPage = tool['connectedPage'] as String?;
+                    if (connectedPage != null) {
+                      Navigator.pushNamed(context, connectedPage);
+                    }
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: (tool['color'] as Color).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(tool['icon'] as IconData, color: tool['color'] as Color, size: 28),
+                      ),
+                      // Titles Panel
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            tool['title'] as String, 
+                            style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 14),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            tool['subtitle'] as String, 
+                            style: TextStyle(color: appColors?.featureSubtitle ?? colorScheme.onSurface.withOpacity(0.7), fontSize: 11),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: colorScheme.primaryContainer,
+        selectedItemColor: colorScheme.secondary,
+        unselectedItemColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
         currentIndex: 0,
-        onTap: (index) {},
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Tools'),
-          BottomNavigationBarItem(icon: Icon(Icons.analytics), label: 'Status'),
+          BottomNavigationBarItem(icon: Icon(Icons.import_contacts), label: 'Learn'),
+          BottomNavigationBarItem(icon: Icon(Icons.leaderboard), label: 'Leaderboard'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem({
-    required IconData icon,
-    required String value,
-    required Color color,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 25),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFeatureCard({
-    required BuildContext context,
-    required AppColors? appColors,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      color: appColors?.cardBackground ?? Theme.of(context).colorScheme.surface,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(icon, color: color, size: 32),
-              const Spacer(),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface, // Note: Changed to onSurface so text is visible on typical card backgrounds
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(fontSize: 12, color: appColors?.featureSubtitle ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
