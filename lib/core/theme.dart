@@ -62,7 +62,7 @@ class AppTheme {
   static ThemeData get theme => ThemeData(
         colorScheme: const ColorScheme(
           brightness: Brightness.dark,
-          primary: Color(0xFF58CC02), // or keep pink only as an accent
+          primary: Color(0xFF58CC02), 
           onPrimary: Colors.white,
 
           secondary: Color(0xFF1CB0F6),

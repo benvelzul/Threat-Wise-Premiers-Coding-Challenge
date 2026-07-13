@@ -6,6 +6,7 @@ import 'features/minigames/quiz_page.dart';
 import 'features/incident_report/report_page.dart';
 import 'features/password_system/password_page.dart';
 import 'features/simulator/simulator_page.dart';
+//import 'features/tests.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         PasswordPage.routeName: (context) => const PasswordPage(),
         EmailPage.routeName: (context) => const EmailPage(),
         ReportPage.routeName: (context) => const ReportPage(),
+        // TestPage.routeName: (context) => const TestPage(),
       },
       initialRoute: DashboardPage.routeName,
     );
