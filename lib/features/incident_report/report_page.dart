@@ -179,7 +179,7 @@ class _ReportPageState extends State<ReportPage> {
             const SizedBox(height: 12),
             Text(
               'Please describe the incident from your perspective. Include what happened, where it happened, and who was involved.',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)),
             ),
           ],
         ),
