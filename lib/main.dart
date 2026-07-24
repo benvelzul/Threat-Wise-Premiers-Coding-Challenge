@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'core/theme.dart';
 import 'features/chatbot/chatbot_page.dart';
 import 'features/dashboard/dashboard_page.dart';
+import 'features/stat_pages/leaderboard_page.dart';
 import 'features/minigames/quiz_page.dart';
 import 'features/incident_report/report_page.dart';
 import 'features/password_system/password_page.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.theme,
       routes: {
         DashboardPage.routeName: (context) => const DashboardPage(),
+        LeaderboardPage.routeName: (context) => const LeaderboardPage(),
         ChatbotPage.routeName: (context) => const ChatbotPage(),
         MinigamesPage.routeName: (context) => const MinigamesPage(),
         PasswordPage.routeName: (context) => const PasswordPage(),
