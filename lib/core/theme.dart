@@ -4,6 +4,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color statItem;
   final Color cardBackground;
   final Color featureChat;
+  final Color featureDiv;
   final Color featureSimulator;
   final Color featurePassword;
   final Color featureGames;
@@ -13,6 +14,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.statItem,
     required this.cardBackground,
     required this.featureChat,
+    required this.featureDiv,
     required this.featureSimulator,
     required this.featurePassword,
     required this.featureGames,
@@ -24,6 +26,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? statItem,
     Color? cardBackground,
     Color? featureChat,
+    Color? featureDiv,
     Color? featureSimulator,
     Color? featurePassword,
     Color? featureGames,
@@ -33,6 +36,7 @@ class AppColors extends ThemeExtension<AppColors> {
       statItem: statItem ?? this.statItem,
       cardBackground: cardBackground ?? this.cardBackground,
       featureChat: featureChat ?? this.featureChat,
+      featureDiv: featureDiv ?? this.featureDiv,
       featureSimulator: featureSimulator ?? this.featureSimulator,
       featurePassword: featurePassword ?? this.featurePassword,
       featureGames: featureGames ?? this.featureGames,
@@ -50,6 +54,7 @@ class AppColors extends ThemeExtension<AppColors> {
       statItem: Color.lerp(statItem, other.statItem, t) ?? statItem,
       cardBackground: Color.lerp(cardBackground, other.cardBackground, t) ?? cardBackground,
       featureChat: Color.lerp(featureChat, other.featureChat, t) ?? featureChat,
+      featureDiv: Color.lerp(featureDiv, other.featureDiv, t) ?? featureDiv,
       featureSimulator: Color.lerp(featureSimulator, other.featureSimulator, t) ?? featureSimulator,
       featurePassword: Color.lerp(featurePassword, other.featurePassword, t) ?? featurePassword,
       featureGames: Color.lerp(featureGames, other.featureGames, t) ?? featureGames,
@@ -88,9 +93,10 @@ class AppTheme {
             statItem: Colors.white,
             cardBackground: Color(0xFF141B2D),
             featureChat: Color(0xFF3B82F6),
+            featureDiv: Color.fromARGB(255, 5, 41, 99),
             featureSimulator: Color(0xFFEF4444),
             featurePassword: Color(0xFFF59E0B),
-            featureGames: Color(0xFF8B5CF6),
+            featureGames: Color.fromARGB(255, 58, 39, 104),
             featureSubtitle: Color(0xFFB0B7C3),
           ),
         ],

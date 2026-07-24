@@ -213,7 +213,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                       child: _buildStatItem(
                         icon: Icons.groups_3,
                         value: 'A1',
-                        color: appColors?.featureChat ?? colorScheme.secondary,
+                        color: appColors?.featureDiv ?? colorScheme.secondary,
                       ),
                     ),
                     Expanded(
@@ -236,15 +236,21 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
             ],
           ),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: colorScheme.secondary,
-          labelColor: colorScheme.onPrimaryContainer,
-          unselectedLabelColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
-          tabs: const [
-            Tab(text: 'COURSES'),
-            Tab(text: 'PRACTICE TOOLS'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Material(
+            color: colorScheme.secondary, // Replaces 'background'
+            child: TabBar(
+              controller: _tabController,
+              // Replaces deprecated indicatorColor
+              labelColor: colorScheme.onPrimaryContainer,
+              unselectedLabelColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
+              tabs: const [
+                Tab(text: 'COURSES'),
+                Tab(text: 'PRACTICE TOOLS'),
+              ],
+            ),
+          ),
         ),
       ),
       body: TabBarView(

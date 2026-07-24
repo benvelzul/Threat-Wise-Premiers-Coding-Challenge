@@ -7,6 +7,7 @@ import 'features/incident_report/report_page.dart';
 import 'features/password_system/password_page.dart';
 import 'features/simulator/simulator_page.dart';
 //import 'features/tests.dart';
+import 'features/minigames/password_game.dart';
 
 void main() {
   runApp(const MyApp());
