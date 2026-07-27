@@ -1,9 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 
-class EmailPage extends StatelessWidget {
+class SimulatorPage extends StatelessWidget {
   static const routeName = '/simulator';
 
-  const EmailPage({super.key});
+  const SimulatorPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -174,7 +174,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
     ];
 
     final tools = [
-      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': Colors.blueAccent, 'connectedPage': EmailPage.routeName},
+      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': Colors.blueAccent, 'connectedPage': SimulatorPage.routeName},
       {'title': 'Password Checker', 'subtitle': 'Test password strength', 'icon': Icons.lock_outline, 'color': Colors.orangeAccent, 'connectedPage': PasswordPage.routeName},
       {'title': 'Mini Games', 'subtitle': 'Spot the security threat', 'icon': Icons.sports_esports_outlined, 'color': Colors.greenAccent, 'connectedPage': MinigamesPage.routeName},
       {'title': 'Incident Report', 'subtitle': 'File a simulated breach', 'icon': Icons.assignment_late_outlined, 'color': Colors.amberAccent, 'connectedPage': ReportPage.routeName},

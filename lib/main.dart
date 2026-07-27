@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         ChatbotPage.routeName: (context) => const ChatbotPage(),
         MinigamesPage.routeName: (context) => const MinigamesPage(),
         PasswordPage.routeName: (context) => const PasswordPage(),
-        EmailPage.routeName: (context) => const EmailPage(),
+        SimulatorPage.routeName: (context) => const SimulatorPage(),
         ReportPage.routeName: (context) => const ReportPage(),
         // TestPage.routeName: (context) => const TestPage(),
       },
