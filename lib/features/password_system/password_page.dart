@@ -40,6 +40,7 @@ class _PasswordPageState extends State<PasswordPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   StrengthChecker? _currentStrength;
+  String _currentPassword = '';
 
   @override
   void dispose() {
@@ -49,8 +50,6 @@ class _PasswordPageState extends State<PasswordPage> {
 
   void _onSubmit() {
     if (_formKey.currentState?.validate() ?? false) {
-      // Show a success notification rather than popping the page.
-      // This prevents browser password managers from trying to "save" the test input.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Password logic validated successfully!'),
@@ -91,6 +90,39 @@ class _PasswordPageState extends State<PasswordPage> {
     }
   }
 
+  String _getHackTimeText(String password) {
+    if (password.isEmpty) return '';
+
+    int poolSize = 0;
+    if (RegExp(r'[a-z]').hasMatch(password)) poolSize += 26;
+    if (RegExp(r'[A-Z]').hasMatch(password)) poolSize += 26;
+    if (RegExp(r'[0-9]').hasMatch(password)) poolSize += 10;
+    if (RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) poolSize += 32;
+
+    if (poolSize == 0) poolSize = 26;
+
+    const double hashesPerSecond = 10000000000; // 10 Billion hashes/sec
+
+    final double combinations = BigInt.from(poolSize)
+        .pow(password.length)
+        .toDouble();
+
+    final double seconds = combinations / hashesPerSecond;
+
+    if (seconds < 1) return 'It would take a computer under 1 second to hack';
+    if (seconds < 60) return 'It would take a computer about ${seconds.round()} seconds to hack';
+    if (seconds < 3600) return 'It would take a computer about ${(seconds / 60).round()} minutes to hack';
+    if (seconds < 86400) return 'It would take a computer about ${(seconds / 3600).round()} hours to hack';
+    if (seconds < 31536000) return 'It would take a computer about ${(seconds / 86400).round()} days to hack';
+
+    final double years = seconds / 31536000;
+    if (years < 1000) return 'It would take a computer about ${years.round()} years to hack';
+    if (years < 1000000) return 'It would take a computer about ${(years / 1000).toStringAsFixed(1)} thousand years to hack';
+    if (years < 1000000000) return 'It would take a computer about ${(years / 1000000).toStringAsFixed(1)} million years to hack';
+
+    return 'It would take a computer billions of years to hack';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,11 +148,8 @@ class _PasswordPageState extends State<PasswordPage> {
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  
-                  // Blocks auto-save password popups on Chrome, iOS, and Android
                   autofillHints: null,
                   enableIMEPersonalizedLearning: false,
-                  
                   decoration: const InputDecoration(
                     labelText: 'Password',
                     hintText: 'Enter your password',
@@ -129,6 +158,7 @@ class _PasswordPageState extends State<PasswordPage> {
                   validator: _passwordValidator,
                   onChanged: (value) {
                     setState(() {
+                      _currentPassword = value;
                       if (value.isEmpty) {
                         _currentStrength = null;
                       } else {
@@ -163,6 +193,18 @@ class _PasswordPageState extends State<PasswordPage> {
                   style: TextStyle(
                     color: _getStrengthColor(),
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // 3. Dynamic Hack Time Text (Bright white text for dark mode visibility)
+                Text(
+                  _getHackTimeText(_currentPassword),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
 
