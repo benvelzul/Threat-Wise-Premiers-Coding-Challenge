@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import '../../core/theme.dart';
 import '../chatbot/chatbot_page.dart';
+import '../stat_pages/leaderboard_page.dart';
 import '../minigames/quiz_page.dart';
 import '../password_system/password_page.dart';
 import '../simulator/simulator_page.dart';
@@ -26,6 +27,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
 
   // Starting position of the floating image
   Offset _offset = const Offset(50, 100);
+
 
   @override
   void initState() {
@@ -177,11 +179,12 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
     ];
 
     final tools = [
-      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': appColors?.featureChat ?? colorScheme.secondary, 'connectedPage': EmailPage.routeName},
+      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': appColors?.featureChat ?? colorScheme.secondary, 'connectedPage': SimulatorPage.routeName},
       {'title': 'Password Checker', 'subtitle': 'Test password strength', 'icon': Icons.lock_outline, 'color': appColors?.featurePassword ?? colorScheme.primary, 'connectedPage': PasswordPage.routeName},
       {'title': 'Mini Games', 'subtitle': 'Spot the security threat', 'icon': Icons.sports_esports_outlined, 'color': appColors?.featureGames ?? colorScheme.tertiary, 'connectedPage': MinigamesPage.routeName},
       {'title': 'Incident Report', 'subtitle': 'File a simulated breach', 'icon': Icons.assignment_late_outlined, 'color': appColors?.featureSimulator ?? colorScheme.secondary, 'connectedPage': ReportPage.routeName},
       {'title': 'Chatbot', 'subtitle': 'Ask security questions', 'icon': Icons.smart_toy_outlined, 'color': appColors?.featureChat ?? colorScheme.tertiary, 'connectedPage': ChatbotPage.routeName},
+      {'title': 'Leaderboard', 'subtitle': 'See top performers', 'icon': Icons.leaderboard_outlined, 'color': appColors?.featureDiv ?? colorScheme.primary, 'connectedPage': LeaderboardPage.routeName},
     ];
 
     return Scaffold(
@@ -213,7 +216,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                       child: _buildStatItem(
                         icon: Icons.groups_3,
                         value: 'A1',
-                        color: appColors?.featureChat ?? colorScheme.secondary,
+                        color: appColors?.featureDiv ?? colorScheme.secondary,
                       ),
                     ),
                     Expanded(
@@ -236,15 +239,21 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
             ],
           ),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: colorScheme.secondary,
-          labelColor: colorScheme.onPrimaryContainer,
-          unselectedLabelColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
-          tabs: const [
-            Tab(text: 'COURSES'),
-            Tab(text: 'PRACTICE TOOLS'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Material(
+            color: colorScheme.secondary, // Replaces 'background'
+            child: TabBar(
+              controller: _tabController,
+              // Replaces deprecated indicatorColor
+              labelColor: colorScheme.onPrimaryContainer,
+              unselectedLabelColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
+              tabs: const [
+                Tab(text: 'COURSES'),
+                Tab(text: 'PRACTICE TOOLS'),
+              ],
+            ),
+          ),
         ),
       ),
       body: TabBarView(
@@ -394,18 +403,6 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
               );
             },
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: colorScheme.primaryContainer,
-        selectedItemColor: colorScheme.secondary,
-        unselectedItemColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.import_contacts), label: 'Learn'),
-          BottomNavigationBarItem(icon: Icon(Icons.leaderboard), label: 'Leaderboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

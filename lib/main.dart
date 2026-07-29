@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'core/theme.dart';
 import 'features/chatbot/chatbot_page.dart';
 import 'features/dashboard/dashboard_page.dart';
+import 'features/stat_pages/leaderboard_page.dart';
 import 'features/minigames/quiz_page.dart';
 import 'features/incident_report/report_page.dart';
 import 'features/password_system/password_page.dart';
 import 'features/simulator/simulator_page.dart';
-//import 'features/tests.dart';
+import 'features/tests.dart';
+import 'features/minigames/password_game.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,15 +24,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
       routes: {
-        DashboardPage.routeName: (context) => const DashboardPage(),
+        // DashboardPage.routeName: (context) => const DashboardPage(),
+        LeaderboardPage.routeName: (context) => const LeaderboardPage(),
         ChatbotPage.routeName: (context) => const ChatbotPage(),
         MinigamesPage.routeName: (context) => const MinigamesPage(),
         PasswordPage.routeName: (context) => const PasswordPage(),
-        EmailPage.routeName: (context) => const EmailPage(),
+        SimulatorPage.routeName: (context) => const SimulatorPage(),
         ReportPage.routeName: (context) => const ReportPage(),
-        // TestPage.routeName: (context) => const TestPage(),
+        ScenarioTestScreen.routeName: (context) => const ScenarioTestScreen(),
       },
-      initialRoute: DashboardPage.routeName,
+      initialRoute: ScenarioTestScreen.routeName,
     );
   }
 }
