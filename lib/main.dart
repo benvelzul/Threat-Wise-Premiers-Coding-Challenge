@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
       routes: {
-        // DashboardPage.routeName: (context) => const DashboardPage(),
+        DashboardPage.routeName: (context) => const DashboardPage(),
         LeaderboardPage.routeName: (context) => const LeaderboardPage(),
         ChatbotPage.routeName: (context) => const ChatbotPage(),
         MinigamesPage.routeName: (context) => const MinigamesPage(),

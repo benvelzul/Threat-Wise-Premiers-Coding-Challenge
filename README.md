@@ -43,9 +43,14 @@ Our dashboard serves as the central hub, granting quick access to our core inter
 ```text
 lib/
 ├── core/
-│   ├── avatar.dart 
 │   ├── constants.dart 
 │   └── theme.dart 
+├── models/
+│   ├── email_scenario.dart 
+│   ├── enums.dart  
+├── data/
+│   ├── email_components.dart 
+│   ├── mock_scenarios.dart 
 ├── features/
 │   ├── chatbot/
 │   │   ├── chatbot_logic.dart
