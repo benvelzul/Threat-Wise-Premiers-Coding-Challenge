@@ -1,3 +1,4 @@
+import 'dart:math'; // 1. Added import for Random()
 import 'package:flutter/material.dart';
 import '../models/email_scenario.dart';
 import '../data/mock_scenarios.dart';
@@ -12,28 +13,39 @@ class ScenarioTestScreen extends StatefulWidget {
 }
 
 class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
-  // Start with a initial random scenario
   late EmailScenario currentScenario;
+
+  // 2. Helper method to pick a random value from any Enum list
+  T _getRandomEnum<T>(List<T> values) {
+    final random = Random();
+    return values[random.nextInt(values.length)];
+  }
+
+  // 3. Helper method to build a completely random scenario
+  EmailScenario _makeRandomScenario() {
+    final randomCategory = _getRandomEnum(ScenarioCategory.values);
+    final randomDifficulty = _getRandomEnum(Difficulty.values);
+    final randomThreatType = _getRandomEnum(ThreatType.values);
+
+    return generateScenario(
+      difficulty: randomDifficulty,
+      category: randomCategory,
+      // Pass threatType if phishing, or null if legitimate
+      threatType: randomCategory == ScenarioCategory.phishing ? randomThreatType : null,
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    final currentScenario = generateScenario(
-      difficulty: Difficulty.hard,
-      category: ScenarioCategory.phishing,
-      threatType: ThreatType.credentialHarvesting,
-    );
+    // Initialize with a random scenario
+    currentScenario = _makeRandomScenario();
   }
 
   void _remakeScenario() {
     setState(() {
-      // Generate a Hard Credential Harvesting Phishing Email
-      final currentScenario = generateScenario(
-        difficulty: Difficulty.hard,
-        category: ScenarioCategory.phishing,
-        threatType: ThreatType.credentialHarvesting,
-      );
-
+      // Re-assign with a brand new random scenario
+      currentScenario = _makeRandomScenario();
     });
   }
 
@@ -45,7 +57,6 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
         actions: [
-          // 🔄 Re-make / Refresh Button in App Bar
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Generate New Email',
@@ -64,9 +75,12 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: currentScenario.isThreat ? const Color.fromARGB(255, 0, 0, 0) : Colors.black12,
+                  color: currentScenario.isThreat 
+                      ? const Color.fromARGB(255, 35, 35, 35) 
+                      : Colors.grey[200],
                   border: Border.all(
                     color: currentScenario.isThreat ? Colors.red : Colors.green,
+                    width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -77,18 +91,37 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                       'ID: ${currentScenario.id} | Threat: ${currentScenario.isThreat ? "YES ⚠️" : "NO ✅"}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: currentScenario.isThreat ? Colors.red[900] : Colors.green[900],
+                        color: currentScenario.isThreat ? Colors.redAccent : Colors.green[800],
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('From: ${currentScenario.emailData.senderName} <${currentScenario.emailData.senderEmail}>'),
-                    Text('Subject: ${currentScenario.emailData.subject}'),
+                    Text(
+                      'Category: ${currentScenario.category.name} | Difficulty: ${currentScenario.difficulty.name}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: currentScenario.isThreat ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                    if (currentScenario.threatType != null)
+                      Text(
+                        'Type: ${currentScenario.threatType!.name}',
+                        style: const TextStyle(color: Colors.orangeAccent),
+                      ),
+                    const Divider(height: 16),
+                    Text(
+                      'From: ${currentScenario.emailData.senderName} <${currentScenario.emailData.senderEmail}>',
+                      style: TextStyle(color: currentScenario.isThreat ? Colors.white : Colors.black),
+                    ),
+                    Text(
+                      'Subject: ${currentScenario.emailData.subject}',
+                      style: TextStyle(color: currentScenario.isThreat ? Colors.white : Colors.black),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 20),
 
-              // Generated Email Text
+              // Generated Email Content
               const Text('Email Content:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
               const Divider(),
               Text(
@@ -97,7 +130,7 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
               ),
               const SizedBox(height: 30),
 
-              // Large Re-make Button on Page
+              // Re-make Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(

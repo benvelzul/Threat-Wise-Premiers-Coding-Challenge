@@ -9,7 +9,6 @@ enum ThreatType {
   malware,
   invoiceFraud,
   businessEmailCompromise,
-  qrScam,
 }
 enum ScenarioCategory {
   phishing,
