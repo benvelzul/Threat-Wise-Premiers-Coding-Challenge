@@ -1,63 +1,88 @@
 import '../core/constants.dart';
+import '../models/enums.dart';
 
 class EmailComponents {
-  // --- GREETINGS ---
-  static const List<String> phishingGreetings = [
-    'Dear Valued Customer,',
-    'Attention Account Holder,',
-    'Dear Employee,',
-    'Urgent Notice:',
-    'Hello,',
-  ];
+  // --- GREETINGS BY DIFFICULTY ---
+  static const Map<Difficulty, List<String>> phishingGreetings = {
+    Difficulty.easy: [
+      'Dear Valued Customer,',
+      'Attention Account Holder,',
+    ],
+    Difficulty.medium: [
+      'Dear Employee,',
+      'Hello,',
+    ],
+    Difficulty.hard: [
+      'Hi $UserFirstName,',
+    ],
+    Difficulty.expert: [
+      'Quick request $UserFirstName,',
+    ],
+  };
 
-  static const List<String> legitimateGreetings = [
-    'Hi $UserFirstName,',
-    'Hello $UserFirstName,',
-    'Dear $UserFirstName $UserLastName,',
-    'Hi there,$UserFirstName!',
-  ];
+  static const Map<Difficulty, List<String>> legitimateGreetings = {
+    Difficulty.easy: ['Hi $UserFirstName,'],
+    Difficulty.medium: ['Dear $UserFirstName $UserLastName,'],
+    Difficulty.hard: ['Hi there, $UserFirstName!'],
+    Difficulty.expert: ['Hey $UserFirstName,'],
+  };
 
-  // --- ISSUES / TRIGGERS ---
-  static const List<String> phishingIssues = [
-    'We detected an unauthorized sign-in attempt from an unknown device in Moscow, Russia.',
-    'Your corporate account password is set to expire in 2 hours.',
-    'Your direct deposit details were updated, but verification failed.',
-    'An overdue invoice (#88402) requires immediate payment to avoid legal action.',
-    'Your cloud storage quota has been exceeded and files will be permanently deleted.',
-  ];
+  // --- ISSUES BY THREAT TYPE ---
+  // Tip: You can group issues by ThreatType to match the exact attack vector!
+  static const Map<ThreatType, List<String>> threatIssues = {
+    ThreatType.credentialHarvesting: [
+      'Your password is set to expire in 2 hours. Please reset it immediately.',
+      'An unauthorized sign-in attempt was detected from Moscow, Russia.',
+    ],
+    ThreatType.malware: [
+      'Please see the attached document for the required workspace setup steps.',
+    ],
+    ThreatType.invoiceFraud: [
+      'Overdue invoice (#88402) requires immediate payment to avoid penalty.',
+    ],
+    ThreatType.businessEmailCompromise: [
+      'I am currently in a meeting and need you to handle an urgent wire request.',
+    ],
+    ThreatType.qrScam: [
+      'Multi-factor authentication reset required. Scan the attached QR code.',
+    ],
+  };
 
-  static const List<String> legitimateIssues = [
-    'Your monthly team workspace summary is now available to view.',
-    'A pull request you were tagged in has been merged into main.',
-    'Your scheduled password change was completed successfully.',
-    'A new security update (v2.4.1) is ready for deployment.',
-  ];
+  // --- CALL TO ACTIONS BY DIFFICULTY ---
+  static const Map<Difficulty, List<String>> phishingCTAs = {
+    Difficulty.easy: [
+      'Click the secure link below to verify your identity immediately:',
+    ],
+    Difficulty.medium: [
+      'Log into your portal within 24 hours to preserve access:',
+    ],
+    Difficulty.hard: [
+      'Re-enter your credentials at the corporate portal below:',
+    ],
+    Difficulty.expert: [
+      'Review the requested details here:',
+    ],
+  };
 
-  // --- CALL TO ACTIONS (CTAs) ---
-  static const List<String> phishingCTAs = [
-    'Click the secure link below to verify your identity immediately:',
-    'Open the attached PDF document to review the dispute details:',
-    'Log into your portal within 24 hours to prevent account suspension:',
-    'Re-enter your credentials at the link below to preserve your access:',
-  ];
-
-  static const List<String> legitimateCTAs = [
-    'You can view the full activity log in your account settings.',
-    'If this was you, no further action is required.',
-    'Check your dashboard for complete details on this release.',
-  ];
+  static const Map<Difficulty, List<String>> legitimateCTAs = {
+    Difficulty.easy: ['If this was you, no further action is required.'],
+    Difficulty.medium: ['You can view the full activity log in your account settings.'],
+    Difficulty.hard: ['Check your dashboard for complete details on this release.'],
+    Difficulty.expert: ['Details available on internal wiki.'],
+  };
 
   // --- SIGNATURES ---
-  static const List<String> phishingSignatures = [
-    'Regards,\nGlobal Security Team',
-    'Best regards,\nAccounts Payable Department',
-    'Sincerely,\nIT Support Desk',
-    'Automated System Administrator',
-  ];
+  static const Map<Difficulty, List<String>> phishingSignatures = {
+    Difficulty.easy: ['Automated System Administrator'],
+    Difficulty.medium: ['Best regards,\nAccounts Department'],
+    Difficulty.hard: ['Sincerely,\nIT Support Desk'],
+    Difficulty.expert: ['Best, \nMark Suckenberg'],
+  };
 
-  static const List<String> legitimateSignatures = [
-    'Thanks,\nThe GitHub Security Team',
-    'Best,\nYour IT Workspace Team',
-    'Cheers,\nSlack Automated Bot',
-  ];
+  static const Map<Difficulty, List<String>> legitimateSignatures = {
+    Difficulty.easy: ['Cheers,\nSlack Automated Bot'],
+    Difficulty.medium: ['Thanks,\nThe GitHub Security Team'],
+    Difficulty.hard: ['Best,\nYour IT Workspace Team'],
+    Difficulty.expert: ['Regards,\nOperations Team'],
+  };
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/email_scenario.dart';
 import '../data/mock_scenarios.dart';
+import '../models/enums.dart';
 
 class ScenarioTestScreen extends StatefulWidget {
   const ScenarioTestScreen({super.key});
@@ -17,12 +18,22 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
   @override
   void initState() {
     super.initState();
-    currentScenario = generateRandomScenario();
+    final currentScenario = generateScenario(
+      difficulty: Difficulty.hard,
+      category: ScenarioCategory.phishing,
+      threatType: ThreatType.credentialHarvesting,
+    );
   }
 
   void _remakeScenario() {
     setState(() {
-      currentScenario = generateRandomScenario();
+      // Generate a Hard Credential Harvesting Phishing Email
+      final currentScenario = generateScenario(
+        difficulty: Difficulty.hard,
+        category: ScenarioCategory.phishing,
+        threatType: ThreatType.credentialHarvesting,
+      );
+
     });
   }
 

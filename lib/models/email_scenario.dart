@@ -1,3 +1,5 @@
+import 'enums.dart';
+
 class EmailData {
   final String senderName;
   final String senderEmail;
@@ -16,11 +18,11 @@ class EmailData {
 
 class EmailScenario {
   final String id;
-  final String category;
-  final String difficulty;
+  final ScenarioCategory category; // Enum
+  final Difficulty difficulty;     // Enum
   final EmailData emailData;
   final bool isThreat;
-  final String threatType;
+  final ThreatType? threatType;    // Enum (Null if legitimate)
   final List<String> indicators;
   final String explanation;
 
@@ -30,7 +32,7 @@ class EmailScenario {
     required this.difficulty,
     required this.emailData,
     required this.isThreat,
-    required this.threatType,
+    this.threatType,
     required this.indicators,
     required this.explanation,
   });
