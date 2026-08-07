@@ -20,7 +20,7 @@ The internet can be a dangerous place, but learning about cybersecurity shouldn'
 Our dashboard serves as the central hub, granting quick access to our core interactive security modules:
 
 * **AI Chatbot:** Learn directly about emerging cyber threats in an interactive Q&A format.
-* **Attack Simulator:** A realistic email interface where users can safely practice spotting phishing and social engineering tactics.
+* **Attack Simulator:** A realistic email interface where users can safely practice spotting phishing and social engineering tactics. 
 * **Password Checker:** Real-time feedback on user passwords, teaching them how to build uncrackable credentials.
 * **Mini Games:** Quick, engaging "Spot the Threat" challenges to reinforce safety habits.
 * **Progress & Analytics Tracker:** A visual progress system ensuring users stay motivated as they continue their learning journey.
@@ -83,6 +83,37 @@ lib/
 
 ---
 
+## Feature description and facts
+
+### Email and Phishing Scenario Generator
+
+Our phishing simulator uses a **component-based scenario generator** rather than relying on hardcoded emails. Each email is dynamically assembled from four independent components:
+
+* **Greeting**
+* **Issue**
+* **Call to Action (CTA)**
+* **Signature**
+
+Each of these components contains **30–50 unique variations**, separated into **legitimate** and **phishing** content. Every variation is also categorized into one of four difficulty levels:
+
+* Easy
+* Medium
+* Hard
+* Expert
+
+This modular approach allows the simulator to generate a huge number of unique email combinations.
+
+| Difficulty | Phishing Scenarios | Legitimate Scenarios | Total Scenarios |
+| ---------- | -----------------: | -------------------: | --------------: |
+| Easy       |             ~6,300 |               ~5,400 |         ~11,700 |
+| Medium     |             ~6,300 |               ~5,400 |         ~11,700 |
+| Hard       |             ~5,400 |               ~5,400 |         ~10,800 |
+| Expert     |             ~5,400 |               ~5,400 |         ~10,800 |
+
+> *Numbers are approximate and will continue to grow as more components are added.*
+
+Overall, the simulator can generate **approximately 45,000 unique email scenarios**, with a different combination being created each time a user plays. This provides a highly varied experience while making it difficult for players to memorize answers, encouraging them to identify phishing attempts based on the email's content rather than repetition.
+
 ## Future Roadmap
 If we continue developing this platform, our next steps include:
 
@@ -121,3 +152,7 @@ Developed by:
 **Zander Setiawan** - Backend & Cloud Dev
 
 Submitted for the Premier's Coding Challenge (QLD).
+
+### AI usage
+
+This project used AI to research and understand concepts of cyber security, algorithims, and flutter (and dart). And some texts like the README was polished by AI to correct gramar and sound more professional. 
