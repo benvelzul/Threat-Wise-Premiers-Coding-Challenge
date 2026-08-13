@@ -101,7 +101,7 @@ class _PasswordPageState extends State<PasswordPage> {
 
     if (poolSize == 0) poolSize = 26;
 
-    const double hashesPerSecond = 10000000000; // 10 Billion hashes/sec
+    const double hashesPerSecond = 10000000000; // 10 billion
 
     final double combinations = BigInt.from(poolSize)
         .pow(password.length)

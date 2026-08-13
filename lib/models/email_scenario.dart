@@ -23,7 +23,7 @@ class EmailScenario {
   final EmailData emailData;
   final bool isThreat;
   final ThreatType? threatType;    // Enum (Null if legitimate)
-  final List<String> indicators;
+  final List<Indicator> indicators;
   final String explanation;
 
   const EmailScenario({

@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         ReportPage.routeName: (context) => const ReportPage(),
         ScenarioTestScreen.routeName: (context) => const ScenarioTestScreen(),
       },
-      initialRoute: ScenarioTestScreen.routeName,
+      initialRoute: DashboardPage.routeName,
     );
   }
 }

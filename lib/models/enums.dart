@@ -14,3 +14,14 @@ enum ScenarioCategory {
   phishing,
   legitimate,
 }
+enum Indicator {
+  genericGreeting,
+  urgency,
+  suspiciousDomain,
+  suspiciousLink,
+  credentialRequest,
+  attachment,
+  spellingErrors,
+  unusualRequest,
+  impersonation,
+}
