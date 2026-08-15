@@ -3,117 +3,452 @@ import '../models/enums.dart';
 import '../models/email_component.dart';
 
 class EmailComponents {
-  // --- GREETINGS BY DIFFICULTY ---
-  static const Map<Difficulty, List<String>> phishingGreetings = {
+  // Greeting
+  static const Map<Difficulty, List<EmailComponent>> phishingGreetings = {
     Difficulty.easy: [
-      'Dear Valued Customer,',
-      'Attention Account Holder,',
-      'Dear Customer,',
-      'Important Notice,',
-      'Dear Sir or Madam,',
-      'To Our Valued User,',
-      'Account Security Alert,',
+      EmailComponent(
+        text: 'Dear Valued Customer,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Attention Account Holder,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Dear Customer,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Important Notice,',
+        indicators: [Indicator.genericGreeting, Indicator.urgency],
+      ),
+      EmailComponent(
+        text: 'Dear Sir or Madam,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'To Our Valued User,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Account Security Alert,',
+        indicators: [Indicator.genericGreeting, Indicator.urgency],
+      ),
     ],
     Difficulty.medium: [
-      'Dear Employee,',
-      'Hello,',
-      'Hi Team Member,',
-      'Dear Staff Member,',
-      'Hello Colleague,',
-      'Attention Team Member,',
-      'Dear Department Member,',
+      EmailComponent(
+        text: 'Dear Employee,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Hello,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Hi Team Member,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Dear Staff Member,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Hello Colleague,',
+        indicators: [Indicator.genericGreeting],
+      ),
+      EmailComponent(
+        text: 'Attention Team Member,',
+        indicators: [Indicator.genericGreeting, Indicator.urgency],
+      ),
+      EmailComponent(
+        text: 'Dear Department Member,',
+        indicators: [Indicator.genericGreeting],
+      ),
     ],
     Difficulty.hard: [
-      'Hi $UserFirstName,',
-      'Hello $UserFirstName,',
-      'Good morning, $UserFirstName,',
-      'Hey $UserFirstName,',
-      'A quick note for you, $UserFirstName,',
-      'Hope you are well, $UserFirstName,',
+      EmailComponent(
+        text: 'Hi $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hello $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Good morning, $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hey $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'A quick note for you, $UserFirstName,',
+        indicators: [Indicator.urgency],
+      ),
+      EmailComponent(
+        text: 'Hope you are well, $UserFirstName,',
+        indicators: [],
+      ),
     ],
     Difficulty.expert: [
-      'Quick request $UserFirstName,',
-      'Could you help me with this, $UserFirstName?',
-      'A quick favour, $UserFirstName,',
-      'Following up with you, $UserFirstName,',
-      'Do you have a moment, $UserFirstName?',
-      'Can I ask you something, $UserFirstName?',
+      EmailComponent(
+        text: 'Quick request $UserFirstName,',
+        indicators: [Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Could you help me with this, $UserFirstName?',
+        indicators: [Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'A quick favour, $UserFirstName,',
+        indicators: [Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Following up with you, $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Do you have a moment, $UserFirstName?',
+        indicators: [Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Can I ask you something, $UserFirstName?',
+        indicators: [Indicator.unusualRequest],
+      ),
     ],
   };
 
-  static const Map<Difficulty, List<String>> legitimateGreetings = {
+  static const Map<Difficulty, List<EmailComponent>> legitimateGreetings = {
     Difficulty.easy: [
-      'Hi $UserFirstName,',
-      'Hello $UserFirstName,',
-      'Hey $UserFirstName,',
-      'Good morning, $UserFirstName,',
-      'Hope you are doing well, $UserFirstName,',
-      'Welcome, $UserFirstName,',
+      EmailComponent(
+        text: 'Hi $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hello $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hey $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Good morning, $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hope you are doing well, $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Welcome, $UserFirstName,',
+        indicators: [],
+      ),
     ],
     Difficulty.medium: [
-      'Dear $UserFirstName $UserLastName,',
-      'Hello $UserFirstName $UserLastName,',
-      'Good morning, $UserFirstName $UserLastName,',
-      'Dear Mr./Ms. $UserLastName,',
-      'Greetings, $UserFirstName $UserLastName,',
-      'Hello there, $UserFirstName $UserLastName,',
+      EmailComponent(
+        text: 'Dear $UserFirstName $UserLastName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hello $UserFirstName $UserLastName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Good morning, $UserFirstName $UserLastName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Dear Mr./Ms. $UserLastName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Greetings, $UserFirstName $UserLastName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hello there, $UserFirstName $UserLastName,',
+        indicators: [],
+      ),
     ],
     Difficulty.hard: [
-      'Hi there, $UserFirstName!',
-      'Hello there, $UserFirstName!',
-      'Good to hear from you, $UserFirstName!',
-      'Hope your day is going well, $UserFirstName!',
-      'Welcome back, $UserFirstName!',
-      'Thanks for getting in touch, $UserFirstName!',
+      EmailComponent(
+        text: 'Hi there, $UserFirstName!',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hello there, $UserFirstName!',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Good to hear from you, $UserFirstName!',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hope your day is going well, $UserFirstName!',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Welcome back, $UserFirstName!',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Thanks for getting in touch, $UserFirstName!',
+        indicators: [],
+      ),
     ],
     Difficulty.expert: [
-      'Hey $UserFirstName,',
-      'Hiya $UserFirstName,',
-      'Morning, $UserFirstName,',
-      'Hey there, $UserFirstName,',
-      'Good to see you, $UserFirstName,',
-      'Thanks for your message, $UserFirstName,',
+      EmailComponent(
+        text: 'Hey $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hiya $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Morning, $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Hey there, $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Good to see you, $UserFirstName,',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Thanks for your message, $UserFirstName,',
+        indicators: [],
+      ),
     ],
   };
-  // --- ISSUES BY THREAT TYPE ---
-  // Tip: You can group issues by ThreatType to match the exact attack vector!
-  static const Map<ThreatType, List<String>> threatIssues = {
+  
+  // Issues 
+  static const Map<ThreatType, List<EmailComponent>> threatIssues = {
     ThreatType.credentialHarvesting: [
-      'Your password is set to expire in 2 hours. Please reset it immediately.',
-      'An unauthorized sign-in attempt was detected from Moscow, Russia.',
-      'Your account will be locked unless you verify your identity today.',
-      'We detected unusual activity and need you to confirm your login details.',
-      'Your security verification is incomplete. Please update your account information.',
-      'A new device was added to your account. Confirm whether this activity was authorized.',
-      'Your access token has expired. Sign in again to restore account access.',
+      EmailComponent(
+        text: 'Your password is set to expire in 2 hours. Please reset it immediately.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'An unauthorized sign-in attempt was detected from Moscow, Russia.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'Your account will be locked unless you verify your identity today.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'We detected unusual activity and need you to confirm your login details.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'Your security verification is incomplete. Please update your account information.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'A new device was added to your account. Confirm whether this activity was authorized.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'Your access token has expired. Sign in again to restore account access.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
     ],
     ThreatType.malware: [
-      'Please see the attached document for the required workspace setup steps.',
-      'The latest staff schedule is included in the attached file.',
-      'Please open the attached security update before your next login.',
-      'The attached document contains the revised project requirements.',
-      'Your device compatibility report is available in the attached file.',
-      'Please review the attached delivery notice and confirm the information.',
+      EmailComponent(
+        text: 'Please see the attached document for the required workspace setup steps.',
+        indicators: [Indicator.attachment, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'The latest staff schedule is included in the attached file.',
+        indicators: [Indicator.attachment],
+      ),
+      EmailComponent(
+        text: 'Please open the attached security update before your next login.',
+        indicators: [Indicator.attachment, Indicator.urgency],
+      ),
+      EmailComponent(
+        text: 'The attached document contains the revised project requirements.',
+        indicators: [Indicator.attachment],
+      ),
+      EmailComponent(
+        text: 'Your device compatibility report is available in the attached file.',
+        indicators: [Indicator.attachment],
+      ),
+      EmailComponent(
+        text: 'Please review the attached delivery notice and confirm the information.',
+        indicators: [Indicator.attachment, Indicator.credentialRequest],
+      ),
     ],
     ThreatType.invoiceFraud: [
-      'Overdue invoice (#88402) requires immediate payment to avoid penalty.',
-      'Invoice #91736 is awaiting approval and must be processed today.',
-      'Your account has an outstanding balance that requires urgent review.',
-      'Please confirm the updated payment details for the attached invoice.',
-      'A late payment fee may be applied unless invoice #56219 is resolved promptly.',
-      'The finance department has flagged an unpaid invoice for immediate attention.',
+      EmailComponent(
+        text: 'Overdue invoice (#88402) requires immediate payment to avoid penalty.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Invoice #91736 is awaiting approval and must be processed today.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Your account has an outstanding balance that requires urgent review.',
+        indicators: [Indicator.urgency],
+      ),
+      EmailComponent(
+        text: 'Please confirm the updated payment details for the attached invoice.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'A late payment fee may be applied unless invoice #56219 is resolved promptly.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'The finance department has flagged an unpaid invoice for immediate attention.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest],
+      ),
     ],
     ThreatType.businessEmailCompromise: [
-      'I am currently in a meeting and need you to handle an urgent wire request.',
-      'Please keep this request confidential until the transaction is complete.',
-      'I need you to purchase several gift cards for an important client meeting.',
-      'Can you urgently send the updated banking information to our supplier?',
-      'Please approve this payment on my behalf while I am unavailable.',
-      'The usual approval process is delayed, so please complete this transfer immediately.',
+      EmailComponent(
+        text: 'I am currently in a meeting and need you to handle an urgent wire request.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest, Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Please keep this request confidential until the transaction is complete.',
+        indicators: [Indicator.unusualRequest, Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'I need you to purchase several gift cards for an important client meeting.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest, Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Can you urgently send the updated banking information to our supplier?',
+        indicators: [Indicator.urgency, Indicator.unusualRequest, Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Please approve this payment on my behalf while I am unavailable.',
+        indicators: [Indicator.unusualRequest, Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'The usual approval process is delayed, so please complete this transfer immediately.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest, Indicator.impersonation],
+      ),
+    ],
+    ThreatType.deliveryScams: [
+      EmailComponent(
+        text: 'Your package delivery failed. Click here to reschedule for a small fee.',
+        indicators: [Indicator.urgency, Indicator.suspiciousLink],
+      ),
+      EmailComponent(
+        text: 'A delivery attempt was made but no one was home. Pay \$2.99 to redeliver.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'Your shipment is being held at customs. Confirm your address to release it.',
+        indicators: [Indicator.urgency, Indicator.suspiciousDomain],
+      ),
+      EmailComponent(
+        text: 'Delivery notification: Sign in to view your tracking details and delivery options.',
+        indicators: [Indicator.credentialRequest, Indicator.suspiciousLink],
+      ),
+      EmailComponent(
+        text: 'Your parcel could not be delivered. Update payment information to complete delivery.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+    ],
+    ThreatType.fakePasswordResets: [
+      EmailComponent(
+        text: 'Did you request a password reset? If not, your account may be compromised.',
+        indicators: [Indicator.urgency, Indicator.suspiciousLink],
+      ),
+      EmailComponent(
+        text: 'Your password was successfully changed. If this was not you, click here immediately.',
+        indicators: [Indicator.urgency, Indicator.suspiciousLink],
+      ),
+      EmailComponent(
+        text: 'Password reset requested for your account. Click the link below to cancel this change.',
+        indicators: [Indicator.urgency, Indicator.suspiciousLink],
+      ),
+      EmailComponent(
+        text: 'We noticed a login from a new device. Reset your password to secure your account.',
+        indicators: [Indicator.urgency, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'Your account security alert: Password reset link expires in 1 hour.',
+        indicators: [Indicator.urgency, Indicator.suspiciousLink],
+      ),
+    ],
+    ThreatType.fakeSharedDocuments: [
+      EmailComponent(
+        text: 'John has shared a document with you. Click to view: Q4_Financial_Report.pdf',
+        indicators: [Indicator.suspiciousLink, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'You have been granted access to a shared folder. Sign in to view the contents.',
+        indicators: [Indicator.credentialRequest, Indicator.suspiciousLink],
+      ),
+      EmailComponent(
+        text: 'Important: Your manager shared a confidential document. Review required by EOD.',
+        indicators: [Indicator.urgency, Indicator.suspiciousLink],
+      ),
+      EmailComponent(
+        text: 'New comment on your shared document. Click here to respond to feedback.',
+        indicators: [Indicator.suspiciousLink, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Document sharing notification: Accept the invitation to access the file.',
+        indicators: [Indicator.suspiciousLink, Indicator.credentialRequest],
+      ),
+    ],
+    ThreatType.impersonatedServices: [
+      EmailComponent(
+        text: 'Netflix: Your payment method was declined. Update billing to avoid service interruption.',
+        indicators: [Indicator.urgency, Indicator.impersonation, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'Microsoft 365: Your subscription expires today. Renew now to keep your data.',
+        indicators: [Indicator.urgency, Indicator.impersonation, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'Amazon: Suspicious activity detected on your account. Verify your identity now.',
+        indicators: [Indicator.urgency, Indicator.impersonation, Indicator.credentialRequest],
+      ),
+      EmailComponent(
+        text: 'PayPal: A payment of \$499.99 was sent from your account. Dispute if unauthorized.',
+        indicators: [Indicator.urgency, Indicator.impersonation, Indicator.suspiciousLink],
+      ),
+      EmailComponent(
+        text: 'Apple ID: Your account has been locked. Sign in to unlock and restore access.',
+        indicators: [Indicator.urgency, Indicator.impersonation, Indicator.credentialRequest],
+      ),
+    ],
+    ThreatType.techSupportScams: [
+      EmailComponent(
+        text: 'WARNING: Your computer is infected with 5 viruses. Call 1-800-XXX-XXXX immediately.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest, Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Microsoft Security Alert: Unauthorized access detected. Contact support now.',
+        indicators: [Indicator.urgency, Indicator.impersonation, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Your subscription has expired. Renew within 24 hours to avoid permanent data loss.',
+        indicators: [Indicator.urgency, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Critical system error. Download the security patch to fix this issue immediately.',
+        indicators: [Indicator.urgency, Indicator.suspiciousLink, Indicator.unusualRequest],
+      ),
+      EmailComponent(
+        text: 'Your device warranty is expiring. Call our technical team to extend coverage.',
+        indicators: [Indicator.urgency, Indicator.impersonation, Indicator.unusualRequest],
+      ),
     ],
   };
 
-  // --- CALL TO ACTIONS BY DIFFICULTY ---
+  // CTAs
   static const Map<Difficulty, List<EmailComponent>> phishingCTAs = {
     Difficulty.easy: [
       EmailComponent(
@@ -290,109 +625,325 @@ class EmailComponents {
     ],
   };
 
-  static const Map<Difficulty, List<String>> legitimateCTAs = {
+  static const Map<Difficulty, List<EmailComponent>> legitimateCTAs = {
     Difficulty.easy: [
-      'If this was you, no further action is required.',
-      'If you recognise this activity, you can safely ignore this message.',
-      'No action is needed if you made this change.',
-      'You do not need to respond if everything looks correct.',
-      'If this notification is expected, you can dismiss it.',
-      'Please continue using your account normally if this was your activity.',
+      EmailComponent(
+        text: 'If this was you, no further action is required.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'If you recognise this activity, you can safely ignore this message.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'No action is needed if you made this change.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'You do not need to respond if everything looks correct.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'If this notification is expected, you can dismiss it.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Please continue using your account normally if this was your activity.',
+        indicators: [],
+      ),
     ],
     Difficulty.medium: [
-      'You can view the full activity log in your account settings.',
-      'Review your recent sign-in history from the security section.',
-      'Open your account settings to see more information about this event.',
-      'Your notification preferences can be managed from the account menu.',
-      'Check the security page for a complete record of recent activity.',
-      'You can update your account settings whenever convenient.',
+      EmailComponent(
+        text: 'You can view the full activity log in your account settings.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Review your recent sign-in history from the security section.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Open your account settings to see more information about this event.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Your notification preferences can be managed from the account menu.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Check the security page for a complete record of recent activity.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'You can update your account settings whenever convenient.',
+        indicators: [],
+      ),
     ],
     Difficulty.hard: [
-      'Check your dashboard for complete details on this release.',
-      'Review the release notes from your usual project dashboard.',
-      'The latest changes are listed in the team workspace.',
-      'You can find the complete update history in the project console.',
-      'Open the dashboard to review the affected features and changes.',
-      'Additional information is available in the standard project tools.',
+      EmailComponent(
+        text: 'Check your dashboard for complete details on this release.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Review the release notes from your usual project dashboard.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'The latest changes are listed in the team workspace.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'You can find the complete update history in the project console.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Open the dashboard to review the affected features and changes.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Additional information is available in the standard project tools.',
+        indicators: [],
+      ),
     ],
     Difficulty.expert: [
-      'Details available on internal wiki.',
-      'Additional context is documented in the team knowledge base.',
-      'Please refer to the usual internal documentation for more information.',
-      'The relevant change notes are available in the project repository.',
-      'You can review the implementation details in the team workspace.',
-      'Further information is recorded in the standard engineering documentation.',
+      EmailComponent(
+        text: 'Details available on internal wiki.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Additional context is documented in the team knowledge base.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Please refer to the usual internal documentation for more information.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'The relevant change notes are available in the project repository.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'You can review the implementation details in the team workspace.',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Further information is recorded in the standard engineering documentation.',
+        indicators: [],
+      ),
     ],
   };
 
-  // --- SIGNATURES ---
-  static const Map<Difficulty, List<String>> phishingSignatures = {
+  // Signatures
+  static const Map<Difficulty, List<EmailComponent>> phishingSignatures = {
     Difficulty.easy: [
-      'Automated System Administrator',
-      'Account Security Team',
-      'Online Services Department',
-      'System Notification Service',
-      'Customer Support Centre',
-      'Automated Verification Team',
+      EmailComponent(
+        text: 'Automated System Administrator',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Account Security Team',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Online Services Department',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'System Notification Service',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Customer Support Centre',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Automated Verification Team',
+        indicators: [Indicator.impersonation],
+      ),
     ],
     Difficulty.medium: [
-      'Best regards,\nAccounts Department',
-      'Kind regards,\nCustomer Accounts Team',
-      'Regards,\nBilling Support',
-      'Sincerely,\nFinance Operations',
-      'Best wishes,\nAccount Services',
-      'Regards,\nAdministrative Support',
+      EmailComponent(
+        text: 'Best regards,\nAccounts Department',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Kind regards,\nCustomer Accounts Team',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Regards,\nBilling Support',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Sincerely,\nFinance Operations',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Best wishes,\nAccount Services',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Regards,\nAdministrative Support',
+        indicators: [Indicator.impersonation],
+      ),
     ],
     Difficulty.hard: [
-      'Sincerely,\nIT Support Desk',
-      'Kind regards,\nInformation Technology Services',
-      'Best regards,\nCorporate Helpdesk',
-      'Regards,\nNetwork Administration Team',
-      'Sincerely,\nTechnical Support Services',
-      'Best,\nEnterprise Systems Team',
+      EmailComponent(
+        text: 'Sincerely,\nIT Support Desk',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Kind regards,\nInformation Technology Services',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Best regards,\nCorporate Helpdesk',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Regards,\nNetwork Administration Team',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Sincerely,\nTechnical Support Services',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Best,\nEnterprise Systems Team',
+        indicators: [Indicator.impersonation],
+      ),
     ],
     Difficulty.expert: [
-      'Best, \nMark Suckenberg',
-      'Cheers,\nAlex Richardson',
-      'Thanks,\nJordan Williams',
-      'Regards,\nTaylor Morgan',
-      'Best wishes,\nChris Anderson',
-      'Thanks again,\nSam Thompson',
+      EmailComponent(
+        text: 'Best, \nMark Suckenberg',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Cheers,\nAlex Richardson',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Thanks,\nJordan Williams',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Regards,\nTaylor Morgan',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Best wishes,\nChris Anderson',
+        indicators: [Indicator.impersonation],
+      ),
+      EmailComponent(
+        text: 'Thanks again,\nSam Thompson',
+        indicators: [Indicator.impersonation],
+      ),
     ],
   };
 
-  static const Map<Difficulty, List<String>> legitimateSignatures = {
+  static const Map<Difficulty, List<EmailComponent>> legitimateSignatures = {
     Difficulty.easy: [
-      'Cheers,\nSlack Automated Bot',
-      'Thanks,\nAutomated Notifications',
-      'Best,\nWorkspace Assistant',
-      'Regards,\nAccount Notification Service',
-      'Cheers,\nTeam Updates Bot',
-      'Thanks,\nSystem Alerts',
+      EmailComponent(
+        text: 'Cheers,\nSlack Automated Bot',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Thanks,\nAutomated Notifications',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Best,\nWorkspace Assistant',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Regards,\nAccount Notification Service',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Cheers,\nTeam Updates Bot',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Thanks,\nSystem Alerts',
+        indicators: [],
+      ),
     ],
     Difficulty.medium: [
-      'Thanks,\nThe GitHub Security Team',
-      'Best regards,\nThe Account Security Team',
-      'Regards,\nThe Platform Support Team',
-      'Thanks,\nThe Service Administration Team',
-      'Sincerely,\nThe Security Operations Team',
-      'Best,\nThe Customer Support Team',
+      EmailComponent(
+        text: 'Thanks,\nThe GitHub Security Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Best regards,\nThe Account Security Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Regards,\nThe Platform Support Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Thanks,\nThe Service Administration Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Sincerely,\nThe Security Operations Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Best,\nThe Customer Support Team',
+        indicators: [],
+      ),
     ],
     Difficulty.hard: [
-      'Best,\nYour IT Workspace Team',
-      'Regards,\nThe Workplace Technology Team',
-      'Thanks,\nYour Internal Systems Team',
-      'Best regards,\nThe Corporate IT Team',
-      'Sincerely,\nThe Digital Services Team',
-      'Best,\nThe Technology Operations Team',
+      EmailComponent(
+        text: 'Best,\nYour IT Workspace Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Regards,\nThe Workplace Technology Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Thanks,\nYour Internal Systems Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Best regards,\nThe Corporate IT Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Sincerely,\nThe Digital Services Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Best,\nThe Technology Operations Team',
+        indicators: [],
+      ),
     ],
     Difficulty.expert: [
-      'Regards,\nOperations Team',
-      'Best,\nPlatform Operations',
-      'Thanks,\nThe Project Operations Team',
-      'Kind regards,\nBusiness Operations',
-      'Best wishes,\nService Operations',
-      'Regards,\nThe Delivery Team',
+      EmailComponent(
+        text: 'Regards,\nOperations Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Best,\nPlatform Operations',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Thanks,\nThe Project Operations Team',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Kind regards,\nBusiness Operations',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Best wishes,\nService Operations',
+        indicators: [],
+      ),
+      EmailComponent(
+        text: 'Regards,\nThe Delivery Team',
+        indicators: [],
+      ),
     ],
   };
 }

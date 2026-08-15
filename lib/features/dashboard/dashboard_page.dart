@@ -9,6 +9,7 @@ import '../password_system/password_page.dart';
 import '../simulator/simulator_page.dart';
 import '../incident_report/report_page.dart';
 import '../widgets/make_image.dart';
+import '../tests.dart';
 
 class DashboardPage extends StatefulWidget {
   static const routeName = '/';
@@ -179,7 +180,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
     ];
 
     final tools = [
-      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': appColors?.featureChat ?? colorScheme.secondary, 'connectedPage': SimulatorPage.routeName},
+      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': appColors?.featureChat ?? colorScheme.secondary, 'connectedPage': ScenarioTestScreen.routeName},
       {'title': 'Password Checker', 'subtitle': 'Test password strength', 'icon': Icons.lock_outline, 'color': appColors?.featurePassword ?? colorScheme.primary, 'connectedPage': PasswordPage.routeName},
       {'title': 'Mini Games', 'subtitle': 'Spot the security threat', 'icon': Icons.sports_esports_outlined, 'color': appColors?.featureGames ?? colorScheme.tertiary, 'connectedPage': MinigamesPage.routeName},
       {'title': 'Incident Report', 'subtitle': 'File a simulated breach', 'icon': Icons.assignment_late_outlined, 'color': appColors?.featureSimulator ?? colorScheme.secondary, 'connectedPage': ReportPage.routeName},

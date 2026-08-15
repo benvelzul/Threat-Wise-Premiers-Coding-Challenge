@@ -61,7 +61,9 @@ class SimulatorPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.secondary,
                         padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),

@@ -9,6 +9,11 @@ enum ThreatType {
   malware,
   invoiceFraud,
   businessEmailCompromise,
+  deliveryScams,
+  fakePasswordResets,
+  fakeSharedDocuments,
+  impersonatedServices,
+  techSupportScams,
 }
 enum ScenarioCategory {
   phishing,
