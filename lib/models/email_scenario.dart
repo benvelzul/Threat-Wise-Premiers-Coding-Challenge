@@ -25,6 +25,7 @@ class EmailScenario {
   final ThreatType? threatType;    // Enum (Null if legitimate)
   final List<Indicator> indicators;
   final String explanation;
+  final String correctAnswer;
 
   const EmailScenario({
     required this.id,
@@ -35,5 +36,6 @@ class EmailScenario {
     this.threatType,
     required this.indicators,
     required this.explanation,
+    required this.correctAnswer,
   });
 }

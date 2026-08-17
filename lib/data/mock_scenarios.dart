@@ -110,47 +110,89 @@ String _getRandomSubject(bool isPhishing, Difficulty difficulty, ThreatType? thr
   }
 }
 
-String _getComponentFromMap<T>(Map<T, List<dynamic>> map, T key) {
+EmailComponent _getRandomComponentFromMap<T>(Map<T, List<EmailComponent>> map, T key) {
   final random = Random();
   final list = map[key];
-  
+
   if (list == null || list.isEmpty) {
-    return 'Action required for your account.';
+    return EmailComponent(
+      text: 'Action required for your account.',
+      indicators: [Indicator.urgency],
+    );
   }
-  
-  final component = list[random.nextInt(list.length)];
-  // Handle EmailComponent objects with text property
-  if (component is EmailComponent) {
-    return component.text;
-  }
-  return component.toString();
+
+  return list[random.nextInt(list.length)];
 }
 
-EmailScenario generateScenario() {
+String _getCorrectAnswerText(bool isThreat, ThreatType? threatType) {
+  if (isThreat && threatType != null) {
+    return threatType.name;
+  }
+  return 'legitimate';
+}
+
+EmailScenario generateScenarioFor({
+  ThreatType? threatType,
+  Difficulty? difficulty,
+  ScenarioCategory? category,
+}) {
   final random = Random();
-  
-  // Randomly select all parameters
-  final difficulty = _getRandomEnumValue(Difficulty.values);
-  final category = _getRandomEnumValue(ScenarioCategory.values);
-  final threatType = _getRandomEnumValue(ThreatType.values);
-  
-  final isThreat = category == ScenarioCategory.phishing;
+
+  final Difficulty selectedDifficulty = difficulty ?? _getRandomEnumValue(Difficulty.values);
+  final ThreatType selectedThreatType = threatType ?? _getRandomEnumValue(ThreatType.values);
+  final ScenarioCategory selectedCategory =
+      category ?? (threatType != null ? ScenarioCategory.phishing : _getRandomEnumValue(ScenarioCategory.values));
+  final bool isThreat = selectedCategory == ScenarioCategory.phishing;
+
+  final ThreatType? threat = isThreat ? selectedThreatType : null;
 
   String greeting;
   String issue;
   String cta;
   String signature;
+  List<Indicator> chosenIndicators = [];
 
-  if (isThreat) {
-    greeting = _getComponentFromMap(EmailComponents.phishingGreetings, difficulty);
-    issue = _getComponentFromMap(
-      EmailComponents.threatIssues, 
-      threatType,
+  if (isThreat && threat != null) {
+    final greetingComponent = _getRandomComponentFromMap(
+      EmailComponents.phishingGreetings,
+      selectedDifficulty,
     );
-    cta = _getComponentFromMap(EmailComponents.phishingCTAs, difficulty);
-    signature = _getComponentFromMap(EmailComponents.phishingSignatures, difficulty);
+    final issueComponent = _getRandomComponentFromMap(
+      EmailComponents.threatIssues,
+      threat,
+    );
+    final ctaComponent = _getRandomComponentFromMap(
+      EmailComponents.phishingCTAs,
+      selectedDifficulty,
+    );
+    final signatureComponent = _getRandomComponentFromMap(
+      EmailComponents.phishingSignatures,
+      selectedDifficulty,
+    );
+
+    greeting = greetingComponent.text;
+    issue = issueComponent.text;
+    cta = ctaComponent.text;
+    signature = signatureComponent.text;
+    chosenIndicators = [
+      ...greetingComponent.indicators,
+      ...issueComponent.indicators,
+      ...ctaComponent.indicators,
+      ...signatureComponent.indicators,
+    ].toSet().toList();
   } else {
-    greeting = _getComponentFromMap(EmailComponents.legitimateGreetings, difficulty);
+    final greetingComponent = _getRandomComponentFromMap(
+      EmailComponents.legitimateGreetings,
+      selectedDifficulty,
+    );
+    final ctaComponent = _getRandomComponentFromMap(
+      EmailComponents.legitimateCTAs,
+      selectedDifficulty,
+    );
+    final signatureComponent = _getRandomComponentFromMap(
+      EmailComponents.legitimateSignatures,
+      selectedDifficulty,
+    );
     final issues = [
       'Your regular workspace digest is ready for viewing.',
       'New updates are available in your account.',
@@ -158,29 +200,41 @@ EmailScenario generateScenario() {
       'Security report for your account.',
       'System maintenance completed successfully.',
     ];
+
+    greeting = greetingComponent.text;
     issue = issues[random.nextInt(issues.length)];
-    cta = _getComponentFromMap(EmailComponents.legitimateCTAs, difficulty);
-    signature = _getComponentFromMap(EmailComponents.legitimateSignatures, difficulty);
+    cta = ctaComponent.text;
+    signature = signatureComponent.text;
+    chosenIndicators = [
+      ...greetingComponent.indicators,
+      ...ctaComponent.indicators,
+      ...signatureComponent.indicators,
+    ].toSet().toList();
   }
 
   final fullBody = '$greeting\n\n$issue\n\n$cta\n\n$signature';
 
   return EmailScenario(
     id: 'scen-${random.nextInt(999999)}',
-    category: category,
-    difficulty: difficulty,
+    category: selectedCategory,
+    difficulty: selectedDifficulty,
     isThreat: isThreat,
-    threatType: isThreat ? threatType : null,
-    indicators: isThreat ? [Indicator.genericGreeting, Indicator.suspiciousLink] : [],
-    explanation: isThreat 
-        ? 'This was a ${threatType.name} phishing attempt.' 
+    threatType: threat,
+    indicators: chosenIndicators,
+    explanation: isThreat
+        ? 'This was a ${threat?.name ?? 'unknown'} phishing attempt.'
         : 'This was a legitimate notification.',
+    correctAnswer: _getCorrectAnswerText(isThreat, threat),
     emailData: EmailData(
       senderName: _getRandomSenderName(isThreat),
       senderEmail: _getRandomSenderEmail(isThreat),
       recipient: _getRandomRecipient(),
-      subject: _getRandomSubject(isThreat, difficulty, threatType),
+      subject: _getRandomSubject(isThreat, selectedDifficulty, threat),
       body: fullBody,
     ),
   );
+}
+
+EmailScenario generateScenario() {
+  return generateScenarioFor();
 }

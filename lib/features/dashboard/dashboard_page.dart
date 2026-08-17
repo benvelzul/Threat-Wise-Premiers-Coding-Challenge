@@ -6,7 +6,7 @@ import '../chatbot/chatbot_page.dart';
 import '../stat_pages/leaderboard_page.dart';
 import '../minigames/quiz_page.dart';
 import '../password_system/password_page.dart';
-import '../simulator/simulator_page.dart';
+import '../simulator/setup_page.dart';
 import '../incident_report/report_page.dart';
 import '../widgets/make_image.dart';
 import '../tests.dart';
@@ -73,38 +73,33 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                   child: GestureDetector(
                     onPanUpdate: (details) {
                       overlaySetState(() {
-                        // 2. Add the tiny touch movement (delta) to our local offset
                         Offset newOffset = localOffset + details.delta;
 
                         Size screenSize = MediaQuery.of(context).size;
 
-                        // 3. Clamp using 100 instead of 150 (since your widget is 100x100)
                         double clampedX = newOffset.dx.clamp(0.0, screenSize.width - 100);
                         double clampedY = newOffset.dy.clamp(0.0, screenSize.height - 100);
 
                         localOffset = Offset(clampedX, clampedY);
 
-                        // 4. Sync it back to the class-level variable so it persists
                         _offset = localOffset;
                       });
                     },
-                    // We wrap everything in a Container to give the shadow room to bleed past the 100x100 bounds
-                    // without getting cut off by the drag limits.
                     child: SizedBox(
-                      width: 115, // 100 image width + extra room for the shadow offset/blur
-                      height: 115, // 100 image height + extra room for the shadow offset/blur
+                      width: 115, 
+                      height: 115, 
                       child: Stack(
-                        clipBehavior: Clip.none, // Ensures the blur doesn't get clipped at the edges
+                        clipBehavior: Clip.none,
                         children: [
-                          // 1. THE BLURRED SILHOUETTE SHADOW LAYER
+                          //shadow
                           Positioned(
-                            left: 5, // How far right the shadow falls
-                            top: 5, // How far down the shadow falls
+                            left: 5,
+                            top: 5,
                             child: ImageFiltered(
-                              imageFilter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0), // Smoothness of shadow
+                              imageFilter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
                               child: ColorFiltered(
                                 colorFilter: ColorFilter.mode(
-                                  Colors.black.withOpacity(0.4), // Shadow tint and opacity
+                                  Colors.black.withOpacity(0.4),
                                   BlendMode.srcIn,
                                 ),
                                 child: LocalImageWidget(
@@ -116,7 +111,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                             ),
                           ),
 
-                          // 2. THE ACTUAL FOREGROUND IMAGE (CLEAN)
+                          // image
                           Positioned(
                             left: 0,
                             top: 0,
@@ -172,7 +167,6 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
     final appColors = Theme.of(context).extension<AppColors>();
     final colorScheme = Theme.of(context).colorScheme;
 
-    // Static mockup datasets for UI building blocks
     final courses = [
       {'title': 'Introduction to Cyber Threats', 'desc': 'Chat with AI to learn security fundamentals.', 'icon': Icons.chat_bubble_outline, 'progress': 1.0, 'color': appColors?.featureChat ?? colorScheme.secondary},
       {'title': 'Social Engineering Tactics', 'desc': 'Understand human exploitation frameworks.', 'icon': Icons.people_outline, 'progress': 0.3, 'color': appColors?.featureGames ?? colorScheme.tertiary},
@@ -180,7 +174,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
     ];
 
     final tools = [
-      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': appColors?.featureChat ?? colorScheme.secondary, 'connectedPage': ScenarioTestScreen.routeName},
+      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': appColors?.featureChat ?? colorScheme.secondary, 'connectedPage': StartSimulatorPage.routeName},
       {'title': 'Password Checker', 'subtitle': 'Test password strength', 'icon': Icons.lock_outline, 'color': appColors?.featurePassword ?? colorScheme.primary, 'connectedPage': PasswordPage.routeName},
       {'title': 'Mini Games', 'subtitle': 'Spot the security threat', 'icon': Icons.sports_esports_outlined, 'color': appColors?.featureGames ?? colorScheme.tertiary, 'connectedPage': MinigamesPage.routeName},
       {'title': 'Incident Report', 'subtitle': 'File a simulated breach', 'icon': Icons.assignment_late_outlined, 'color': appColors?.featureSimulator ?? colorScheme.secondary, 'connectedPage': ReportPage.routeName},
@@ -243,10 +237,9 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Material(
-            color: colorScheme.secondary, // Replaces 'background'
+            color: colorScheme.secondary, 
             child: TabBar(
               controller: _tabController,
-              // Replaces deprecated indicatorColor
               labelColor: colorScheme.onPrimaryContainer,
               unselectedLabelColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
               tabs: const [
@@ -274,7 +267,6 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Timeline Indicator Block
                         Column(
                           children: [
                             Container(
@@ -300,7 +292,6 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                           ],
                         ),
                         const SizedBox(width: 16),
-                        // Module Information Card
                         Expanded(
                           child: Container(
                             padding: const EdgeInsets.all(16),
@@ -365,7 +356,6 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                 ),
                 child: InkWell(
                   onTap: () {
-                    // Navigate to the connected page if it exists
                     final String? connectedPage = tool['connectedPage'] as String?;
                     if (connectedPage != null) {
                       Navigator.pushNamed(context, connectedPage);
@@ -383,7 +373,6 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                         ),
                         child: Icon(tool['icon'] as IconData, color: tool['color'] as Color, size: 28),
                       ),
-                      // Titles Panel
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
