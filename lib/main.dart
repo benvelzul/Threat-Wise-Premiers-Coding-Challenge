@@ -32,9 +32,10 @@ class MyApp extends StatelessWidget {
         PasswordPage.routeName: (context) => const PasswordPage(),
         SimulatorPage.routeName: (context) => const SimulatorPage(),
         ReportPage.routeName: (context) => const ReportPage(),
+        ScenarioTestScreen.routeName: (context) => const ScenarioTestScreen(),
         StartSimulatorPage.routeName: (context) => const StartSimulatorPage(),
       },
-      initialRoute: DashboardPage.routeName,
+      initialRoute: ScenarioTestScreen.routeName,
     );
   }
 }

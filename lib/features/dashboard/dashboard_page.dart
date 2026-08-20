@@ -99,7 +99,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                               imageFilter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
                               child: ColorFiltered(
                                 colorFilter: ColorFilter.mode(
-                                  Colors.black.withOpacity(0.4),
+                                  Colors.black.withValues(alpha: 0.4),
                                   BlendMode.srcIn,
                                 ),
                                 child: LocalImageWidget(
@@ -241,7 +241,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
             child: TabBar(
               controller: _tabController,
               labelColor: colorScheme.onPrimaryContainer,
-              unselectedLabelColor: colorScheme.onPrimaryContainer.withOpacity(0.6),
+              unselectedLabelColor: colorScheme.onPrimaryContainer.withValues(alpha: 0.6),
               tabs: const [
                 Tab(text: 'COURSES'),
                 Tab(text: 'PRACTICE TOOLS'),
@@ -287,7 +287,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                             const SizedBox(height: 6),
                             Text(
                               progress == 1.0 ? 'Done' : '${(progress * 100).toInt()}%', 
-                              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7), fontSize: 11),
+                              style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 11),
                             ),
                           ],
                         ),
@@ -310,14 +310,14 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                                 const SizedBox(height: 4),
                                 Text(
                                   course['desc'] as String, 
-                                  style: TextStyle(color: appColors?.featureSubtitle ?? colorScheme.onSurface.withOpacity(0.7), fontSize: 12),
+                                  style: TextStyle(color: appColors?.featureSubtitle ?? colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 12),
                                 ),
                                 const SizedBox(height: 12),
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(4),
                                   child: LinearProgressIndicator(
                                     value: progress, 
-                                    backgroundColor: colorScheme.onSurface.withOpacity(0.15),
+                                    backgroundColor: colorScheme.onSurface.withValues(alpha: 0.15),
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       progress == 1.0 ? colorScheme.primary : course['color'] as Color,
                                     ),
@@ -383,7 +383,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                           const SizedBox(height: 2),
                           Text(
                             tool['subtitle'] as String, 
-                            style: TextStyle(color: appColors?.featureSubtitle ?? colorScheme.onSurface.withOpacity(0.7), fontSize: 11),
+                            style: TextStyle(color: appColors?.featureSubtitle ?? colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 11),
                           ),
                         ],
                       )

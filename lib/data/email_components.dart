@@ -67,53 +67,53 @@ class EmailComponents {
     ],
     Difficulty.hard: [
       EmailComponent(
-        text: 'Hi $UserFirstName,',
+        text: 'Hi $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hello $UserFirstName,',
+        text: 'Hello $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Good morning, $UserFirstName,',
+        text: 'Good morning, $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hey $UserFirstName,',
+        text: 'Hey $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'A quick note for you, $UserFirstName,',
+        text: 'A quick note for you, $userFirstName,',
         indicators: [Indicator.urgency],
       ),
       EmailComponent(
-        text: 'Hope you are well, $UserFirstName,',
+        text: 'Hope you are well, $userFirstName,',
         indicators: [],
       ),
     ],
     Difficulty.expert: [
       EmailComponent(
-        text: 'Quick request $UserFirstName,',
+        text: 'Quick request $userFirstName,',
         indicators: [Indicator.unusualRequest],
       ),
       EmailComponent(
-        text: 'Could you help me with this, $UserFirstName?',
+        text: 'Could you help me with this, $userFirstName?',
         indicators: [Indicator.unusualRequest],
       ),
       EmailComponent(
-        text: 'A quick favour, $UserFirstName,',
+        text: 'A quick favour, $userFirstName,',
         indicators: [Indicator.unusualRequest],
       ),
       EmailComponent(
-        text: 'Following up with you, $UserFirstName,',
+        text: 'Following up with you, $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Do you have a moment, $UserFirstName?',
+        text: 'Do you have a moment, $userFirstName?',
         indicators: [Indicator.unusualRequest],
       ),
       EmailComponent(
-        text: 'Can I ask you something, $UserFirstName?',
+        text: 'Can I ask you something, $userFirstName?',
         indicators: [Indicator.unusualRequest],
       ),
     ],
@@ -122,105 +122,105 @@ class EmailComponents {
   static const Map<Difficulty, List<EmailComponent>> legitimateGreetings = {
     Difficulty.easy: [
       EmailComponent(
-        text: 'Hi $UserFirstName,',
+        text: 'Hi $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hello $UserFirstName,',
+        text: 'Hello $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hey $UserFirstName,',
+        text: 'Hey $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Good morning, $UserFirstName,',
+        text: 'Good morning, $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hope you are doing well, $UserFirstName,',
+        text: 'Hope you are doing well, $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Welcome, $UserFirstName,',
+        text: 'Welcome, $userFirstName,',
         indicators: [],
       ),
     ],
     Difficulty.medium: [
       EmailComponent(
-        text: 'Dear $UserFirstName $UserLastName,',
+        text: 'Dear $userFirstName $userLastName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hello $UserFirstName $UserLastName,',
+        text: 'Hello $userFirstName $userLastName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Good morning, $UserFirstName $UserLastName,',
+        text: 'Good morning, $userFirstName $userLastName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Dear Mr./Ms. $UserLastName,',
+        text: 'Dear Mr./Ms. $userLastName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Greetings, $UserFirstName $UserLastName,',
+        text: 'Greetings, $userFirstName $userLastName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hello there, $UserFirstName $UserLastName,',
+        text: 'Hello there, $userFirstName $userLastName,',
         indicators: [],
       ),
     ],
     Difficulty.hard: [
       EmailComponent(
-        text: 'Hi there, $UserFirstName!',
+        text: 'Hi there, $userFirstName!',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hello there, $UserFirstName!',
+        text: 'Hello there, $userFirstName!',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Good to hear from you, $UserFirstName!',
+        text: 'Good to hear from you, $userFirstName!',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hope your day is going well, $UserFirstName!',
+        text: 'Hope your day is going well, $userFirstName!',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Welcome back, $UserFirstName!',
+        text: 'Welcome back, $userFirstName!',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Thanks for getting in touch, $UserFirstName!',
+        text: 'Thanks for getting in touch, $userFirstName!',
         indicators: [],
       ),
     ],
     Difficulty.expert: [
       EmailComponent(
-        text: 'Hey $UserFirstName,',
+        text: 'Hey $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hiya $UserFirstName,',
+        text: 'Hiya $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Morning, $UserFirstName,',
+        text: 'Morning, $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Hey there, $UserFirstName,',
+        text: 'Hey there, $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Good to see you, $UserFirstName,',
+        text: 'Good to see you, $userFirstName,',
         indicators: [],
       ),
       EmailComponent(
-        text: 'Thanks for your message, $UserFirstName,',
+        text: 'Thanks for your message, $userFirstName,',
         indicators: [],
       ),
     ],

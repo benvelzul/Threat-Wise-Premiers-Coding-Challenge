@@ -131,6 +131,12 @@ String _getCorrectAnswerText(bool isThreat, ThreatType? threatType) {
   return 'legitimate';
 }
 
+String _getFakeCtaLink(bool isThreat) {
+  return isThreat
+      ? 'https://account-security.invalid/verify'
+      : 'https://workspace.invalid/activity';
+}
+
 EmailScenario generateScenarioFor({
   ThreatType? threatType,
   Difficulty? difficulty,
@@ -212,7 +218,7 @@ EmailScenario generateScenarioFor({
     ].toSet().toList();
   }
 
-  final fullBody = '$greeting\n\n$issue\n\n$cta\n\n$signature';
+  final fullBody = '$greeting\n\n$issue\n\n$cta\n${_getFakeCtaLink(isThreat)}\n\n$signature';
 
   return EmailScenario(
     id: 'scen-${random.nextInt(999999)}',
@@ -236,5 +242,5 @@ EmailScenario generateScenarioFor({
 }
 
 EmailScenario generateScenario() {
-  return generateScenarioFor();
+  return generateScenarioFor(threatType: ThreatType.credentialHarvesting, difficulty: Difficulty.easy, category: ScenarioCategory.phishing);
 }
