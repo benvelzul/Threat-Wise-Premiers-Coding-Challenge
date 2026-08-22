@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 
 class ChatbotPage extends StatefulWidget {
   static const routeName = '/chatbot';
@@ -12,18 +13,85 @@ class ChatbotPage extends StatefulWidget {
 class _ChatbotPageState extends State<ChatbotPage> {
   final TextEditingController _controller = TextEditingController();
   final List<_ChatMessage> _messages = [
-    _ChatMessage(text: 'Hi there! I am your security assistant. Ask me anything about cyber safety.', isUser: false),
+    const _ChatMessage(
+      text: 'Hi there! I am your security assistant. Ask me anything about cyber safety.',
+      isUser: false,
+    ),
   ];
 
-  void _sendMessage() {
-    final text = _controller.text.trim();
-    if (text.isEmpty) return;
+  GenerativeModel? _model;
+  ChatSession? _chatSession;
+  bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _initGemini();
+  }
+
+  void _initGemini() {
+    // Retrieves key passed via --dart-define=GEMINI_API_KEY="YOUR_KEY"
+    const apiKey = String.fromEnvironment('GEMINI_API_KEY');
+
+    if (apiKey.isNotEmpty) {
+      _model = GenerativeModel(
+        model: 'gemini-3.5-flash',
+        apiKey: apiKey,
+        systemInstruction: Content.system(
+          'You are ThreatWise AI, an expert cybersecurity assistant for a cyber safety app. '
+          'Keep responses concise, clear, and focused on security tips, threat prevention, and safe habits.',
+        ),
+      );
+      _chatSession = _model!.startChat();
+    }
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty || _isLoading) return;
+
+    _controller.clear();
+
+    // 1. Add user message to UI and set loading state
     setState(() {
       _messages.add(_ChatMessage(text: text, isUser: true));
-      _messages.add(_ChatMessage(text: 'That sounds important. I can help with security tips, threat awareness, and safe habits.', isUser: false));
-      _controller.clear();
+      _isLoading = true;
     });
+
+    // Handle missing API key case
+    if (_chatSession == null) {
+      setState(() {
+        _messages.add(const _ChatMessage(
+          text: 'Error: API key is missing. Please run the app using:\n'
+                'flutter run --dart-define=GEMINI_API_KEY=""',
+          isUser: false,
+        ));
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      // 2. Send message to Gemini API
+      final response = await _chatSession!.sendMessage(Content.text(text));
+      final responseText = response.text ?? 'I could not process that request.';
+
+      // 3. Display Gemini's response
+      setState(() {
+        _messages.add(_ChatMessage(text: responseText, isUser: false));
+      });
+    } catch (e) {
+      setState(() {
+        _messages.add(_ChatMessage(
+          text: 'Error connecting to Gemini: $e',
+          isUser: false,
+        ));
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -41,13 +109,26 @@ class _ChatbotPageState extends State<ChatbotPage> {
                 color: const Color(0xFF0A0E17),
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  itemCount: _messages.length,
+                  itemCount: _messages.length + (_isLoading ? 1 : 0),
                   itemBuilder: (context, index) {
+                    // Show loading bubble when waiting for Gemini
+                    if (index == _messages.length) {
+                      return const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: CircularProgressIndicator(color: Color(0xFF4CC9F0)),
+                        ),
+                      );
+                    }
+
                     final message = _messages[index];
                     return Align(
                       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.75,
+                        ),
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 6),
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -106,7 +187,16 @@ class _ChatbotPageState extends State<ChatbotPage> {
                     color: Theme.of(context).colorScheme.primary,
                     shape: const CircleBorder(),
                     child: IconButton(
-                      icon: const Icon(Icons.send),
+                      icon: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Icon(Icons.send),
                       color: Colors.white,
                       onPressed: _sendMessage,
                     ),
