@@ -9,7 +9,6 @@ import '../password_system/password_page.dart';
 import '../simulator/setup_page.dart';
 import '../incident_report/report_page.dart';
 import '../widgets/make_image.dart';
-import '../tests.dart';
 
 class DashboardPage extends StatefulWidget {
   static const routeName = '/';

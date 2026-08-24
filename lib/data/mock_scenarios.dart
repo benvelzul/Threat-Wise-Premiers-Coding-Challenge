@@ -1,16 +1,18 @@
+import 'package:flutter/foundation.dart';
+
 import '../models/email_scenario.dart';
 import '../models/enums.dart';
 import '../models/email_component.dart';
 import 'email_components.dart';
 import 'dart:math';
 
-// Helper to get random enum value
+// enum helper
 T _getRandomEnumValue<T>(List<T> enumValues) {
   final random = Random();
   return enumValues[random.nextInt(enumValues.length)];
 }
 
-// Random data generators
+// randomness generators
 String _getRandomSenderName(bool isPhishing) {
   final random = Random();
   final phishingNames = [
@@ -242,5 +244,5 @@ EmailScenario generateScenarioFor({
 }
 
 EmailScenario generateScenario() {
-  return generateScenarioFor(threatType: ThreatType.credentialHarvesting, difficulty: Difficulty.easy, category: ScenarioCategory.phishing);
+  return generateScenarioFor(threatType: _getRandomEnumValue(ThreatType.values), difficulty: _getRandomEnumValue(Difficulty.values), category: _getRandomEnumValue(ScenarioCategory.values));
 }

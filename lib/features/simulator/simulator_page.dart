@@ -2,6 +2,7 @@
 import '../../models/email_scenario.dart';
 import '../../data/mock_scenarios.dart';
 import '../../models/enums.dart';
+import 'grading_engine.dart';
 
 class SimulatorPage extends StatefulWidget {
   const SimulatorPage({super.key});
@@ -16,49 +17,97 @@ class _SimulatorPageState extends State<SimulatorPage> {
   bool _showAnswer = false;
   bool _userAnswered = false;
   bool? _userAnswer;
-  ThreatType? _selectedThreatType;
+  double _score = 0;
+  String _feedbackMsg = '';
+  
+  final Set<ThreatType> _selectedThreatTypes = <ThreatType>{};
+  final Set<Indicator> _selectedIndicators = <Indicator>{};
 
   @override
   void initState() {
     super.initState();
-    currentScenario = _makeRandomScenario();
+    _resetQuiz();
   }
 
-  void _submitAnswer(bool isThreat) {
-    setState(() {
-      _userAnswer = isThreat;
-      _selectedThreatType = null;
-      _userAnswered = !isThreat;
-      _showAnswer = !isThreat;
-    });
-  }
-
-  void _submitThreatType(ThreatType threatType) {
-    setState(() {
-      _selectedThreatType = threatType;
-    });
-  }
-
-  void _confirmThreatType() {
-    setState(() {
-      _userAnswered = true;
-      _showAnswer = true;
-    });
-  }
-
-  void _toggleAnswer() {
-    setState(() {
-      _showAnswer = !_showAnswer;
-    });
-  }
-
-  void _loadNextScenario() {
+  void _resetQuiz() {
     setState(() {
       currentScenario = _makeRandomScenario();
       _userAnswered = false;
       _showAnswer = false;
       _userAnswer = null;
-      _selectedThreatType = null;
+      _selectedThreatTypes.clear();
+      _selectedIndicators.clear();
+    });
+  }
+
+  void _submitAnswer({
+    required bool isThreat,
+    required List<ThreatType> selectedThreatTypes,
+    required List<Indicator> selectedIndicators,
+  }) {
+    bool actualIsPhishing = currentScenario.isThreat;
+    Difficulty scenarioDifficulty = currentScenario.difficulty;
+    final List<ThreatType> actualThreatTypes = currentScenario.threatType == null
+      ? <ThreatType>[]
+      : <ThreatType>[currentScenario.threatType!];
+
+    final (score, message) = gradeAnswer(
+      phishing: isThreat,
+      phishingAns: actualIsPhishing,
+      difficulty: scenarioDifficulty,
+      threatTypes: selectedThreatTypes,
+      threatTypesAns: actualThreatTypes,
+      indicators: selectedIndicators,
+      indicatorsAns: currentScenario.indicators,
+    );
+
+    setState(() {
+      _userAnswer = isThreat;
+      _score = score;
+      _feedbackMsg = message;
+      _userAnswered = true;
+      _showAnswer = true; 
+    });
+  }
+
+  void _beginThreatAnswer() {
+    setState(() {
+      _userAnswer = true;
+      _userAnswered = false;
+      _showAnswer = false;
+    });
+  }
+
+  void _confirmThreatTypeAndIndicator() {
+    _submitAnswer(
+      isThreat: true,
+      selectedThreatTypes: _selectedThreatTypes.toList(),
+      selectedIndicators: _selectedIndicators.toList(),
+    );
+  }
+
+  void _toggleThreatType(ThreatType threatType) {
+    setState(() {
+      if (_selectedThreatTypes.contains(threatType)) {
+        _selectedThreatTypes.remove(threatType);
+      } else {
+        _selectedThreatTypes.add(threatType);
+      }
+    });
+  }
+
+  void _toggleIndicators(Indicator indicator) {
+    setState(() {
+      if (_selectedIndicators.contains(indicator)) {
+        _selectedIndicators.remove(indicator);
+      } else {
+        _selectedIndicators.add(indicator);
+      }
+    });
+  }
+  void _toggleAnswer() {
+    setState(() {
+      _showAnswer = !_showAnswer;
     });
   }
 
@@ -77,12 +126,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isCorrect =
-        _userAnswered &&
-        _userAnswer == currentScenario.isThreat &&
-        (!currentScenario.isThreat ||
-            _selectedThreatType == currentScenario.threatType);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Email Threat Quiz'),
@@ -90,15 +133,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            onPressed: () {
-              setState(() {
-                currentScenario = _makeRandomScenario();
-                _userAnswered = false;
-                _showAnswer = false;
-                _userAnswer = null;
-                _selectedThreatType = null;
-              });
-            },
+            onPressed: _resetQuiz,
             icon: const Icon(Icons.refresh),
           ),
         ],
@@ -195,7 +230,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
               ),
             ),
             const SizedBox(height: 20),
-
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -256,18 +290,22 @@ class _SimulatorPageState extends State<SimulatorPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Analyze the email carefully before answering.',
+              'Analyse the email carefully before answering.',
               style: TextStyle(color: Colors.grey[600]),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 8),
 
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: _userAnswered || _userAnswer != null
+                    onPressed: _userAnswer != null
                         ? null
-                        : () => _submitAnswer(false),
+                        : () => _submitAnswer(
+                            isThreat: false,
+                            selectedThreatTypes: const <ThreatType>[],
+                            selectedIndicators: const <Indicator>[],
+                          ),
                     icon: const Icon(Icons.verified_outlined),
                     label: const Text('Legitimate'),
                     style: ElevatedButton.styleFrom(
@@ -280,9 +318,9 @@ class _SimulatorPageState extends State<SimulatorPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: _userAnswered || _userAnswer != null
+                    onPressed: _userAnswer != null
                         ? null
-                        : () => _submitAnswer(true),
+                      : _beginThreatAnswer,
                     icon: const Icon(Icons.warning_amber_outlined),
                     label: const Text('Phishing'),
                     style: ElevatedButton.styleFrom(
@@ -298,30 +336,43 @@ class _SimulatorPageState extends State<SimulatorPage> {
             if (_userAnswer == true && !_userAnswered) ...[
               const SizedBox(height: 24),
               const Text(
-                'What type of phishing is this?',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                'What type(s) of phishing is this?',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
               ),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: ThreatType.values.map((threatType) {
-                  final isSelected = _selectedThreatType == threatType;
-                  return OutlinedButton.icon(
-                    onPressed: () => _submitThreatType(threatType),
-                    icon: Icon(
-                      isSelected
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_unchecked,
-                    ),
+                  final isSelected = _selectedThreatTypes.contains(threatType);
+                  return FilterChip(
+                    selected: isSelected,
                     label: Text(_formatEnumLabel(threatType.name)),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: isSelected ? Colors.red : null,
-                      side: BorderSide(
-                        color: isSelected ? Colors.red : Colors.grey,
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
+                    selectedColor: Colors.red.shade100,
+                    checkmarkColor: Colors.red,
+                    onSelected: (_) => _toggleThreatType(threatType),
+                  );
+                }).toList(),
+              ),
+              
+              // Indicator selection 
+              const SizedBox(height: 24),
+              const Text(
+                'How did you get to this answer?',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: Indicator.values.map((indicator) {
+                  final isSelected = _selectedIndicators.contains(indicator);
+                  return FilterChip(
+                    selected: isSelected,
+                    label: Text(_formatEnumLabel(indicator.name)),
+                    selectedColor: Colors.red.shade100,
+                    checkmarkColor: Colors.red,
+                    onSelected: (_) => _toggleIndicators(indicator),
                   );
                 }).toList(),
               ),
@@ -329,10 +380,14 @@ class _SimulatorPageState extends State<SimulatorPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _selectedThreatType == null
+                  onPressed: _selectedIndicators.isEmpty
                       ? null
-                      : _confirmThreatType,
-                  child: const Text('Submit phishing type'),
+                      : _confirmThreatTypeAndIndicator,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Submit Indicator and Threat Type(s)'),
                 ),
               ),
             ],
@@ -367,6 +422,27 @@ class _SimulatorPageState extends State<SimulatorPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
+                  color: Colors.deepPurple.withValues(alpha: 0.06),
+                  border: Border.all(
+                    color: Colors.deepPurple.withValues(alpha: 0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _feedbackMsg,
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
                   color: currentScenario.isThreat
                       ? Colors.red.withValues(alpha: 0.05)
                       : Colors.green.withValues(alpha: 0.05),
@@ -383,25 +459,19 @@ class _SimulatorPageState extends State<SimulatorPage> {
                       'Explanation:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: currentScenario.isThreat
-                            ? Colors.red[700]
-                            : Colors.green[700],
+                        color: Colors.black87,
                         fontSize: 15,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       currentScenario.explanation,
-                      style: const TextStyle(fontSize: 14, height: 1.5),
+                      style: const TextStyle(fontSize: 14, height: 1.5, color: Colors.black87),
                     ),
                   ],
                 ),
               ),
-            ],
-
-            const SizedBox(height: 16),
-
-            if (_showAnswer && _userAnswered) ...[
+              const SizedBox(height: 16),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -474,7 +544,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: _loadNextScenario,
+                  onPressed: _resetQuiz,
                   icon: const Icon(Icons.arrow_forward),
                   label: const Text('Next Email'),
                   style: ElevatedButton.styleFrom(

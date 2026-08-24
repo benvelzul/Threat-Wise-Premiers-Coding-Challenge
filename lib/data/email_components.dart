@@ -347,7 +347,7 @@ class EmailComponents {
       ),
       EmailComponent(
         text: 'Your shipment is being held at customs. Confirm your address to release it.',
-        indicators: [Indicator.urgency, Indicator.suspiciousDomain],
+        indicators: [Indicator.urgency, Indicator.suspiciousLink],
       ),
       EmailComponent(
         text: 'Delivery notification: Sign in to view your tracking details and delivery options.',

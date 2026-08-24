@@ -23,12 +23,6 @@ const Map<Indicator, IndicatorInfo> indicatorInfo = {
         'Attackers may create a false deadline to pressure you into acting without checking the message.',
   ),
 
-  Indicator.suspiciousDomain: IndicatorInfo(
-    title: 'Suspicious domain',
-    explanation:
-        'The sender domain does not match the organisation it claims to represent.',
-  ),
-
   Indicator.suspiciousLink: IndicatorInfo(
     title: 'Suspicious link',
     explanation:

@@ -8,8 +8,8 @@ import 'features/incident_report/report_page.dart';
 import 'features/password_system/password_page.dart';
 import 'features/simulator/simulator_page.dart';
 import 'features/tests.dart';
-import 'features/minigames/password_game.dart';
 import 'features/simulator/setup_page.dart';
+import 'features/courses/courses_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
       routes: {
+        CourseDetailsPage.routeName: (context) => const CourseDetailsPage(),
         DashboardPage.routeName: (context) => const DashboardPage(),
         LeaderboardPage.routeName: (context) => const LeaderboardPage(),
         ChatbotPage.routeName: (context) => const ChatbotPage(),
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
         ScenarioTestScreen.routeName: (context) => const ScenarioTestScreen(),
         StartSimulatorPage.routeName: (context) => const StartSimulatorPage(),
       },
-      initialRoute: ScenarioTestScreen.routeName,
+      initialRoute: DashboardPage.routeName,
     );
   }
 }

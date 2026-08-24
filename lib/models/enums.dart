@@ -22,7 +22,6 @@ enum ScenarioCategory {
 enum Indicator {
   genericGreeting,
   urgency,
-  suspiciousDomain,
   suspiciousLink,
   credentialRequest,
   attachment,

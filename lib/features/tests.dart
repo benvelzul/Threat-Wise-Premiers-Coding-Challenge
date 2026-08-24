@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/email_scenario.dart';
 import '../data/mock_scenarios.dart';
-import '../models/enums.dart';
 
 class ScenarioTestScreen extends StatefulWidget {
   const ScenarioTestScreen({super.key});
