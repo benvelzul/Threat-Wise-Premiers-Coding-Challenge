@@ -51,12 +51,12 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
     return score / 5.0; // Normalizes score between 0.0 and 1.0
   }
 
-  Color get _strengthColor {
+  Color _strengthColor(ColorScheme colorScheme) {
     double score = _strengthScore;
-    if (score <= 0.2) return Colors.redAccent;
-    if (score <= 0.6) return Colors.orangeAccent;
-    if (score <= 0.8) return Colors.yellowAccent;
-    return Colors.greenAccent;
+    if (score <= 0.2) return colorScheme.error;
+    if (score <= 0.6) return colorScheme.tertiary;
+    if (score <= 0.8) return colorScheme.secondary;
+    return colorScheme.primary;
   }
 
   String get _strengthText {
@@ -72,6 +72,8 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
   @override
   Widget build(BuildContext context) {
     bool gameWon = _strengthScore == 1.0;
+    final colorScheme = Theme.of(context).colorScheme;
+    final strengthColor = _strengthColor(colorScheme);
 
     return Scaffold(
       appBar: AppBar(
@@ -86,14 +88,14 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
+              Text(
                 "Your Mission:",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 "Craft a password strong enough to withstand brute-force attacks. Satisfy all the rules below!",
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+                style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
               ),
               const SizedBox(height: 24),
 
@@ -101,19 +103,19 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
               TextField(
                 controller: _passwordController,
                 obscureText: false, // Set to true if you want to hide it, but false is fun for the game aspect!
-                style: const TextStyle(fontSize: 18, color: Colors.white, letterSpacing: 1.5),
+                style: TextStyle(fontSize: 18, color: colorScheme.onSurface, letterSpacing: 1.5),
                 decoration: InputDecoration(
                   labelText: "Enter Password",
-                  labelStyle: const TextStyle(color: Colors.cyanAccent),
+                  labelStyle: TextStyle(color: colorScheme.secondary),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.grey),
+                    borderSide: BorderSide(color: colorScheme.onSurface.withValues(alpha: 0.4)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.cyanAccent, width: 2),
+                    borderSide: BorderSide(color: colorScheme.secondary, width: 2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  prefixIcon: const Icon(Icons.lock_outline, color: Colors.cyanAccent),
+                  prefixIcon: Icon(Icons.lock_outline, color: colorScheme.secondary),
                 ),
               ),
               const SizedBox(height: 24),
@@ -125,7 +127,7 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
                   const Text("Security Status:", style: TextStyle(fontSize: 16)),
                   Text(
                     _strengthText,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: _strengthColor),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: strengthColor),
                   ),
                 ],
               ),
@@ -134,15 +136,15 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
                 borderRadius: BorderRadius.circular(8),
                 child: LinearProgressIndicator(
                   value: _strengthScore,
-                  backgroundColor: Colors.grey[800],
-                  valueColor: AlwaysStoppedAnimation<Color>(_strengthColor),
+                  backgroundColor: colorScheme.onSurface.withValues(alpha: 0.16),
+                  valueColor: AlwaysStoppedAnimation<Color>(strengthColor),
                   minHeight: 12,
                 ),
               ),
               const SizedBox(height: 32),
 
               // Rules List
-              const Text(
+                      Text(
                 "Requirements:",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -162,22 +164,22 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.greenAccent.withOpacity(0.15),
-                    border: Border.all(color: Colors.greenAccent, width: 2),
+                    color: colorScheme.primary.withValues(alpha: 0.15),
+                    border: Border.all(color: colorScheme.primary, width: 2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Column(
+                  child: Column(
                     children: [
-                      Icon(Icons.verified, color: Colors.greenAccent, size: 48),
+                      Icon(Icons.verified, color: colorScheme.primary, size: 48),
                       SizedBox(height: 8),
                       Text(
                         "Access Granted!",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.greenAccent),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.primary),
                       ),
                       SizedBox(height: 4),
                       Text(
                         "You created an incredibly secure password.",
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
                       ),
                     ],
                   ),
@@ -197,7 +199,7 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
         children: [
           Icon(
             isMet ? Icons.check_circle : Icons.radio_button_unchecked,
-            color: isMet ? Colors.greenAccent : Colors.grey,
+            color: isMet ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
             size: 24,
           ),
           const SizedBox(width: 12),
@@ -206,7 +208,7 @@ class _PasswordGameScreenState extends State<PasswordGameScreen> {
               text,
               style: TextStyle(
                 fontSize: 15,
-                color: isMet ? Colors.white : Colors.grey[400],
+                color: isMet ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                 decoration: isMet ? TextDecoration.lineThrough : null,
               ),
             ),

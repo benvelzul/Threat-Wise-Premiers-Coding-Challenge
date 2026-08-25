@@ -34,11 +34,12 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Scenario Sandbox'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.tertiary,
+        foregroundColor: colorScheme.onTertiary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -60,9 +61,9 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                 decoration: BoxDecoration(
                   color: currentScenario.isThreat 
                       ? const Color.fromARGB(255, 35, 35, 35) 
-                      : Colors.grey[200],
+                      : colorScheme.surfaceContainerHighest,
                   border: Border.all(
-                    color: currentScenario.isThreat ? Colors.red : Colors.green,
+                    color: currentScenario.isThreat ? colorScheme.error : colorScheme.primary,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -74,7 +75,7 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                       'ID: ${currentScenario.id} | Threat: ${currentScenario.isThreat ? "YES ⚠️" : "NO ✅"}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: currentScenario.isThreat ? Colors.redAccent : Colors.green[800],
+                        color: currentScenario.isThreat ? colorScheme.error : colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -82,22 +83,22 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                       'Category: ${currentScenario.category.name} | Difficulty: ${currentScenario.difficulty.name}',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: currentScenario.isThreat ? Colors.white70 : Colors.black87,
+                        color: currentScenario.isThreat ? colorScheme.onSurface.withValues(alpha: 0.7) : colorScheme.onSurface,
                       ),
                     ),
                     if (currentScenario.threatType != null)
                       Text(
                         'Type: ${currentScenario.threatType!.name}',
-                        style: const TextStyle(color: Colors.orangeAccent),
+                        style: TextStyle(color: colorScheme.tertiary),
                       ),
                     const Divider(height: 16),
                     Text(
                       'From: ${currentScenario.emailData.senderName} <${currentScenario.emailData.senderEmail}>',
-                      style: TextStyle(color: currentScenario.isThreat ? Colors.white : Colors.black),
+                      style: TextStyle(color: colorScheme.onSurface),
                     ),
                     Text(
                       'Subject: ${currentScenario.emailData.subject}',
-                      style: TextStyle(color: currentScenario.isThreat ? Colors.white : Colors.black),
+                      style: TextStyle(color: colorScheme.onSurface),
                     ),
                   ],
                 ),
@@ -105,7 +106,7 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
               const SizedBox(height: 20),
 
               // Generated Email Content
-              const Text('Email Content:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+              Text('Email Content:', style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface.withValues(alpha: 0.65))),
               const Divider(),
               Text(
                 currentScenario.emailData.body,
@@ -119,10 +120,10 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: currentScenario.isThreat 
-                      ? Colors.red.withValues(alpha: 0.1)
-                      : Colors.green.withValues(alpha: 0.1),
+                      ? colorScheme.error.withValues(alpha: 0.1)
+                      : colorScheme.primary.withValues(alpha: 0.1),
                   border: Border.all(
-                    color: currentScenario.isThreat ? Colors.red : Colors.green,
+                    color: currentScenario.isThreat ? colorScheme.error : colorScheme.primary,
                     width: 1.5,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -134,7 +135,7 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                       'Explanation:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: currentScenario.isThreat ? Colors.red[700] : Colors.green[700],
+                        color: currentScenario.isThreat ? colorScheme.error : colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -152,9 +153,9 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withValues(alpha:0.1),
+                  color: colorScheme.secondary.withValues(alpha: 0.1),
                   border: Border.all(
-                    color: Colors.blue,
+                    color: colorScheme.secondary,
                     width: 1.5,
                   ), 
                   borderRadius: BorderRadius.circular(8),
@@ -164,16 +165,16 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                   children: [
                     Text(
                       'Red Flags (${currentScenario.indicators.length} indicator${currentScenario.indicators.length != 1 ? 's' : ''}):',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: colorScheme.secondary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     if (currentScenario.indicators.isEmpty)
-                      const Text(
+                      Text(
                         'No suspicious indicators detected.',
-                        style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
+                        style: TextStyle(fontStyle: FontStyle.italic, color: colorScheme.onSurface.withValues(alpha: 0.65)),
                       )
                     else
                       Wrap(
@@ -183,7 +184,7 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.blue,
+                              color: colorScheme.secondary,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -196,8 +197,8 @@ class _ScenarioTestScreenState extends State<ScenarioTestScreen> {
                                     RegExp(r'\b(\w)'),
                                     (match) => match.group(1)!.toUpperCase(),
                                   ),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: colorScheme.onSecondary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                               ),

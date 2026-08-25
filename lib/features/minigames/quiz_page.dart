@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme.dart';
 
 class MinigamesPage extends StatelessWidget {
   static const routeName = '/minigames';
@@ -22,15 +23,15 @@ class MinigamesPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Container(
-        color: const Color(0xFF0A0E17),
+        color: Theme.of(context).colorScheme.surface,
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
+            Text(
               'Choose a minigame to play',
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -52,9 +53,9 @@ class MinigamesPage extends StatelessWidget {
                         onTap: () {},
                         child: Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFF141B2D),
+                            color: Theme.of(context).extension<AppColors>()?.cardBackground ?? Theme.of(context).colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white24),
+                            border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.14)),
                           ),
                           padding: const EdgeInsets.all(16),
                           child: Column(
@@ -64,19 +65,19 @@ class MinigamesPage extends StatelessWidget {
                               const SizedBox(height: 16),
                               Text(
                                 game['title'] as String,
-                                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 game['subtitle'] as String,
-                                style: TextStyle(color: Colors.grey[400], fontSize: 13),
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 13),
                               ),
                               const Spacer(),
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: Text(
                                   'Coming soon',
-                                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55), fontSize: 12),
                                 ),
                               ),
                             ],

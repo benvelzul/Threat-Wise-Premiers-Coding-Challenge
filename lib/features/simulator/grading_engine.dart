@@ -23,32 +23,50 @@ import '../../models/enums.dart';
     msg.writeln('Correct! You correctly identified the email as a phishing attempt.\n+20 pts');
     score += 20;
 
-    for (final threat in threatTypes) {
-      if (threatTypesAns.contains(threat)) {
-        msg.writeln('You were correct, ${threat.name} was a threat type. \n+5 pts');
+    for (final userThreat in threatTypesAns) {
+      if (threatTypes.contains(userThreat)) {
+        msg.writeln('You correctly identified ${userThreat.name}.\n+5 pts');
         score += 5;
       } else {
-        msg.writeln('You missed ${threat.name}.');
+        msg.writeln('You missed ${userThreat.name}.\n -2 pts');
+        score -= 2;
       }
     }
- 
-    for (final indicator in indicators) {
-      msg.writeln(indicator.name);
-      if (indicatorsAns.contains(indicator)) {
-        msg.writeln('You correctly identified ${indicator.name} as a phishing indicator. \n+7 pts');
+
+    for (final actualThreat in threatTypes) {
+      if (!threatTypesAns.contains(actualThreat)) {
+        msg.writeln('Incorrect choice: ${actualThreat.name} was not a threat.\n-5 pts');
+        score -= 5;
+      }
+    }
+
+    for (final userIndicator in indicatorsAns) {
+      if (indicators.contains(userIndicator)) {
+        msg.writeln('You correctly identified ${userIndicator.name}.\n+7 pts');
         score += 7;
       } else {
-        msg.writeln('You missed ${indicator.name}.');
+        msg.writeln('You missed ${userIndicator.name}.\n-2 pts');
+        score -= 2;
       }
     }
-  } else if (phishingAns && !phishing) {
-    msg.writeln('Incorrect, this scenario was legitimate.');
+
+    for (final actualIndicator in indicators) {
+      if (!indicatorsAns.contains(actualIndicator)) {
+        msg.writeln('Incorrect choice: ${actualIndicator.name} is not an indicator.\n-7 pts');
+        score -= 7;
+      }
+    }
+
   } else if (!phishingAns && phishing) {
+    msg.writeln('Incorrect, this scenario was legitimate.');
+  } else if (phishingAns && !phishing) {
     msg.writeln('Incorrect, this scenario was a phishing attempt.');
   } else {
     msg.writeln('Correct, this scenario was legitimate.\n+20 pts');
     score += 20;
   }
+
+  if (score < 0) score = 0;
 
   if (difficulty != Difficulty.easy) {
     msg.writeln('Difficulty multiplier: ${scoreMultiplier}x');

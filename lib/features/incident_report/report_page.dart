@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme.dart';
 
 class ReportPage extends StatefulWidget {
   static const routeName = '/incident-report';
@@ -43,10 +44,11 @@ class _ReportPageState extends State<ReportPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E17),
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3A0CA3),
+        backgroundColor: colorScheme.tertiary,
         elevation: 0,
         title: const Text('Report an Incident'),
       ),
@@ -127,7 +129,7 @@ class _ReportPageState extends State<ReportPage> {
                       Expanded(
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3A0CA3),
+                            backgroundColor: colorScheme.tertiary,
                             minimumSize: const Size.fromHeight(50),
                           ),
                           icon: const Icon(Icons.send),
@@ -139,7 +141,7 @@ class _ReportPageState extends State<ReportPage> {
                       Expanded(
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 105, 0, 0),
+                            backgroundColor: colorScheme.error,
                             minimumSize: const Size.fromHeight(50),
                           ),
                           icon: const Icon(Icons.local_police),
@@ -161,19 +163,19 @@ class _ReportPageState extends State<ReportPage> {
 
   Widget _buildInstructionsCard(BuildContext context) {
     return Card(
-      color: const Color(0xFF141B2D),
+      color: Theme.of(context).extension<AppColors>()?.cardBackground ?? Theme.of(context).colorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Report your incident',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 12),
@@ -189,19 +191,19 @@ class _ReportPageState extends State<ReportPage> {
 
   Widget _buildExamplesCard(BuildContext context) {
     return Card(
-      color: const Color(0xFF141B2D),
+      color: Theme.of(context).extension<AppColors>()?.cardBackground ?? Theme.of(context).colorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Examples to help you write your report',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 12),
@@ -220,12 +222,12 @@ class _ReportPageState extends State<ReportPage> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.check_circle_outline, size: 18, color: Colors.greenAccent),
+        Icon(Icons.check_circle_outline, size: 18, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(color: Colors.grey, height: 1.4),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7), height: 1.4),
           ),
         ),
       ],
@@ -243,14 +245,14 @@ class _ReportPageState extends State<ReportPage> {
       controller: controller,
       maxLines: maxLines,
       validator: validator,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.grey),
-        labelStyle: const TextStyle(color: Colors.white70),
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55)),
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
         filled: true,
-        fillColor: const Color(0xFF141B2D),
+        fillColor: Theme.of(context).extension<AppColors>()?.cardBackground ?? Theme.of(context).colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,

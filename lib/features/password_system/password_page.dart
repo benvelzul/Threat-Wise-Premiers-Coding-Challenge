@@ -64,16 +64,16 @@ class _PasswordPageState extends State<PasswordPage> {
     return null;
   }
 
-  Color _getStrengthColor() {
+  Color _getStrengthColor(ColorScheme colorScheme) {
     switch (_currentStrength) {
       case StrengthChecker.weak:
-        return Colors.red;
+        return colorScheme.error;
       case StrengthChecker.medium:
-        return Colors.orange;
+        return colorScheme.tertiary;
       case StrengthChecker.strong:
-        return Colors.green;
+        return colorScheme.primary;
       case null:
-        return Colors.grey.shade300;
+        return colorScheme.onSurface.withValues(alpha: 0.3);
     }
   }
 
@@ -125,6 +125,7 @@ class _PasswordPageState extends State<PasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Password Checker'),
@@ -177,7 +178,7 @@ class _PasswordPageState extends State<PasswordPage> {
                       child: Container(
                         height: 6,
                         decoration: BoxDecoration(
-                          color: _getStrengthColor(),
+                          color: _getStrengthColor(colorScheme),
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
@@ -191,7 +192,7 @@ class _PasswordPageState extends State<PasswordPage> {
                 Text(
                   _getStrengthText(),
                   style: TextStyle(
-                    color: _getStrengthColor(),
+                    color: _getStrengthColor(colorScheme),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -201,9 +202,9 @@ class _PasswordPageState extends State<PasswordPage> {
                 // 3. Dynamic Hack Time Text (Bright white text for dark mode visibility)
                 Text(
                   _getHackTimeText(_currentPassword),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
-                    color: Colors.white,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

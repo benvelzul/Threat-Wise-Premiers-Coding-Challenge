@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import '../../core/theme.dart';
 
 class ChatbotPage extends StatefulWidget {
   static const routeName = '/chatbot';
@@ -96,6 +97,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppColors>();
+    final cardColor = appColors?.cardBackground ?? colorScheme.surfaceContainerHighest;
     return Scaffold(
       appBar: AppBar(
         title: const Text('AI Chatbot'),
@@ -106,18 +110,18 @@ class _ChatbotPageState extends State<ChatbotPage> {
           children: [
             Expanded(
               child: Container(
-                color: const Color(0xFF0A0E17),
+                color: colorScheme.surface,
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   itemCount: _messages.length + (_isLoading ? 1 : 0),
                   itemBuilder: (context, index) {
                     // Show loading bubble when waiting for Gemini
                     if (index == _messages.length) {
-                      return const Align(
+                      return Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 8),
-                          child: CircularProgressIndicator(color: Color(0xFF4CC9F0)),
+                          child: CircularProgressIndicator(color: colorScheme.secondary),
                         ),
                       );
                     }
@@ -133,7 +137,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                           margin: const EdgeInsets.symmetric(vertical: 6),
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                           decoration: BoxDecoration(
-                            color: message.isUser ? const Color(0xFF4CC9F0) : const Color(0xFF141B2D),
+                            color: message.isUser ? colorScheme.secondary : cardColor,
                             borderRadius: BorderRadius.only(
                               topLeft: const Radius.circular(18),
                               topRight: const Radius.circular(18),
@@ -144,7 +148,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                           child: Text(
                             message.text,
                             style: TextStyle(
-                              color: message.isUser ? Colors.black : Colors.white,
+                              color: message.isUser ? colorScheme.onSecondary : colorScheme.onSurface,
                               fontSize: 15,
                             ),
                           ),
@@ -156,8 +160,8 @@ class _ChatbotPageState extends State<ChatbotPage> {
               ),
             ),
             Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFF141B2D),
+              decoration: BoxDecoration(
+                color: cardColor,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -166,12 +170,12 @@ class _ChatbotPageState extends State<ChatbotPage> {
                   Expanded(
                     child: TextField(
                       controller: _controller,
-                      style: const TextStyle(color: Colors.white),
+                      style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
-                        hintStyle: TextStyle(color: Colors.grey[500]),
+                        hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.55)),
                         filled: true,
-                        fillColor: const Color(0xFF0A0E17),
+                        fillColor: colorScheme.surface,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -188,16 +192,16 @@ class _ChatbotPageState extends State<ChatbotPage> {
                     shape: const CircleBorder(),
                     child: IconButton(
                       icon: _isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: colorScheme.onPrimary,
                                 strokeWidth: 2,
                               ),
                             )
                           : const Icon(Icons.send),
-                      color: Colors.white,
+                      color: colorScheme.onPrimary,
                       onPressed: _sendMessage,
                     ),
                   ),
