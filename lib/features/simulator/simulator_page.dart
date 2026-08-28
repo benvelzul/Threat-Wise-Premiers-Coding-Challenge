@@ -20,6 +20,11 @@ class _SimulatorPageState extends State<SimulatorPage> {
   bool? _userAnswer;
   double _score = 0;
   String _feedbackMsg = '';
+
+  OverlayEntry? _overlayEntry;
+  bool _isExpanded = false;
+  double _blockWidth = 0.0; 
+
   
   final Set<ThreatType> _selectedThreatTypes = <ThreatType>{};
   final Set<Indicator> _selectedIndicators = <Indicator>{};
@@ -29,7 +34,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
     super.initState();
     _resetQuiz();
   }
-
+  
   void _resetQuiz() {
     setState(() {
       currentScenario = _makeRandomScenario();
@@ -107,6 +112,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
       }
     });
   }
+  
   void _toggleAnswer() {
     setState(() {
       _showAnswer = !_showAnswer;
@@ -127,7 +133,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(

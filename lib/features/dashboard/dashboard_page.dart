@@ -19,7 +19,8 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> with TickerProviderStateMixin {
+class _DashboardPageState extends State<DashboardPage>
+    with TickerProviderStateMixin {
   late final TabController _tabController;
 
   OverlayEntry? _overlayEntry;
@@ -27,7 +28,6 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
 
   // Starting position of the floating image
   Offset _offset = const Offset(50, 100);
-
 
   @override
   void initState() {
@@ -37,8 +37,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
 
-    _tabController = TabController(length: 2, vsync: this);
-
+    _tabController = TabController(length: 3, vsync: this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showFloatingImage(context);
@@ -64,7 +63,8 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
             return AnimatedBuilder(
               animation: _floatController,
               builder: (context, child) {
-                final floatOffset = 10 * math.sin(_floatController.value * 2 * math.pi);
+                final floatOffset =
+                    10 * math.sin(_floatController.value * 2 * math.pi);
 
                 return Positioned(
                   left: localOffset.dx,
@@ -76,8 +76,14 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
 
                         Size screenSize = MediaQuery.of(context).size;
 
-                        double clampedX = newOffset.dx.clamp(0.0, screenSize.width - 100);
-                        double clampedY = newOffset.dy.clamp(0.0, screenSize.height - 100);
+                        double clampedX = newOffset.dx.clamp(
+                          0.0,
+                          screenSize.width - 100,
+                        );
+                        double clampedY = newOffset.dy.clamp(
+                          0.0,
+                          screenSize.height - 100,
+                        );
 
                         localOffset = Offset(clampedX, clampedY);
 
@@ -85,8 +91,8 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                       });
                     },
                     child: SizedBox(
-                      width: 115, 
-                      height: 115, 
+                      width: 115,
+                      height: 115,
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
@@ -95,7 +101,10 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                             left: 5,
                             top: 5,
                             child: ImageFiltered(
-                              imageFilter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                              imageFilter: ImageFilter.blur(
+                                sigmaX: 4.0,
+                                sigmaY: 4.0,
+                              ),
                               child: ColorFiltered(
                                 colorFilter: ColorFilter.mode(
                                   Colors.black.withValues(alpha: 0.4),
@@ -153,11 +162,284 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
           Icon(icon, color: color, size: 20),
           const SizedBox(height: 4),
           Text(
-          value,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
+            value,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAnalyticsMetric({
+    required IconData icon,
+    required String value,
+    required String label,
+    required Color color,
+    required ColorScheme colorScheme,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: colorScheme.onSurface.withValues(alpha: 0.65),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivity({
+    required IconData icon,
+    required String title,
+    required String detail,
+    required String xp,
+    required Color color,
+    required ColorScheme colorScheme,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  detail,
+                  style: TextStyle(
+                    color: colorScheme.onSurface.withValues(alpha: 0.62),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            xp,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnalyticsPage(ColorScheme colorScheme, AppColors? appColors) {
+    final xpColor = appColors?.featureGames ?? colorScheme.tertiary;
+    final urgencyColor = appColors?.featurePassword ?? colorScheme.error;
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
+      children: [
+        Text(
+          'Your progress',
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Keep building your cyber safety skills.',
+          style: TextStyle(
+            color: colorScheme.onSurface.withValues(alpha: 0.65),
+            fontSize: 13,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: appColors?.cardBackground ?? colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colorScheme.outline),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'LEVEL 4',
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '850 / 1,000 XP',
+                    style: TextStyle(
+                      color: xpColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: LinearProgressIndicator(
+                  value: 0.85,
+                  minHeight: 10,
+                  backgroundColor: colorScheme.onSurface.withValues(
+                    alpha: 0.12,
+                  ),
+                  valueColor: AlwaysStoppedAnimation<Color>(xpColor),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '150 XP to Level 5',
+                style: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.62),
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 2.1,
+          children: [
+            _buildAnalyticsMetric(
+              icon: Icons.local_fire_department,
+              value: '7 days',
+              label: 'Streak',
+              color: urgencyColor,
+              colorScheme: colorScheme,
+            ),
+            _buildAnalyticsMetric(
+              icon: Icons.monetization_on,
+              value: '250',
+              label: 'Coins',
+              color: xpColor,
+              colorScheme: colorScheme,
+            ),
+            _buildAnalyticsMetric(
+              icon: Icons.bolt,
+              value: '85',
+              label: 'Energy',
+              color: colorScheme.primary,
+              colorScheme: colorScheme,
+            ),
+            _buildAnalyticsMetric(
+              icon: Icons.emoji_events_outlined,
+              value: 'A1',
+              label: 'Rank',
+              color: colorScheme.secondary,
+              colorScheme: colorScheme,
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'Urgency activities',
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
+          decoration: BoxDecoration(
+            color: appColors?.cardBackground ?? colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colorScheme.outline),
+          ),
+          child: Column(
+            children: [
+              _buildActivity(
+                icon: Icons.mark_email_unread_outlined,
+                title: 'Urgent email drills',
+                detail: '12 scenarios completed',
+                xp: '+120 XP',
+                color: urgencyColor,
+                colorScheme: colorScheme,
+              ),
+              _buildActivity(
+                icon: Icons.speed,
+                title: 'Fast response bonus',
+                detail: 'Best response: 18 seconds',
+                xp: '+50 XP',
+                color: colorScheme.primary,
+                colorScheme: colorScheme,
+              ),
+              _buildActivity(
+                icon: Icons.shield_outlined,
+                title: 'Threats identified',
+                detail: '9 of 10 correct this week',
+                xp: '+90 XP',
+                color: colorScheme.secondary,
+                colorScheme: colorScheme,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -167,18 +449,72 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
     final colorScheme = Theme.of(context).colorScheme;
 
     final courses = [
-      {'title': 'Introduction to Cyber Threats', 'desc': 'Chat with AI to learn security fundamentals.', 'icon': Icons.chat_bubble_outline, 'progress': 1.0, 'color': appColors?.featureChat ?? colorScheme.secondary},
-      {'title': 'Social Engineering Tactics', 'desc': 'Understand human exploitation frameworks.', 'icon': Icons.people_outline, 'progress': 0.3, 'color': appColors?.featureGames ?? colorScheme.tertiary},
-      {'title': 'Network Security Foundations', 'desc': 'Deep dive into data streams and encryption.', 'icon': Icons.lan_outlined, 'progress': 0.0, 'color': appColors?.featureSimulator ?? colorScheme.primary},
+      {
+        'title': 'Introduction o Cyber Threatst',
+        'desc': 'Chat with AI to learn security fundamentals.',
+        'icon': Icons.chat_bubble_outline,
+        'progress': 1.0,
+        'color': appColors?.featureChat ?? colorScheme.secondary,
+      },
+      {
+        'title': 'Social Engineering Tactics',
+        'desc': 'Understand human exploitation frameworks.',
+        'icon': Icons.people_outline,
+        'progress': 0.3,
+        'color': appColors?.featureGames ?? colorScheme.tertiary,
+      },
+      {
+        'title': 'Network Security Foundations',
+        'desc': 'Deep dive into data streams and encryption.',
+        'icon': Icons.lan_outlined,
+        'progress': 0.0,
+        'color': appColors?.featureSimulator ?? colorScheme.primary,
+      },
     ];
 
     final tools = [
-      {'title': 'Email Analyzer', 'subtitle': 'Spot phishing emails', 'icon': Icons.email_outlined, 'color': appColors?.featureChat ?? colorScheme.secondary, 'connectedPage': StartSimulatorPage.routeName},
-      {'title': 'Password Checker', 'subtitle': 'Test password strength', 'icon': Icons.lock_outline, 'color': appColors?.featurePassword ?? colorScheme.primary, 'connectedPage': PasswordPage.routeName},
-      {'title': 'Mini Games', 'subtitle': 'Spot the security threat', 'icon': Icons.sports_esports_outlined, 'color': appColors?.featureGames ?? colorScheme.tertiary, 'connectedPage': MinigamesPage.routeName},
-      {'title': 'Incident Report', 'subtitle': 'File a simulated breach', 'icon': Icons.assignment_late_outlined, 'color': appColors?.featureSimulator ?? colorScheme.secondary, 'connectedPage': ReportPage.routeName},
-      {'title': 'Chatbot', 'subtitle': 'Ask security questions', 'icon': Icons.smart_toy_outlined, 'color': appColors?.featureChat ?? colorScheme.tertiary, 'connectedPage': ChatbotPage.routeName},
-      {'title': 'Leaderboard', 'subtitle': 'See top performers', 'icon': Icons.leaderboard_outlined, 'color': appColors?.featureDiv ?? colorScheme.primary, 'connectedPage': LeaderboardPage.routeName},
+      {
+        'title': 'Email Analyzer',
+        'subtitle': 'Spot phishing emails',
+        'icon': Icons.email_outlined,
+        'color': appColors?.featureChat ?? colorScheme.secondary,
+        'connectedPage': StartSimulatorPage.routeName,
+      },
+      {
+        'title': 'Password Checker',
+        'subtitle': 'Test password strength',
+        'icon': Icons.lock_outline,
+        'color': appColors?.featurePassword ?? colorScheme.primary,
+        'connectedPage': PasswordPage.routeName,
+      },
+      {
+        'title': 'Mini Games',
+        'subtitle': 'Spot the security threat',
+        'icon': Icons.sports_esports_outlined,
+        'color': appColors?.featureGames ?? colorScheme.tertiary,
+        'connectedPage': MinigamesPage.routeName,
+      },
+      {
+        'title': 'Incident Report',
+        'subtitle': 'File a simulated breach',
+        'icon': Icons.assignment_late_outlined,
+        'color': appColors?.featureSimulator ?? colorScheme.secondary,
+        'connectedPage': ReportPage.routeName,
+      },
+      {
+        'title': 'Chatbot',
+        'subtitle': 'Ask security questions',
+        'icon': Icons.smart_toy_outlined,
+        'color': appColors?.featureChat ?? colorScheme.tertiary,
+        'connectedPage': ChatbotPage.routeName,
+      },
+      {
+        'title': 'Leaderboard',
+        'subtitle': 'See top performers',
+        'icon': Icons.leaderboard_outlined,
+        'color': appColors?.featureDiv ?? colorScheme.primary,
+        'connectedPage': LeaderboardPage.routeName,
+      },
     ];
 
     return Scaffold(
@@ -189,61 +525,29 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
         titleSpacing: 12,
         title: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            children: [
-              Text(
-                'ThreatWise',
-                style: TextStyle(color: colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatItem(
-                        icon: Icons.local_fire_department,
-                        value: '7',
-                        color: appColors?.featurePassword ?? colorScheme.primary,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildStatItem(
-                        icon: Icons.groups_3,
-                        value: 'A1',
-                        color: appColors?.featureDiv ?? colorScheme.secondary,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildStatItem(
-                        icon: Icons.monetization_on,
-                        value: '250',
-                        color: appColors?.featureGames ?? colorScheme.tertiary,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildStatItem(
-                        icon: Icons.bolt,
-                        value: '85',
-                        color: colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          child: Text(
+            'ThreatWise',
+            style: TextStyle(
+              color: colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Material(
-            color: colorScheme.secondary, 
+            color: colorScheme.secondary,
             child: TabBar(
               controller: _tabController,
               labelColor: colorScheme.onPrimaryContainer,
-              unselectedLabelColor: colorScheme.onPrimaryContainer.withValues(alpha: 0.6),
+              unselectedLabelColor: colorScheme.onPrimaryContainer.withValues(
+                alpha: 0.6,
+              ),
               tabs: const [
                 Tab(text: 'COURSES'),
                 Tab(text: 'PRACTICE TOOLS'),
+                Tab(text: 'ANALYTICS'),
               ],
             ),
           ),
@@ -255,7 +559,10 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
           Stack(
             children: [
               ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 24,
+                  horizontal: 16,
+                ),
                 itemCount: courses.length,
                 itemBuilder: (context, index) {
                   final course = courses[index];
@@ -275,18 +582,31 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                                 color: course['color'] as Color,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: progress == 1.0 ? colorScheme.primary : course['color'] as Color,
+                                  color: progress == 1.0
+                                      ? colorScheme.primary
+                                      : course['color'] as Color,
                                   width: 3,
                                 ),
                               ),
                               child: Center(
-                                child: Icon(course['icon'] as IconData, color: colorScheme.onPrimary, size: 26),
+                                child: Icon(
+                                  course['icon'] as IconData,
+                                  color: colorScheme.onPrimary,
+                                  size: 26,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              progress == 1.0 ? 'Done' : '${(progress * 100).toInt()}%', 
-                              style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 11),
+                              progress == 1.0
+                                  ? 'Done'
+                                  : '${(progress * 100).toInt()}%',
+                              style: TextStyle(
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.7,
+                                ),
+                                fontSize: 11,
+                              ),
                             ),
                           ],
                         ),
@@ -295,7 +615,9 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: appColors?.cardBackground ?? colorScheme.surface,
+                              color:
+                                  appColors?.cardBackground ??
+                                  colorScheme.surface,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: colorScheme.outline),
                             ),
@@ -303,22 +625,36 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  course['title'] as String, 
-                                  style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 15),
+                                  course['title'] as String,
+                                  style: TextStyle(
+                                    color: colorScheme.onSurface,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  course['desc'] as String, 
-                                  style: TextStyle(color: appColors?.featureSubtitle ?? colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 12),
+                                  course['desc'] as String,
+                                  style: TextStyle(
+                                    color:
+                                        appColors?.featureSubtitle ??
+                                        colorScheme.onSurface.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                    fontSize: 12,
+                                  ),
                                 ),
                                 const SizedBox(height: 12),
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(4),
                                   child: LinearProgressIndicator(
-                                    value: progress, 
-                                    backgroundColor: colorScheme.onSurface.withValues(alpha: 0.15),
+                                    value: progress,
+                                    backgroundColor: colorScheme.onSurface
+                                        .withValues(alpha: 0.15),
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      progress == 1.0 ? colorScheme.primary : course['color'] as Color,
+                                      progress == 1.0
+                                          ? colorScheme.primary
+                                          : course['color'] as Color,
                                     ),
                                     minHeight: 4,
                                   ),
@@ -355,7 +691,8 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                 ),
                 child: InkWell(
                   onTap: () {
-                    final String? connectedPage = tool['connectedPage'] as String?;
+                    final String? connectedPage =
+                        tool['connectedPage'] as String?;
                     if (connectedPage != null) {
                       Navigator.pushNamed(context, connectedPage);
                     }
@@ -367,31 +704,48 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: (tool['color'] as Color).withValues(alpha: 0.15),
+                          color: (tool['color'] as Color).withValues(
+                            alpha: 0.15,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Icon(tool['icon'] as IconData, color: tool['color'] as Color, size: 28),
+                        child: Icon(
+                          tool['icon'] as IconData,
+                          color: tool['color'] as Color,
+                          size: 28,
+                        ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            tool['title'] as String, 
-                            style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 14),
+                            tool['title'] as String,
+                            style: TextStyle(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            tool['subtitle'] as String, 
-                            style: TextStyle(color: appColors?.featureSubtitle ?? colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 11),
+                            tool['subtitle'] as String,
+                            style: TextStyle(
+                              color:
+                                  appColors?.featureSubtitle ??
+                                  colorScheme.onSurface.withValues(alpha: 0.7),
+                              fontSize: 11,
+                            ),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
               );
             },
           ),
+
+          _buildAnalyticsPage(colorScheme, appColors),
         ],
       ),
     );

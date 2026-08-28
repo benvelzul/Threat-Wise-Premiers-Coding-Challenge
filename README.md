@@ -153,6 +153,13 @@ Developed by:
 
 Submitted for the Premier's Coding Challenge (QLD).
 
-### AI usage
+### Tester Credits
+
+* Sebastyen Nagy 
+* Tracey Iki
+* Belinda Bretherton 
+* Matthew Sutherland
+
+## AI usage
 
 This project used AI to research and understand concepts of cyber security, algorithims, and flutter (and dart). And some texts like the README was polished by AI to correct gramar and sound more professional. 

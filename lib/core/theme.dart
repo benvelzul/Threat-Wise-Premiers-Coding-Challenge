@@ -66,41 +66,40 @@ class AppColors extends ThemeExtension<AppColors> {
 class AppTheme {
   static ThemeData get theme => ThemeData(
         colorScheme: const ColorScheme(
-          brightness: Brightness.dark,
-          primary: Color(0xFF58CC02), 
+          brightness: Brightness.light,
+          primary: Color(0xFF46C200), // Punchy Bold Green
           onPrimary: Colors.white,
 
-          secondary: Color(0xFF1CB0F6),
+          secondary: Color(0xFF0099FF), // High-Energy Vivid Blue
           onSecondary: Colors.white,
 
-          tertiary: Color(0xFF7209B7),
+          tertiary: Color(0xFF8A2BE2), // Vibrant Blue Violet
           onTertiary: Colors.white,
 
-          primaryContainer: Color(0xFF1D4ED8),
-          onPrimaryContainer: Colors.white,
+          primaryContainer: Color(0xFFBFDBFE), // Electric Ice Blue Tint
+          onPrimaryContainer: Color(0xFF1E3A8A),
 
-          secondaryContainer: Color(0xFF4CC9F0),
-          onSecondaryContainer: Colors.black,
+          secondaryContainer: Color(0xFFBAE6FD), // Sharp Sky Blue Tint
+          onSecondaryContainer: Color(0xFF0C4A6E),
 
-          surface: Color(0xFF0A0E17),
-          onSurface: Colors.white,
+          surface: Color(0xFFF1F5F9), // Very light slate gray
+          onSurface: Color(0xFF020617), // Ultra-dark ink text for maximum pop
 
-          error: Color(0xFFFF4D4D),
+          error: Color(0xFFFF0055), // Intense Electric Red
           onError: Colors.white,
         ),
         extensions: const [
           AppColors(
-            statItem: Colors.white,
-            cardBackground: Color(0xFF141B2D),
-            featureChat: Color(0xFF3B82F6),
-            featureDiv: Color.fromARGB(255, 5, 41, 99),
-            featureSimulator: Color(0xFFEF4444),
-            featurePassword: Color(0xFFF59E0B),
-            featureGames: Color.fromARGB(255, 58, 39, 104),
-            featureSubtitle: Color(0xFFB0B7C3),
+            statItem: Color(0xFF020617), // Pitch dark text for stats
+            cardBackground: Colors.white, // Pure white cards to frame intense colors
+            featureChat: Color(0xFF1D4ED8), // Deep Royal Blue
+            featureDiv: Color(0xFFCBD5E1), // Crisp high-contrast divider
+            featureSimulator: Color(0xFFFF2E93), // Vivid Neon Pink/Red
+            featurePassword: Color(0xFFD97706), // Bold Warm Amber
+            featureGames: Color(0xFF7C3AED), // Heavy Deep Violet
+            featureSubtitle: Color(0xFF475569), // Medium-dark slate subtitle
           ),
         ],
         useMaterial3: true,
       );
 }
-

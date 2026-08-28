@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import '../models/email_scenario.dart';
 import '../models/enums.dart';
 import '../models/email_component.dart';

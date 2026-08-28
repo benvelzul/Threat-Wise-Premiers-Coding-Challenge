@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
 import 'simulator_page.dart';
+import '../widgets/cinematic_band_anim.dart';
 
-class StartSimulatorPage extends StatelessWidget {
+class StartSimulatorPage extends StatefulWidget {
   static const routeName = '/start-simulator';
 
   const StartSimulatorPage({super.key});
+  @override
+  State<StartSimulatorPage> createState() => _StartSimulatorPageState();
+
+}
+
+class _StartSimulatorPageState extends State<StartSimulatorPage>{
+
+  OverlayEntry? _transitionOverlay;
+
+  void _triggerSceneTransition(String message, int duration) {
+    if (_transitionOverlay != null) return;
+
+    _transitionOverlay = OverlayEntry(
+      builder: (context) => AngledBandTransition(
+        message: message, 
+        onComplete: () {
+          _transitionOverlay?.remove();
+          _transitionOverlay = null;
+        },
+        duration: duration,
+      ),
+    );
+
+    Overlay.of(context).insert(_transitionOverlay!);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +89,16 @@ class StartSimulatorPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, SimulatorPage.routeName);
+                      onPressed: () async {
+                        for (int i = 3; i >= 1; i--) {
+                          _triggerSceneTransition('$i', 900);
+                          await Future.delayed(const Duration(seconds: 1));
+                        }
+                        _triggerSceneTransition('Start', 2000);
+                        await Future.delayed(const Duration(milliseconds: 2000));
+                        if (context.mounted) {
+                          Navigator.pushNamed(context, SimulatorPage.routeName);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.secondary,
