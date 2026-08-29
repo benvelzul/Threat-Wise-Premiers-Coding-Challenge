@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 import '../../core/theme.dart';
+import '../../core/xp_system/xp_manager.dart';
 import '../chatbot/chatbot_page.dart';
 import '../stat_pages/leaderboard_page.dart';
 import '../minigames/quiz_page.dart';
@@ -144,36 +145,6 @@ class _DashboardPageState extends State<DashboardPage>
     Overlay.of(context).insert(_overlayEntry!);
   }
 
-  Widget _buildStatItem({
-    required IconData icon,
-    required String value,
-    required Color color,
-    String? connectedPage,
-  }) {
-    return InkWell(
-      onTap: connectedPage != null
-          ? () {
-              Navigator.pushNamed(context, connectedPage);
-            }
-          : () {},
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildAnalyticsMetric({
     required IconData icon,
     required String value,
@@ -276,9 +247,17 @@ class _DashboardPageState extends State<DashboardPage>
     );
   }
 
-  Widget _buildAnalyticsPage(ColorScheme colorScheme, AppColors? appColors) {
+  Widget _buildAnalyticsPage(
+    ColorScheme colorScheme,
+    AppColors? appColors,
+    int totalXp,
+  ) {
     final xpColor = appColors?.featureGames ?? colorScheme.tertiary;
     final urgencyColor = appColors?.featurePassword ?? colorScheme.error;
+    final level = XpManager.instance.currentLevel;
+    final xpInCurrentLevel = XpManager.instance.xpInCurrentLevel;
+    final xpToNextLevel = XpManager.instance.xpToNextLevel;
+    final progress = XpManager.instance.levelProgress;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
@@ -314,7 +293,7 @@ class _DashboardPageState extends State<DashboardPage>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'LEVEL 4',
+                    'LEVEL $level',
                     style: TextStyle(
                       color: colorScheme.onSurface,
                       fontSize: 16,
@@ -322,7 +301,7 @@ class _DashboardPageState extends State<DashboardPage>
                     ),
                   ),
                   Text(
-                    '850 / 1,000 XP',
+                    '$totalXp XP total',
                     style: TextStyle(
                       color: xpColor,
                       fontSize: 13,
@@ -332,10 +311,31 @@ class _DashboardPageState extends State<DashboardPage>
                 ],
               ),
               const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '$xpInCurrentLevel / ${XpManager.xpPerLevel} XP',
+                    style: TextStyle(
+                      color: xpColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Lvl ${level + 1}',
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(5),
                 child: LinearProgressIndicator(
-                  value: 0.85,
+                  value: progress.clamp(0.0, 1.0),
                   minHeight: 10,
                   backgroundColor: colorScheme.onSurface.withValues(
                     alpha: 0.12,
@@ -345,7 +345,7 @@ class _DashboardPageState extends State<DashboardPage>
               ),
               const SizedBox(height: 8),
               Text(
-                '150 XP to Level 5',
+                '$xpToNextLevel XP to Level ${level + 1}',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.62),
                   fontSize: 11,
@@ -447,6 +447,7 @@ class _DashboardPageState extends State<DashboardPage>
   Widget build(BuildContext context) {
     final appColors = Theme.of(context).extension<AppColors>();
     final colorScheme = Theme.of(context).colorScheme;
+    final totalXp = XpManager.instance.totalXp;
 
     final courses = [
       {
@@ -517,77 +518,82 @@ class _DashboardPageState extends State<DashboardPage>
       },
     ];
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: colorScheme.primaryContainer,
-        elevation: 0,
-        titleSpacing: 12,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            'ThreatWise',
-            style: TextStyle(
-              color: colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: Material(
-            color: colorScheme.secondary,
-            child: TabBar(
-              controller: _tabController,
-              labelColor: colorScheme.onPrimaryContainer,
-              unselectedLabelColor: colorScheme.onPrimaryContainer.withValues(
-                alpha: 0.6,
-              ),
-              tabs: const [
-                Tab(text: 'COURSES'),
-                Tab(text: 'PRACTICE TOOLS'),
-                Tab(text: 'ANALYTICS'),
-              ],
-            ),
-          ),
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Stack(
-            children: [
-              ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 24,
-                  horizontal: 16,
-                ),
-                itemCount: courses.length,
-                itemBuilder: (context, index) {
-                  final course = courses[index];
-                  final double progress = course['progress'] as double;
+    return ValueListenableBuilder<int>(
+      valueListenable: XpManager.instance.xpNotifier,
+      builder: (context, _, __) {
+        final totalXp = XpManager.instance.totalXp;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 24.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
+        return Scaffold(
+          backgroundColor: colorScheme.surface,
+          appBar: AppBar(
+            backgroundColor: colorScheme.primaryContainer,
+            elevation: 0,
+            titleSpacing: 12,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                'ThreatWise',
+                style: TextStyle(
+                  color: colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(kToolbarHeight),
+              child: Material(
+                color: colorScheme.secondary,
+                child: TabBar(
+                  controller: _tabController,
+                  labelColor: colorScheme.onPrimaryContainer,
+                  unselectedLabelColor: colorScheme.onPrimaryContainer.withValues(
+                    alpha: 0.6,
+                  ),
+                  tabs: const [
+                    Tab(text: 'COURSES'),
+                    Tab(text: 'PRACTICE TOOLS'),
+                    Tab(text: 'ANALYTICS'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              Stack(
+                children: [
+                  ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 24,
+                      horizontal: 16,
+                    ),
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) {
+                      final course = courses[index];
+                      final double progress = course['progress'] as double;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 24.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                color: course['color'] as Color,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: progress == 1.0
-                                      ? colorScheme.primary
-                                      : course['color'] as Color,
-                                  width: 3,
-                                ),
-                              ),
+                            Column(
+                              children: [
+                                Container(
+                                  width: 70,
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                    color: course['color'] as Color,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: progress == 1.0
+                                          ? colorScheme.primary
+                                          : course['color'] as Color,
+                                      width: 3,
+                                    ),
+                                  ),
                               child: Center(
                                 child: Icon(
                                   course['icon'] as IconData,
@@ -745,7 +751,7 @@ class _DashboardPageState extends State<DashboardPage>
             },
           ),
 
-          _buildAnalyticsPage(colorScheme, appColors),
+          _buildAnalyticsPage(colorScheme, appColors, totalXp),
         ],
       ),
     );

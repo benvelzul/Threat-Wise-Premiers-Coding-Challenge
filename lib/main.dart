@@ -10,8 +10,11 @@ import 'features/simulator/simulator_page.dart';
 import 'features/tests.dart';
 import 'features/simulator/setup_page.dart';
 import 'features/courses/courses_page.dart';
+import 'core/xp_system/xp_manager.dart';
 
-void main() {
+void main() async {
+
+  await XpManager.instance.loadXp();
   runApp(const MyApp());
 }
 

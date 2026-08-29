@@ -97,14 +97,14 @@ class CourseDetailsPage extends StatelessWidget {
               ),
               p: theme.textTheme.bodyMedium?.copyWith(
                 height: 1.6,
-                color: theme.colorScheme.onSurface.withOpacity(0.87),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.87),
               ),
               listBullet: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
               blockquoteDecoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
                 border: Border(
                   left: BorderSide(
@@ -154,7 +154,7 @@ class CourseDetailsPage extends StatelessWidget {
           color: theme.colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, -4),
             ),

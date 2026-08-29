@@ -3,6 +3,7 @@ import '../../core/theme.dart';
 import '../../models/email_scenario.dart';
 import '../../data/mock_scenarios.dart';
 import '../../models/enums.dart';
+import '../../core/xp_system/xp_manager.dart';
 import 'grading_engine.dart';
 
 class SimulatorPage extends StatefulWidget {
@@ -18,13 +19,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
   bool _showAnswer = false;
   bool _userAnswered = false;
   bool? _userAnswer;
-  double _score = 0;
   String _feedbackMsg = '';
-
-  OverlayEntry? _overlayEntry;
-  bool _isExpanded = false;
-  double _blockWidth = 0.0; 
-
   
   final Set<ThreatType> _selectedThreatTypes = <ThreatType>{};
   final Set<Indicator> _selectedIndicators = <Indicator>{};
@@ -33,6 +28,33 @@ class _SimulatorPageState extends State<SimulatorPage> {
   void initState() {
     super.initState();
     _resetQuiz();
+  }
+
+  int _xpConversion(double points, Difficulty difficulty) {
+    int xp = 0;
+    if (points <= 0) return 0;
+
+    if (points <= 20) {
+      xp += 5;
+    }else if (points <= 40) {
+      xp += 15;
+    }else if (points <= 60){
+      xp += 30;
+    }else if (points <= 80){
+      xp += 45;
+    }else {
+      xp += 60;
+    }
+    final difficultyBonus = switch (difficulty) {
+      Difficulty.easy => 0,
+      Difficulty.medium => 10,
+      Difficulty.hard => 20,
+      Difficulty.expert => 35,
+    };
+    
+    xp += difficultyBonus;
+
+    return xp; 
   }
   
   void _resetQuiz() {
@@ -46,11 +68,11 @@ class _SimulatorPageState extends State<SimulatorPage> {
     });
   }
 
-  void _submitAnswer({
+  void _submitAnswer( {
     required bool isThreat,
     required List<ThreatType> selectedThreatTypes,
     required List<Indicator> selectedIndicators,
-  }) {
+  }) async {
     bool actualIsPhishing = currentScenario.isThreat;
     Difficulty scenarioDifficulty = currentScenario.difficulty;
     final List<ThreatType> actualThreatTypes = currentScenario.threatType == null
@@ -66,10 +88,10 @@ class _SimulatorPageState extends State<SimulatorPage> {
       indicators: selectedIndicators,
       indicatorsAns: currentScenario.indicators,
     );
+    await XpManager.instance.addXp(_xpConversion(score, scenarioDifficulty));
 
     setState(() {
       _userAnswer = isThreat;
-      _score = score;
       _feedbackMsg = message;
       _userAnswered = true;
       _showAnswer = true; 

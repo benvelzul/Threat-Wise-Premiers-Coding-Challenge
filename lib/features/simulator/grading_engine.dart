@@ -63,12 +63,10 @@ import '../../models/enums.dart';
     msg.writeln('Incorrect, this scenario was a phishing attempt.');
   } else {
     msg.writeln('Correct, this scenario was legitimate.\n+20 pts');
-    score += 20;
+    score += 30;
   }
 
-  if (score < 0) score = 0;
-
-  if (difficulty != Difficulty.easy) {
+  if (difficulty != Difficulty.easy && score < 0) {
     msg.writeln('Difficulty multiplier: ${scoreMultiplier}x');
   }
   msg.writeln('-----------------------------------');
