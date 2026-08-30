@@ -61,9 +61,9 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer.withOpacity(0.12),
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: colorScheme.onSurface.withOpacity(0.08)),
+                  border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.08)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -82,7 +82,7 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
                       'Tap below to launch a hands-on security simulation experience in one clean screen. You will be presented with a series of scenarios that test your ability to identify and respond to potential security threats.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.72),
+                        color: colorScheme.onSurface.withValues(alpha: 0.72),
                         fontSize: 16,
                         height: 1.5,
                       ),
@@ -122,7 +122,7 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
               const SizedBox(height: 30),
               Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                color: colorScheme.primaryContainer.withOpacity(0.08),
+                color: colorScheme.primaryContainer.withValues(alpha: 0.08),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -162,7 +162,7 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
           height: 32,
           width: 32,
           decoration: BoxDecoration(
-            color: colorScheme.secondary.withOpacity(0.16),
+            color: colorScheme.secondary.withValues(alpha: 0.16),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, size: 18, color: colorScheme.secondary),
@@ -172,7 +172,7 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
           child: Text(
             text,
             style: TextStyle(
-              color: colorScheme.onSurface.withOpacity(0.78),
+              color: colorScheme.onSurface.withValues(alpha: 0.78),
               fontSize: 14,
             ),
           ),

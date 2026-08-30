@@ -11,7 +11,7 @@ class LeaderboardPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -35,17 +35,17 @@ class LeaderboardPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isCurrentUser ? accentColor.withOpacity(0.14) : colorScheme.primaryContainer.withOpacity(0.08),
+        color: isCurrentUser ? accentColor.withValues(alpha: 0.14) : colorScheme.primaryContainer.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isCurrentUser ? accentColor.withOpacity(0.35) : colorScheme.onSurface.withOpacity(0.06),
+          color: isCurrentUser ? accentColor.withValues(alpha: 0.35) : colorScheme.onSurface.withValues(alpha: 0.06),
         ),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         leading: CircleAvatar(
           radius: 24,
-          backgroundColor: accentColor.withOpacity(0.17),
+          backgroundColor: accentColor.withValues(alpha: 0.17),
           child: Text(
             '$rank',
             style: TextStyle(
@@ -65,7 +65,7 @@ class LeaderboardPage extends StatelessWidget {
         subtitle: Text(
           '$points points',
           style: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.72),
+            color: colorScheme.onSurface.withValues(alpha: 0.72),
             fontSize: 13,
           ),
         ),
@@ -110,7 +110,7 @@ class LeaderboardPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: appColors?.cardBackground ?? colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: colorScheme.onSurface.withOpacity(0.08)),
+                border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.08)),
               ),
               child: Row(
                 children: [
@@ -121,7 +121,7 @@ class LeaderboardPage extends StatelessWidget {
                         Text(
                           'Top Performer',
                           style: TextStyle(
-                            color: colorScheme.onSurface.withOpacity(0.7),
+                            color: colorScheme.onSurface.withValues(alpha: 0.7),
                             fontSize: 13,
                           ),
                         ),
@@ -138,7 +138,7 @@ class LeaderboardPage extends StatelessWidget {
                         Text(
                           '1980 points',
                           style: TextStyle(
-                            color: colorScheme.onSurface.withOpacity(0.72),
+                            color: colorScheme.onSurface.withValues(alpha: 0.72),
                           ),
                         ),
                       ],
@@ -183,7 +183,7 @@ class LeaderboardPage extends StatelessWidget {
                         Text(
                           'Your Current Rank',
                           style: TextStyle(
-                            color: colorScheme.onPrimaryContainer.withOpacity(0.85),
+                            color: colorScheme.onPrimaryContainer.withValues(alpha: 0.85),
                             fontSize: 12,
                           ),
                         ),
@@ -214,7 +214,7 @@ class LeaderboardPage extends StatelessWidget {
                         Text(
                           'This Week',
                           style: TextStyle(
-                            color: colorScheme.onSecondaryContainer.withOpacity(0.85),
+                            color: colorScheme.onSecondaryContainer.withValues(alpha: 0.85),
                             fontSize: 12,
                           ),
                         ),

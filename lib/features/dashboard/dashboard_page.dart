@@ -447,7 +447,6 @@ class _DashboardPageState extends State<DashboardPage>
   Widget build(BuildContext context) {
     final appColors = Theme.of(context).extension<AppColors>();
     final colorScheme = Theme.of(context).colorScheme;
-    final totalXp = XpManager.instance.totalXp;
 
     final courses = [
       {
@@ -520,7 +519,7 @@ class _DashboardPageState extends State<DashboardPage>
 
     return ValueListenableBuilder<int>(
       valueListenable: XpManager.instance.xpNotifier,
-      builder: (context, _, __) {
+      builder: (context, _, _) {
         final totalXp = XpManager.instance.totalXp;
 
         return Scaffold(
@@ -594,166 +593,163 @@ class _DashboardPageState extends State<DashboardPage>
                                       width: 3,
                                     ),
                                   ),
-                              child: Center(
-                                child: Icon(
-                                  course['icon'] as IconData,
-                                  color: colorScheme.onPrimary,
-                                  size: 26,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              progress == 1.0
-                                  ? 'Done'
-                                  : '${(progress * 100).toInt()}%',
-                              style: TextStyle(
-                                color: colorScheme.onSurface.withValues(
-                                  alpha: 0.7,
-                                ),
-                                fontSize: 11,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color:
-                                  appColors?.cardBackground ??
-                                  colorScheme.surface,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: colorScheme.outline),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  course['title'] as String,
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  course['desc'] as String,
-                                  style: TextStyle(
-                                    color:
-                                        appColors?.featureSubtitle ??
-                                        colorScheme.onSurface.withValues(
-                                          alpha: 0.7,
-                                        ),
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: LinearProgressIndicator(
-                                    value: progress,
-                                    backgroundColor: colorScheme.onSurface
-                                        .withValues(alpha: 0.15),
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      progress == 1.0
-                                          ? colorScheme.primary
-                                          : course['color'] as Color,
+                                  child: Center(
+                                    child: Icon(
+                                      course['icon'] as IconData,
+                                      color: colorScheme.onPrimary,
+                                      size: 26,
                                     ),
-                                    minHeight: 4,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  progress == 1.0
+                                      ? 'Done'
+                                      : '${(progress * 100).toInt()}%',
+                                  style: TextStyle(
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.7,
+                                    ),
+                                    fontSize: 11,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: appColors?.cardBackground ??
+                                      colorScheme.surface,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: colorScheme.outline),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      course['title'] as String,
+                                      style: TextStyle(
+                                        color: colorScheme.onSurface,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      course['desc'] as String,
+                                      style: TextStyle(
+                                        color: appColors?.featureSubtitle ??
+                                            colorScheme.onSurface.withValues(
+                                              alpha: 0.7,
+                                            ),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: LinearProgressIndicator(
+                                        value: progress,
+                                        backgroundColor: colorScheme.onSurface
+                                            .withValues(alpha: 0.15),
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                          progress == 1.0
+                                              ? colorScheme.primary
+                                              : course['color'] as Color,
+                                        ),
+                                        minHeight: 4,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+              GridView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: tools.length,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 300,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 1.1,
+                ),
+                itemBuilder: (context, index) {
+                  final tool = tools[index];
+                  return Ink(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: appColors?.cardBackground ?? colorScheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: colorScheme.outline),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        final String? connectedPage =
+                            tool['connectedPage'] as String?;
+                        if (connectedPage != null) {
+                          Navigator.pushNamed(context, connectedPage);
+                        }
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: (tool['color'] as Color).withValues(
+                                alpha: 0.15,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              tool['icon'] as IconData,
+                              color: tool['color'] as Color,
+                              size: 28,
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                tool['title'] as String,
+                                style: TextStyle(
+                                  color: colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                tool['subtitle'] as String,
+                                style: TextStyle(
+                                  color: appColors?.featureSubtitle ??
+                                      colorScheme.onSurface.withValues(alpha: 0.7),
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
               ),
+              _buildAnalyticsPage(colorScheme, appColors, totalXp),
             ],
           ),
-
-          GridView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: tools.length,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 300,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 1.1,
-            ),
-            itemBuilder: (context, index) {
-              final tool = tools[index];
-              return Ink(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: appColors?.cardBackground ?? colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: colorScheme.outline),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    final String? connectedPage =
-                        tool['connectedPage'] as String?;
-                    if (connectedPage != null) {
-                      Navigator.pushNamed(context, connectedPage);
-                    }
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: (tool['color'] as Color).withValues(
-                            alpha: 0.15,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          tool['icon'] as IconData,
-                          color: tool['color'] as Color,
-                          size: 28,
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            tool['title'] as String,
-                            style: TextStyle(
-                              color: colorScheme.onSurface,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            tool['subtitle'] as String,
-                            style: TextStyle(
-                              color:
-                                  appColors?.featureSubtitle ??
-                                  colorScheme.onSurface.withValues(alpha: 0.7),
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-
-          _buildAnalyticsPage(colorScheme, appColors, totalXp),
-        ],
-      ),
+        );
+      },
     );
   }
 }
