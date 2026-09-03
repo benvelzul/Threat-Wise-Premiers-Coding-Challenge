@@ -52,8 +52,6 @@ class _ChatbotPageState extends State<ChatbotPage> {
     if (text.isEmpty || _isLoading) return;
 
     _controller.clear();
-
-    // 1. Add user message to UI and set loading state
     setState(() {
       _messages.add(_ChatMessage(text: text, isUser: true));
       _isLoading = true;

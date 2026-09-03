@@ -22,7 +22,7 @@ Our dashboard serves as the central hub, granting quick access to our core inter
 * **AI Chatbot:** Learn directly about emerging cyber threats in an interactive Q&A format.
 * **Attack Simulator:** A realistic email interface where users can safely practice spotting phishing and social engineering tactics. 
 * **Password Checker:** Real-time feedback on user passwords, teaching them how to build uncrackable credentials.
-* **Mini Games:** Quick, engaging "Spot the Threat" challenges to reinforce safety habits.
+* **Mascot:** Our own mascot just like duolingo help users feel more engaged and creates a trademark for the app. 
 * **Progress & Analytics Tracker:** A visual progress system ensuring users stay motivated as they continue their learning journey.
 
 ---
@@ -31,6 +31,7 @@ Our dashboard serves as the central hub, granting quick access to our core inter
 
 * **Phishing Simulation:** The email simulator dynamically generates mock phishing scenarios (e.g., fake banking alerts, urgent delivery scams) and tests whether the user can correctly identify red flags like mismatched URLs or urgent language.
 * **Password Strength Algorithm:** The password checker evaluates input text in real-time, checking for length, uppercase letters, numbers, and special characters to teach users the anatomy of a strong credential.
+* **AI chatbot:** The chatbot works using Gemini API and its prompted to be only for cybersecurity related stuff, 
 
 
 ### Tech Stack & Architecture
@@ -38,7 +39,8 @@ Our dashboard serves as the central hub, granting quick access to our core inter
 | Component | Technology | Description |
 | :--- | :--- | :--- |
 | **Frontend Framework** | Flutter & Dart | Cross-platform UI development |
-| **Animation and Graphics design** | Adobe Illustrator | A digital design software to make the mascots and some icons |
+| **Graphics design** | Adobe Illustrator | A digital design software to make the mascots and some icons |
+| **Animations** | Rive | Digital software to animate our mascot |
 
 ```text
 lib/
@@ -80,6 +82,17 @@ lib/
     **The Challenge**: We struggled with adding an image to the app because we were new to this. And because we wanted to make it have a shadow but it kept showing a box instead of the siluete. 
 
     **The Solution**: We reserached how we could make the shadow a silluete instead of the box behind it. We found you could use a function to make the image blurred behind the actual image (with an offset) and it now works. 
+
+* 
+    **The Challenge**: We struggled making the grading system and the simulater with the multiple selection and with the use of lists since its the first time using them and they are a little different from other languages. 
+
+    **The Solution**: We just pushed through google-ing any problem we had until the Simulator was as good as we wanted.
+
+
+* 
+    **The Challenge**: We struggled at the end of the challenge whne it was about to end because we didn't have any courses to present.
+
+    **The Solution**: But we asked lots of our friends to help us build courses for the app, the courses could be about any cybersecurity concept they wanted so it was a nice activity and it helped them learn too. 
 
 ---
 
@@ -160,6 +173,12 @@ Submitted for the Premier's Coding Challenge (QLD).
 * Belinda Bretherton 
 * Matthew Sutherland
 
+### Extra Credits 
+
+* ChatGPT - personal instructr on how Flutter works
+* Matthew Sutherland - Writer of cybersecurity courses
+
+
 ## AI usage
 
-This project used AI to research and understand concepts of cyber security, algorithims, and flutter (and dart). And some texts like the README was polished by AI to correct gramar and sound more professional. 
+This project used AI to research and understand concepts of cyber security, algorithims, and Flutter (and Dart). And some texts like the README was polished by AI to correct grammar (as you can see in this paragraph no AI polished it) and sound more professional. 
