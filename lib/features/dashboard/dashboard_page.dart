@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 import '../../core/theme.dart';
@@ -27,8 +29,28 @@ class _DashboardPageState extends State<DashboardPage>
   OverlayEntry? _overlayEntry;
   late final AnimationController _floatController;
 
-  // Starting position of the floating image
   Offset _offset = const Offset(50, 100);
+
+  List<Map<String, dynamic>> _dynamicCourses = [];
+  bool _isLoadingCourses = true;
+
+  final List<IconData> _courseIcons = [
+    Icons.menu_book_outlined,
+    Icons.security_outlined,
+    Icons.shield_outlined,
+    Icons.lan_outlined,
+    Icons.phishing_outlined,
+    Icons.devices_outlined,
+  ];
+
+  final List<Color> _courseColors = [
+    Colors.blue,
+    Colors.teal,
+    Colors.orange,
+    Colors.indigo,
+    Colors.red,
+    Colors.green,
+  ];
 
   @override
   void initState() {
@@ -43,18 +65,17 @@ class _DashboardPageState extends State<DashboardPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showFloatingImage(context);
     });
+    _loadCoursesFromAssets();
   }
 
   @override
   void dispose() {
-    // Clean up the overlay when the widget is destroyed
     _floatController.dispose();
     _overlayEntry?.remove();
     super.dispose();
   }
 
   void showFloatingImage(BuildContext context) {
-    // 1. Create a local position variable that the StatefulBuilder can manipulate directly
     Offset localOffset = _offset;
 
     _overlayEntry = OverlayEntry(
@@ -143,6 +164,58 @@ class _DashboardPageState extends State<DashboardPage>
     );
 
     Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  Future<void> _loadCoursesFromAssets() async {
+    try {
+      final manifestJson = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestJson);
+
+      final coursePaths = manifestMap.keys.where(
+        (String key) =>
+            key.startsWith('assets/courses/') && key.endsWith('.md'),
+      );
+
+      List<Map<String, dynamic>> loadedCourses = [];
+      final random = math.Random();
+
+      for (String path in coursePaths) {
+        final String content = await rootBundle.loadString(path);
+        final lines = content
+            .split('\n')
+            .map((line) => line.trim())
+            .where((line) => line.isNotEmpty)
+            .toList();
+        final titleLine = lines.firstWhere(
+          (line) => line.startsWith('#'),
+          orElse: () => path.split('/').last,
+        );
+        final title = titleLine.replaceFirst(RegExp(r'^#+\s*'), '').trim();
+        final description = lines
+            .firstWhere(
+              (line) => !line.startsWith('#'),
+              orElse: () => 'Explore this cybersecurity course.',
+            )
+            .replaceAll(RegExp(r'[*_`]'), '');
+
+        loadedCourses.add({
+          'title': title,
+          'desc': description,
+          'icon': _courseIcons[random.nextInt(_courseIcons.length)],
+          'progress': 0.0,
+          'color': _courseColors[random.nextInt(_courseColors.length)],
+        });
+      }
+
+      setState(() {
+        _dynamicCourses = loadedCourses;
+        _isLoadingCourses = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingCourses = false;
+      });
+    }
   }
 
   Widget _buildAnalyticsMetric({
@@ -448,30 +521,6 @@ class _DashboardPageState extends State<DashboardPage>
     final appColors = Theme.of(context).extension<AppColors>();
     final colorScheme = Theme.of(context).colorScheme;
 
-    final courses = [
-      {
-        'title': 'Introduction o Cyber Threatst',
-        'desc': 'Chat with AI to learn security fundamentals.',
-        'icon': Icons.chat_bubble_outline,
-        'progress': 1.0,
-        'color': appColors?.featureChat ?? colorScheme.secondary,
-      },
-      {
-        'title': 'Social Engineering Tactics',
-        'desc': 'Understand human exploitation frameworks.',
-        'icon': Icons.people_outline,
-        'progress': 0.3,
-        'color': appColors?.featureGames ?? colorScheme.tertiary,
-      },
-      {
-        'title': 'Network Security Foundations',
-        'desc': 'Deep dive into data streams and encryption.',
-        'icon': Icons.lan_outlined,
-        'progress': 0.0,
-        'color': appColors?.featureSimulator ?? colorScheme.primary,
-      },
-    ];
-
     final tools = [
       {
         'title': 'Email Analyzer',
@@ -546,9 +595,8 @@ class _DashboardPageState extends State<DashboardPage>
                 child: TabBar(
                   controller: _tabController,
                   labelColor: colorScheme.onPrimaryContainer,
-                  unselectedLabelColor: colorScheme.onPrimaryContainer.withValues(
-                    alpha: 0.6,
-                  ),
+                  unselectedLabelColor: colorScheme.onPrimaryContainer
+                      .withValues(alpha: 0.6),
                   tabs: const [
                     Tab(text: 'COURSES'),
                     Tab(text: 'PRACTICE TOOLS'),
@@ -563,114 +611,126 @@ class _DashboardPageState extends State<DashboardPage>
             children: [
               Stack(
                 children: [
-                  ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 24,
-                      horizontal: 16,
-                    ),
-                    itemCount: courses.length,
-                    itemBuilder: (context, index) {
-                      final course = courses[index];
-                      final double progress = course['progress'] as double;
-
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 24.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              children: [
-                                Container(
-                                  width: 70,
-                                  height: 70,
+                  if (_isLoadingCourses)
+                    const Center(child: CircularProgressIndicator())
+                  else if (_dynamicCourses.isEmpty)
+                    const Center(child: Text('No courses found.'))
+                  else
+                    ListView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 24,
+                        horizontal: 16,
+                      ),
+                      itemCount:
+                          _dynamicCourses.length, // Uses dynamic list length
+                      itemBuilder: (context, index) {
+                        final course =
+                            _dynamicCourses[index]; // Uses loaded item
+                        final progress = 0.5;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 24.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    width: 70,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                      color: course['color'] as Color,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: progress == 1.0
+                                            ? colorScheme.primary
+                                            : course['color'] as Color,
+                                        width: 3,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        course['icon'] as IconData,
+                                        color: colorScheme.onPrimary,
+                                        size: 26,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    progress == 1.0
+                                        ? 'Done'
+                                        : '${(progress * 100).toInt()}%',
+                                    style: TextStyle(
+                                      color: colorScheme.onSurface.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: course['color'] as Color,
-                                    shape: BoxShape.circle,
+                                    color:
+                                        appColors?.cardBackground ??
+                                        colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: progress == 1.0
-                                          ? colorScheme.primary
-                                          : course['color'] as Color,
-                                      width: 3,
+                                      color: colorScheme.outline,
                                     ),
                                   ),
-                                  child: Center(
-                                    child: Icon(
-                                      course['icon'] as IconData,
-                                      color: colorScheme.onPrimary,
-                                      size: 26,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  progress == 1.0
-                                      ? 'Done'
-                                      : '${(progress * 100).toInt()}%',
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface.withValues(
-                                      alpha: 0.7,
-                                    ),
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: appColors?.cardBackground ??
-                                      colorScheme.surface,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: colorScheme.outline),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      course['title'] as String,
-                                      style: TextStyle(
-                                        color: colorScheme.onSurface,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      course['desc'] as String,
-                                      style: TextStyle(
-                                        color: appColors?.featureSubtitle ??
-                                            colorScheme.onSurface.withValues(
-                                              alpha: 0.7,
-                                            ),
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: LinearProgressIndicator(
-                                        value: progress,
-                                        backgroundColor: colorScheme.onSurface
-                                            .withValues(alpha: 0.15),
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          progress == 1.0
-                                              ? colorScheme.primary
-                                              : course['color'] as Color,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        course['title'] as String,
+                                        style: TextStyle(
+                                          color: colorScheme.onSurface,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
                                         ),
-                                        minHeight: 4,
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        course['desc'] as String,
+                                        style: TextStyle(
+                                          color:
+                                              appColors?.featureSubtitle ??
+                                              colorScheme.onSurface.withValues(
+                                                alpha: 0.7,
+                                              ),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: LinearProgressIndicator(
+                                          value: progress,
+                                          backgroundColor: colorScheme.onSurface
+                                              .withValues(alpha: 0.15),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                progress == 1.0
+                                                    ? colorScheme.primary
+                                                    : course['color'] as Color,
+                                              ),
+                                          minHeight: 4,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                 ],
               ),
               GridView.builder(
@@ -732,8 +792,11 @@ class _DashboardPageState extends State<DashboardPage>
                               Text(
                                 tool['subtitle'] as String,
                                 style: TextStyle(
-                                  color: appColors?.featureSubtitle ??
-                                      colorScheme.onSurface.withValues(alpha: 0.7),
+                                  color:
+                                      appColors?.featureSubtitle ??
+                                      colorScheme.onSurface.withValues(
+                                        alpha: 0.7,
+                                      ),
                                   fontSize: 11,
                                 ),
                               ),

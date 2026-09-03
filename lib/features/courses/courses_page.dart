@@ -8,7 +8,7 @@ class CourseDetailsPage extends StatelessWidget {
 
   const CourseDetailsPage({
     super.key,
-    this.assetPath = 'assets/courses/course1.md',
+    this.assetPath = 'assets/courses/information/course1.md',
   });
 
   Future<String> _loadMarkdownData() async {
