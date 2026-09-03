@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'simulator_page.dart';
-import '../widgets/cinematic_band_anim.dart';
 
 class StartSimulatorPage extends StatefulWidget {
   static const routeName = '/start-simulator';
@@ -8,31 +7,9 @@ class StartSimulatorPage extends StatefulWidget {
   const StartSimulatorPage({super.key});
   @override
   State<StartSimulatorPage> createState() => _StartSimulatorPageState();
-
 }
 
-class _StartSimulatorPageState extends State<StartSimulatorPage>{
-
-  OverlayEntry? _transitionOverlay;
-
-  void _triggerSceneTransition(String message, int duration) {
-    if (_transitionOverlay != null) return;
-
-    _transitionOverlay = OverlayEntry(
-      builder: (context) => AngledBandTransition(
-        message: message, 
-        onComplete: () {
-          _transitionOverlay?.remove();
-          _transitionOverlay = null;
-        },
-        duration: duration,
-      ),
-    );
-
-    Overlay.of(context).insert(_transitionOverlay!);
-  }
-
-
+class _StartSimulatorPageState extends State<StartSimulatorPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -63,7 +40,9 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
                 decoration: BoxDecoration(
                   color: colorScheme.primaryContainer.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.08)),
+                  border: Border.all(
+                    color: colorScheme.onSurface.withValues(alpha: 0.08),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,19 +69,16 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
                     const SizedBox(height: 28),
                     ElevatedButton(
                       onPressed: () async {
-                        for (int i = 3; i >= 1; i--) {
-                          _triggerSceneTransition('$i', 900);
-                          await Future.delayed(const Duration(seconds: 1));
-                        }
-                        _triggerSceneTransition('Start', 2000);
-                        await Future.delayed(const Duration(milliseconds: 2000));
                         if (context.mounted) {
                           Navigator.pushNamed(context, SimulatorPage.routeName);
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.secondary,
-                        padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 36,
+                          vertical: 16,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -121,7 +97,9 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
               ),
               const SizedBox(height: 30),
               Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
                 color: colorScheme.primaryContainer.withValues(alpha: 0.08),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -137,11 +115,23 @@ class _StartSimulatorPageState extends State<StartSimulatorPage>{
                         ),
                       ),
                       const SizedBox(height: 14),
-                      _buildFeatureRow(context, Icons.lock_outline, 'Phishing awareness challenge'),
+                      _buildFeatureRow(
+                        context,
+                        Icons.lock_outline,
+                        'Phishing awareness challenge',
+                      ),
                       const SizedBox(height: 12),
-                      _buildFeatureRow(context, Icons.insights_outlined, 'Interactive threat decision-making'),
+                      _buildFeatureRow(
+                        context,
+                        Icons.insights_outlined,
+                        'Interactive threat decision-making',
+                      ),
                       const SizedBox(height: 12),
-                      _buildFeatureRow(context, Icons.lightbulb_outline, 'Real-time security tips'),
+                      _buildFeatureRow(
+                        context,
+                        Icons.lightbulb_outline,
+                        'Real-time security tips',
+                      ),
                     ],
                   ),
                 ),
