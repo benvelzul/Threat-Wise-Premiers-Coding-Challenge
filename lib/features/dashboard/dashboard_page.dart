@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 import '../../core/theme.dart';
@@ -12,6 +10,7 @@ import '../password_system/password_page.dart';
 import '../simulator/setup_page.dart';
 import '../incident_report/report_page.dart';
 import '../widgets/make_image.dart';
+import '../courses/courses_page.dart';
 
 class DashboardPage extends StatefulWidget {
   static const routeName = '/';
@@ -31,25 +30,23 @@ class _DashboardPageState extends State<DashboardPage>
 
   Offset _offset = const Offset(50, 100);
 
-  List<Map<String, dynamic>> _dynamicCourses = [];
-  bool _isLoadingCourses = true;
-
-  final List<IconData> _courseIcons = [
-    Icons.menu_book_outlined,
-    Icons.security_outlined,
-    Icons.shield_outlined,
-    Icons.lan_outlined,
-    Icons.phishing_outlined,
-    Icons.devices_outlined,
-  ];
-
-  final List<Color> _courseColors = [
-    Colors.blue,
-    Colors.teal,
-    Colors.orange,
-    Colors.indigo,
-    Colors.red,
-    Colors.green,
+  final List<Map<String, dynamic>> _courses = [
+    {
+      'title': 'Fundamentals of VoIP/SIP Systems',
+      'desc': 'Learn the fundamentals of VoIP, SIP, and network protocols.',
+      'icon': Icons.menu_book_outlined,
+      'progress': 0.0,
+      'color': Colors.blue,
+      'assetPath': 'assets/courses/course1.md',
+    },
+    {
+      'title': 'Test',
+      'desc': 'Learn how to secure VoIP/SIP systems and prevent attacks.',
+      'icon': Icons.security_outlined,
+      'progress': 0.0,
+      'color': Colors.green,
+      'assetPath': 'assets/courses/course2.md',
+    },
   ];
 
   @override
@@ -65,7 +62,6 @@ class _DashboardPageState extends State<DashboardPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showFloatingImage(context);
     });
-    _loadCoursesFromAssets();
   }
 
   @override
@@ -164,58 +160,6 @@ class _DashboardPageState extends State<DashboardPage>
     );
 
     Overlay.of(context).insert(_overlayEntry!);
-  }
-
-  Future<void> _loadCoursesFromAssets() async {
-    try {
-      final manifestJson = await rootBundle.loadString('AssetManifest.json');
-      final Map<String, dynamic> manifestMap = json.decode(manifestJson);
-
-      final coursePaths = manifestMap.keys.where(
-        (String key) =>
-            key.startsWith('assets/courses/') && key.endsWith('.md'),
-      );
-
-      List<Map<String, dynamic>> loadedCourses = [];
-      final random = math.Random();
-
-      for (String path in coursePaths) {
-        final String content = await rootBundle.loadString(path);
-        final lines = content
-            .split('\n')
-            .map((line) => line.trim())
-            .where((line) => line.isNotEmpty)
-            .toList();
-        final titleLine = lines.firstWhere(
-          (line) => line.startsWith('#'),
-          orElse: () => path.split('/').last,
-        );
-        final title = titleLine.replaceFirst(RegExp(r'^#+\s*'), '').trim();
-        final description = lines
-            .firstWhere(
-              (line) => !line.startsWith('#'),
-              orElse: () => 'Explore this cybersecurity course.',
-            )
-            .replaceAll(RegExp(r'[*_`]'), '');
-
-        loadedCourses.add({
-          'title': title,
-          'desc': description,
-          'icon': _courseIcons[random.nextInt(_courseIcons.length)],
-          'progress': 0.0,
-          'color': _courseColors[random.nextInt(_courseColors.length)],
-        });
-      }
-
-      setState(() {
-        _dynamicCourses = loadedCourses;
-        _isLoadingCourses = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoadingCourses = false;
-      });
-    }
   }
 
   Widget _buildAnalyticsMetric({
@@ -609,129 +553,127 @@ class _DashboardPageState extends State<DashboardPage>
           body: TabBarView(
             controller: _tabController,
             children: [
-              Stack(
-                children: [
-                  if (_isLoadingCourses)
-                    const Center(child: CircularProgressIndicator())
-                  else if (_dynamicCourses.isEmpty)
-                    const Center(child: Text('No courses found.'))
-                  else
-                    ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 24,
-                        horizontal: 16,
-                      ),
-                      itemCount:
-                          _dynamicCourses.length, // Uses dynamic list length
-                      itemBuilder: (context, index) {
-                        final course =
-                            _dynamicCourses[index]; // Uses loaded item
-                        final progress = 0.5;
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 24.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+              ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 24,
+                  horizontal: 16,
+                ),
+                itemCount: _courses.length,
+                itemBuilder: (context, index) {
+                  final course = _courses[index];
+                  final progress = course['progress'] as double;
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => CourseDetailsPage(
+                            assetPath: course['assetPath'] as String,
+                          ),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
                             children: [
-                              Column(
-                                children: [
-                                  Container(
-                                    width: 70,
-                                    height: 70,
-                                    decoration: BoxDecoration(
-                                      color: course['color'] as Color,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: progress == 1.0
-                                            ? colorScheme.primary
-                                            : course['color'] as Color,
-                                        width: 3,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        course['icon'] as IconData,
-                                        color: colorScheme.onPrimary,
-                                        size: 26,
-                                      ),
-                                    ),
+                              Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: course['color'] as Color,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: progress == 1.0
+                                        ? colorScheme.primary
+                                        : course['color'] as Color,
+                                    width: 3,
                                   ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    progress == 1.0
-                                        ? 'Done'
-                                        : '${(progress * 100).toInt()}%',
-                                    style: TextStyle(
-                                      color: colorScheme.onSurface.withValues(
-                                        alpha: 0.7,
-                                      ),
-                                      fontSize: 11,
-                                    ),
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    course['icon'] as IconData,
+                                    color: colorScheme.onPrimary,
+                                    size: 26,
                                   ),
-                                ],
+                                ),
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        appColors?.cardBackground ??
-                                        colorScheme.surface,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: colorScheme.outline,
-                                    ),
+                              const SizedBox(height: 6),
+                              Text(
+                                progress == 1.0
+                                    ? 'Done'
+                                    : '${(progress * 100).toInt()}%',
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.7,
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        course['title'] as String,
-                                        style: TextStyle(
-                                          color: colorScheme.onSurface,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        course['desc'] as String,
-                                        style: TextStyle(
-                                          color:
-                                              appColors?.featureSubtitle ??
-                                              colorScheme.onSurface.withValues(
-                                                alpha: 0.7,
-                                              ),
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(4),
-                                        child: LinearProgressIndicator(
-                                          value: progress,
-                                          backgroundColor: colorScheme.onSurface
-                                              .withValues(alpha: 0.15),
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                progress == 1.0
-                                                    ? colorScheme.primary
-                                                    : course['color'] as Color,
-                                              ),
-                                          minHeight: 4,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  fontSize: 11,
                                 ),
                               ),
                             ],
                           ),
-                        );
-                      },
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color:
+                                    appColors?.cardBackground ??
+                                    colorScheme.surface,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: colorScheme.outline),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    course['title'] as String,
+                                    style: TextStyle(
+                                      color: colorScheme.onSurface,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    course['desc'] as String,
+                                    style: TextStyle(
+                                      color:
+                                          appColors?.featureSubtitle ??
+                                          colorScheme.onSurface.withValues(
+                                            alpha: 0.7,
+                                          ),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: LinearProgressIndicator(
+                                      value: progress,
+                                      backgroundColor: colorScheme.onSurface
+                                          .withValues(alpha: 0.15),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        progress == 1.0
+                                            ? colorScheme.primary
+                                            : course['color'] as Color,
+                                      ),
+                                      minHeight: 4,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                ],
+                  );
+                },
               ),
               GridView.builder(
                 padding: const EdgeInsets.all(16),

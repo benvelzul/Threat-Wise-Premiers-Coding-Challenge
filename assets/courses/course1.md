@@ -26,13 +26,13 @@ What does the acronym VoIP stand for?
 **Difficulty:** easy
 **Points:** 10
 
-- [] Voice over Internal Protocol
+- [ ] Voice over Internal Protocol
 
 - [x] Voice over Internet Protocol
 
-- [] Virtual Online IP Phone
+- [ ] Virtual Online IP Phone
 
-- [] Variable Output Interface Protocol
+- [ ] Variable Output Interface Protocol
 
 ### Question 2
 Why is UDP (User Datagram Protocol) usually preferred over TCP for VoIP calls?
@@ -40,13 +40,13 @@ Why is UDP (User Datagram Protocol) usually preferred over TCP for VoIP calls?
 **Difficulty:** medium
 **Points:** 10
 
-- [] UDP guarantees every packet arrives without loss
+- [ ] UDP guarantees every packet arrives without loss
 
-- [] UDP is cheaper to implement across a LAN
+- [ ] UDP is cheaper to implement across a LAN
 
 - [x] Speed is prioritized over accuracy in real-time voice calls
 
-- [] UDP encrypts the audio content automatically
+- [ ] UDP encrypts the audio content automatically
 
 ### Question 3
 What is the primary advantage of TCP compared to UDP?
@@ -54,13 +54,13 @@ What is the primary advantage of TCP compared to UDP?
 **Difficulty:** medium
 **Points:** 10
 
-- [] It delivers faster transmission speeds
+- [ ] It delivers faster transmission speeds
 
-- [] It reduces overall network bandwidth consumption
+- [ ] It reduces overall network bandwidth consumption
 
 - [x] It is more reliable in ensuring packets reach their destination
 
-- [] It is required for high-definition voice codecs
+- [ ] It is required for high-definition voice codecs
 
 ### Question 4
 Which audio codec is recognized as the universal standard for traditional IP telephone systems?
@@ -70,11 +70,11 @@ Which audio codec is recognized as the universal standard for traditional IP tel
 
 - [x] G.711 (u-law)
 
-- [] G.729 (A-Law)
+- [ ] G.729 (A-Law)
 
-- [] G.722 (HD Voice)
+- [ ] G.722 (HD Voice)
 
-- [] AAC-LD
+- [ ] AAC-LD
 
 ### Question 5
 What is the main benefit of using the G.729 (A-Law) audio codec?
@@ -82,13 +82,13 @@ What is the main benefit of using the G.729 (A-Law) audio codec?
 **Difficulty:** medium
 **Points:** 10
 
-- [] It offers the highest fidelity and audio clarity
+- [ ] It offers the highest fidelity and audio clarity
 
 - [x] It is highly compressed, which saves network bandwidth
 
-- [] It operates without using IP packets
+- [ ] It operates without using IP packets
 
-- [] It allows video and audio to sync automatically
+- [ ] It allows video and audio to sync automatically
 
 ### Question 6
 Which audio codec provides the best sound quality ("HD Voice") on modern IP phones?
@@ -96,13 +96,13 @@ Which audio codec provides the best sound quality ("HD Voice") on modern IP phon
 **Difficulty:** easy
 **Points:** 10
 
-- [] G.711
+- [ ] G.711
 
-- [] G.729
+- [ ] G.729
 
 - [x] G.722
 
-- [] UDP-Audio
+- [ ] UDP-Audio
 
 ### Question 7
 How do internal VoIP calls differ from external VoIP calls?
@@ -110,13 +110,13 @@ How do internal VoIP calls differ from external VoIP calls?
 **Difficulty:** medium
 **Points:** 10
 
-- [] Internal calls require a PSTN connection, while external calls do not
+- [ ] Internal calls require a PSTN connection, while external calls do not
 
 - [x] Internal calls take place within the same LAN; external calls connect offsite over a WAN
 
-- [] Internal calls use TCP, while external calls must use UDP
+- [ ] Internal calls use TCP, while external calls must use UDP
 
-- [] Internal calls only support video, while external calls only support audio
+- [ ] Internal calls only support video, while external calls only support audio
 
 ### Question 8
 What service is required to enable external VoIP calling to phone numbers outside your network?
@@ -124,13 +124,13 @@ What service is required to enable external VoIP calling to phone numbers outsid
 **Difficulty:** medium
 **Points:** 10
 
-- [] Local Area Network (LAN)
+- [ ] Local Area Network (LAN)
 
 - [x] Public Switched Telephone Network (PSTN)
 
-- [] Self-hosted DNS Server
+- [ ] Self-hosted DNS Server
 
-- [] G.722 Codec License
+- [ ] G.722 Codec License
 
 ### Question 9
 Which of the following features is provided by VoIP systems but NOT typically found on traditional copper line systems?
@@ -138,13 +138,13 @@ Which of the following features is provided by VoIP systems but NOT typically fo
 **Difficulty:** easy
 **Points:** 10
 
-- [] Analog signaling
+- [ ] Analog signaling
 
 - [x] Auto attendant, ring groups, and intercom paging
 
-- [] Mandatory PSTN subscription for local extensions
+- [ ] Mandatory PSTN subscription for local extensions
 
-- [] Physical copper wiring between all internal extensions
+- [ ] Physical copper wiring between all internal extensions
 
 ### Question 10
 How can an integrated IP PA system benefit a large site or school during daily operations or emergencies?
@@ -152,10 +152,10 @@ How can an integrated IP PA system benefit a large site or school during daily o
 **Difficulty:** easy
 **Points:** 10
 
-- [] It converts all voice traffic from UDP to TCP automatically
+- [ ] It converts all voice traffic from UDP to TCP automatically
 
-- [] It replaces the need for a WAN or PSTN connection
+- [ ] It replaces the need for a WAN or PSTN connection
 
 - [x] It allows live announcements by zone, scheduled bells, and immediate emergency signals
 
-- [] It eliminates the need for audio codecs on the network
+- [ ] It eliminates the need for audio codecs on the network
