@@ -1,21 +1,31 @@
 import 'course_divider.dart';
 
+class QuestionResult {
+  final bool correct;
+  final int pointsEarned;
+  final int? selectedAnswer;
+  final int correctAnswer;
+
+  QuestionResult({
+    required this.correct,
+    required this.pointsEarned,
+    required this.selectedAnswer,
+    required this.correctAnswer,
+  });
+}
+
 class QuizGrader {
-  bool isCorrect({
+  QuestionResult gradeQuestion({
     required QuizQuestion question,
     required int selectedAnswer,
   }) {
-    return selectedAnswer == question.correctAnswer;
-  }
+    final correct = selectedAnswer == question.correctAnswer;
 
-  int calculatePoints({
-    required QuizQuestion question,
-    required int selectedAnswer,
-  }) {
-    if (isCorrect(question: question, selectedAnswer: selectedAnswer)) {
-      return question.points;
-    }
-
-    return 0;
+    return QuestionResult(
+      correct: correct,
+      pointsEarned: correct ? question.points : 0,
+      selectedAnswer: selectedAnswer,
+      correctAnswer: question.correctAnswer,
+    );
   }
 }

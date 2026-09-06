@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../core/theme.dart';
+import '../../core/xp_system/xp_manager.dart';
 import 'course_divider.dart';
+import 'grade_course.dart';
 
 class CourseDetailsPage extends StatefulWidget {
   static const routeName = '/courses';
@@ -19,6 +21,12 @@ class CourseDetailsPage extends StatefulWidget {
 
 class _CourseDetailsPageState extends State<CourseDetailsPage> {
   int _currentQuestionIndex = 0;
+  List<QuestionResult> _results = [];
+  final Set<int> _answeredQuestionIndexes = {};
+  bool _isShowingAnswerFeedback = false;
+
+  bool get _isCourseCompleted =>
+      XpManager.instance.isCourseCompleted(widget.assetPath);
 
   Future<Course> _loadCourse() async {
     try {
@@ -30,6 +38,127 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
     } catch (e, stacktrace) {
       debugPrint('Error loading course: $e\n$stacktrace');
       rethrow;
+    }
+  }
+
+  Future<void> _finishQuiz(Course course) async {
+    final totalPoints = _results.fold<int>(
+      0,
+      (sum, result) => sum + result.pointsEarned,
+    );
+
+    final totalPossiblePoints = course.questions.fold<int>(
+      0,
+      (sum, question) => sum + question.points,
+    );
+
+    final completedPerfectly =
+        _results.length == course.questions.length &&
+        _results.every((result) => result.correct);
+    if (completedPerfectly) {
+      await XpManager.instance.completeCourse(
+        courseId: widget.assetPath,
+        xpReward: totalPossiblePoints * 2,
+      );
+    } else if (totalPoints > 5) {
+      await XpManager.instance.addXp(totalPoints);
+    }
+
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            completedPerfectly ? 'Course Completed' : 'Quiz Completed',
+          ),
+          content: Text(
+            completedPerfectly
+                ? 'Perfect score! You earned $totalPoints XP.'
+                : 'Next time you will do even better! \nYou scored $totalPoints out of $totalPossiblePoints points.',
+          ),
+          actions: [
+            if (!completedPerfectly)
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _currentQuestionIndex = 0;
+                    _results.clear();
+                    _answeredQuestionIndexes.clear();
+                  });
+                },
+                child: const Text('Restart Quiz'),
+              ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Exit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleAnswerSelected(
+    Course course,
+    QuizQuestion question,
+    int selectedAnswer,
+  ) async {
+    if (_isShowingAnswerFeedback ||
+        _answeredQuestionIndexes.contains(_currentQuestionIndex)) {
+      return;
+    }
+
+    final questionIndex = _currentQuestionIndex;
+    await XpManager.instance.markCourseAttempted(widget.assetPath);
+    final result = QuizGrader().gradeQuestion(
+      question: question,
+      selectedAnswer: selectedAnswer,
+    );
+
+    setState(() {
+      _isShowingAnswerFeedback = true;
+      _answeredQuestionIndexes.add(questionIndex);
+      _results.add(result);
+    });
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(result.correct ? 'Correct!' : 'Incorrect'),
+          content: Text(
+            result.correct
+                ? 'You earned ${result.pointsEarned} points.'
+                : 'The correct answer was option ${result.correctAnswer + 1}.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _isShowingAnswerFeedback = false;
+      if (questionIndex < course.questions.length - 1) {
+        _currentQuestionIndex = questionIndex + 1;
+      }
+    });
+
+    if (questionIndex == course.questions.length - 1) {
+      await _finishQuiz(course);
     }
   }
 
@@ -109,7 +238,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
               border: Border.all(color: colorScheme.outline),
             ),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
               child: MarkdownBody(
                 data: course.information.trim().isEmpty
                     ? "# Markdown Content Was Empty\nCheck your parser logic or file content."
@@ -183,26 +312,30 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
 
           return LayoutBuilder(
             builder: (context, constraints) {
+              if (constraints.maxWidth >= 900) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: courseContent,
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: _buildQuizSection(course, theme),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
               return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
-                  child: IntrinsicHeight(
-                    child: constraints.maxWidth >= 900
-                        ? Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(child: courseContent),
-                              Expanded(child: _buildQuizSection(course, theme)),
-                            ],
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              courseContent,
-                              _buildQuizSection(course, theme),
-                            ],
-                          ),
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [courseContent, _buildQuizSection(course, theme)],
                 ),
               );
             },
@@ -223,14 +356,43 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
     }
 
     final colorScheme = theme.colorScheme;
+    final cardColor =
+        theme.extension<AppColors>()?.cardBackground ?? colorScheme.surface;
     final accentColor =
         theme.extension<AppColors>()?.featureChat ?? colorScheme.primary;
 
+    if (_isCourseCompleted) {
+      return Container(
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: cardColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: colorScheme.outline),
+        ),
+        child: Column(
+          children: [
+            Icon(Icons.verified_rounded, size: 48, color: accentColor),
+            const SizedBox(height: 12),
+            Text(
+              'Course completed',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: accentColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text('You answered every question correctly.'),
+          ],
+        ),
+      );
+    }
+
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colorScheme.outline),
       ),
@@ -254,14 +416,19 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
               style: theme.textTheme.bodyMedium,
             ),
           ),
-          _buildQuestionCard(course.questions[_currentQuestionIndex], theme),
+          _buildQuestionCard(
+            course.questions[_currentQuestionIndex],
+            course,
+            theme,
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 OutlinedButton.icon(
-                  onPressed: _currentQuestionIndex == 0
+                  onPressed:
+                      _isShowingAnswerFeedback || _currentQuestionIndex == 0
                       ? null
                       : () {
                           setState(() => _currentQuestionIndex--);
@@ -271,7 +438,8 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                 ),
                 FilledButton.icon(
                   onPressed:
-                      _currentQuestionIndex == course.questions.length - 1
+                      _isShowingAnswerFeedback ||
+                          _currentQuestionIndex == course.questions.length - 1
                       ? null
                       : () {
                           setState(() => _currentQuestionIndex++);
@@ -287,7 +455,11 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
     );
   }
 
-  Widget _buildQuestionCard(QuizQuestion question, ThemeData theme) {
+  Widget _buildQuestionCard(
+    QuizQuestion question,
+    Course course,
+    ThemeData theme,
+  ) {
     final colorScheme = theme.colorScheme;
     final accentColor =
         theme.extension<AppColors>()?.featureChat ?? colorScheme.primary;
@@ -324,6 +496,30 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
               color: colorScheme.onSurfaceVariant,
             ),
           ),
+          const SizedBox(height: 16),
+          ...List.generate(question.answers.length, (index) {
+            final answer = question.answers[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: OutlinedButton(
+                onPressed:
+                    _isShowingAnswerFeedback ||
+                        _answeredQuestionIndexes.contains(_currentQuestionIndex)
+                    ? (_results.length == course.questions.length
+                          ? () => _finishQuiz(course)
+                          : null)
+                    : () => _handleAnswerSelected(course, question, index),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: accentColor),
+                  foregroundColor: accentColor,
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(answer),
+                ),
+              ),
+            );
+          }),
         ],
       ),
     );

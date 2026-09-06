@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
-import 'dart:ui';
 import '../../core/theme.dart';
 import '../../core/xp_system/xp_manager.dart';
 import '../chatbot/chatbot_page.dart';
@@ -9,7 +7,6 @@ import '../minigames/quiz_page.dart';
 import '../password_system/password_page.dart';
 import '../simulator/setup_page.dart';
 import '../incident_report/report_page.dart';
-import '../widgets/make_image.dart';
 import '../courses/courses_page.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -24,11 +21,6 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage>
     with TickerProviderStateMixin {
   late final TabController _tabController;
-
-  OverlayEntry? _overlayEntry;
-  late final AnimationController _floatController;
-
-  Offset _offset = const Offset(50, 100);
 
   final List<Map<String, dynamic>> _courses = [
     {
@@ -52,114 +44,12 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   void initState() {
     super.initState();
-    _floatController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
-
     _tabController = TabController(length: 3, vsync: this);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showFloatingImage(context);
-    });
   }
 
   @override
   void dispose() {
-    _floatController.dispose();
-    _overlayEntry?.remove();
     super.dispose();
-  }
-
-  void showFloatingImage(BuildContext context) {
-    Offset localOffset = _offset;
-
-    _overlayEntry = OverlayEntry(
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, overlaySetState) {
-            return AnimatedBuilder(
-              animation: _floatController,
-              builder: (context, child) {
-                final floatOffset =
-                    10 * math.sin(_floatController.value * 2 * math.pi);
-
-                return Positioned(
-                  left: localOffset.dx,
-                  top: localOffset.dy + floatOffset,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      overlaySetState(() {
-                        Offset newOffset = localOffset + details.delta;
-
-                        Size screenSize = MediaQuery.of(context).size;
-
-                        double clampedX = newOffset.dx.clamp(
-                          0.0,
-                          screenSize.width - 100,
-                        );
-                        double clampedY = newOffset.dy.clamp(
-                          0.0,
-                          screenSize.height - 100,
-                        );
-
-                        localOffset = Offset(clampedX, clampedY);
-
-                        _offset = localOffset;
-                      });
-                    },
-                    child: SizedBox(
-                      width: 115,
-                      height: 115,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          //shadow
-                          Positioned(
-                            left: 5,
-                            top: 5,
-                            child: ImageFiltered(
-                              imageFilter: ImageFilter.blur(
-                                sigmaX: 4.0,
-                                sigmaY: 4.0,
-                              ),
-                              child: ColorFiltered(
-                                colorFilter: ColorFilter.mode(
-                                  Colors.black.withValues(alpha: 0.4),
-                                  BlendMode.srcIn,
-                                ),
-                                child: LocalImageWidget(
-                                  imagePath: 'assets/images/Gargoyle.png',
-                                  width: 100,
-                                  height: 100,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // image
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            child: LocalImageWidget(
-                              imagePath: 'assets/images/Gargoyle.png',
-                              width: 100,
-                              height: 100,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-
-    Overlay.of(context).insert(_overlayEntry!);
   }
 
   Widget _buildAnalyticsMetric({
@@ -561,17 +451,26 @@ class _DashboardPageState extends State<DashboardPage>
                 itemCount: _courses.length,
                 itemBuilder: (context, index) {
                   final course = _courses[index];
-                  final progress = course['progress'] as double;
+                  final courseId = course['assetPath'] as String;
+                  final isCompleted = XpManager.instance.isCourseCompleted(
+                    courseId,
+                  );
+                  final isAttempted = XpManager.instance.isCourseAttempted(
+                    courseId,
+                  );
+                  final progress = isCompleted
+                      ? 1.0
+                      : course['progress'] as double;
                   return InkWell(
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute<void>(
-                          builder: (context) => CourseDetailsPage(
-                            assetPath: course['assetPath'] as String,
-                          ),
+                          builder: (context) =>
+                              CourseDetailsPage(assetPath: courseId),
                         ),
                       );
+                      if (mounted) setState(() {});
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Padding(
@@ -604,8 +503,10 @@ class _DashboardPageState extends State<DashboardPage>
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                progress == 1.0
+                                isCompleted
                                     ? 'Done'
+                                    : isAttempted
+                                    ? 'Attempted'
                                     : '${(progress * 100).toInt()}%',
                                 style: TextStyle(
                                   color: colorScheme.onSurface.withValues(
