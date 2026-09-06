@@ -1,7 +1,3 @@
-// Password page template
-// - Displays dynamic password strength (weak/medium/strong)
-// - Prevents native browser/OS password manager autofill popups
-
 import 'package:flutter/material.dart';
 
 enum StrengthChecker { weak, medium, strong }
@@ -37,6 +33,7 @@ class PasswordPage extends StatefulWidget {
 
 class _PasswordPageState extends State<PasswordPage> {
   final _formKey = GlobalKey<FormState>();
+  bool _obscureText = true;
   final TextEditingController _passwordController = TextEditingController();
 
   StrengthChecker? _currentStrength;
@@ -46,17 +43,6 @@ class _PasswordPageState extends State<PasswordPage> {
   void dispose() {
     _passwordController.dispose();
     super.dispose();
-  }
-
-  void _onSubmit() {
-    if (_formKey.currentState?.validate() ?? false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password logic validated successfully!'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
   }
 
   String? _passwordValidator(String? value) {
@@ -103,22 +89,31 @@ class _PasswordPageState extends State<PasswordPage> {
 
     const double hashesPerSecond = 10000000000; // 10 billion
 
-    final double combinations = BigInt.from(poolSize)
-        .pow(password.length)
-        .toDouble();
+    final double combinations = BigInt.from(
+      poolSize,
+    ).pow(password.length).toDouble();
 
     final double seconds = combinations / hashesPerSecond;
 
     if (seconds < 1) return 'It would take a computer under 1 second to hack';
-    if (seconds < 60) return 'It would take a computer about ${seconds.round()} seconds to hack';
-    if (seconds < 3600) return 'It would take a computer about ${(seconds / 60).round()} minutes to hack';
-    if (seconds < 86400) return 'It would take a computer about ${(seconds / 3600).round()} hours to hack';
-    if (seconds < 31536000) return 'It would take a computer about ${(seconds / 86400).round()} days to hack';
+    if (seconds < 60) {
+      return 'It would take a computer about ${seconds.round()} seconds to hack';
+    } else if (seconds < 3600) {
+      return 'It would take a computer about ${(seconds / 60).round()} minutes to hack';
+    } else if (seconds < 86400) {
+      return 'It would take a computer about ${(seconds / 3600).round()} hours to hack';
+    } else if (seconds < 31536000) {
+      return 'It would take a computer about ${(seconds / 86400).round()} days to hack';
+    }
 
     final double years = seconds / 31536000;
-    if (years < 1000) return 'It would take a computer about ${years.round()} years to hack';
-    if (years < 1000000) return 'It would take a computer about ${(years / 1000).toStringAsFixed(1)} thousand years to hack';
-    if (years < 1000000000) return 'It would take a computer about ${(years / 1000000).toStringAsFixed(1)} million years to hack';
+    if (years < 1000) {
+      return 'It would take a computer about ${years.round()} years to hack';
+    } else if (years < 1000000) {
+      return 'It would take a computer about ${(years / 1000).toStringAsFixed(1)} thousand years to hack';
+    } else if (years < 1000000000) {
+      return 'It would take a computer about ${(years / 1000000).toStringAsFixed(1)} million years to hack';
+    }
 
     return 'It would take a computer billions of years to hack';
   }
@@ -129,6 +124,7 @@ class _PasswordPageState extends State<PasswordPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Password Checker'),
+        backgroundColor: colorScheme.primaryContainer,
       ),
       body: SafeArea(
         child: Padding(
@@ -145,16 +141,25 @@ class _PasswordPageState extends State<PasswordPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Password input field
                 TextFormField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: _obscureText,
                   autofillHints: null,
                   enableIMEPersonalizedLearning: false,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Password',
                     hintText: 'Enter your password',
                     border: OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                    ),
                   ),
                   validator: _passwordValidator,
                   onChanged: (value) {
@@ -171,7 +176,6 @@ class _PasswordPageState extends State<PasswordPage> {
 
                 const SizedBox(height: 16),
 
-                // 1. Visual Colored Strength Bar
                 Row(
                   children: [
                     Expanded(
@@ -188,7 +192,6 @@ class _PasswordPageState extends State<PasswordPage> {
 
                 const SizedBox(height: 12),
 
-                // 2. Matching Strength Status Text
                 Text(
                   _getStrengthText(),
                   style: TextStyle(
@@ -199,7 +202,6 @@ class _PasswordPageState extends State<PasswordPage> {
 
                 const SizedBox(height: 8),
 
-                // 3. Dynamic Hack Time Text (Bright white text for dark mode visibility)
                 Text(
                   _getHackTimeText(_currentPassword),
                   style: TextStyle(
@@ -210,12 +212,6 @@ class _PasswordPageState extends State<PasswordPage> {
                 ),
 
                 const SizedBox(height: 24),
-
-                // Submission/Action button
-                ElevatedButton(
-                  onPressed: _onSubmit,
-                  child: const Text('Check Password'),
-                ),
               ],
             ),
           ),

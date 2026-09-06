@@ -30,15 +30,62 @@ class _ReportPageState extends State<ReportPage> {
 
   void _submitReport() {
     if (_formKey.currentState?.validate() ?? false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Report submitted successfully.')),
+      showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Report submitted'),
+          content: const Text(
+            'Your report has been submitted successfully.\n\n'
+            'This is a demo and does not actually send an alert or report.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
     }
   }
 
   void _sendSOS() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('SOS request sent. Help is on the way.')),
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Send SOS?'),
+        content: const Text(
+          'Are you sure you want to send an SOS request?\n\n'
+          'This is a demo and does not actually contact emergency services or send an alert.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              showDialog<void>(
+                context: this.context,
+                builder: (context) => AlertDialog(
+                  title: const Text('SOS request sent'),
+                  content: const Text(
+                    'This is a demo. No actual alert or emergency request was sent.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            child: const Text('Send SOS'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -48,7 +95,7 @@ class _ReportPageState extends State<ReportPage> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.tertiary,
+        backgroundColor: colorScheme.primaryContainer,
         elevation: 0,
         title: const Text('Report an Incident'),
       ),
@@ -70,7 +117,8 @@ class _ReportPageState extends State<ReportPage> {
                   _buildTextField(
                     controller: _titleController,
                     label: 'What happened?',
-                    hintText: 'e.g. Someone walked into my office and took my badge',
+                    hintText:
+                        'e.g. Someone walked into my office and took my badge',
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please describe what happened.';
@@ -107,7 +155,8 @@ class _ReportPageState extends State<ReportPage> {
                   _buildTextField(
                     controller: _descriptionController,
                     label: 'Details',
-                    hintText: 'Tell us everything you remember about the incident',
+                    hintText:
+                        'Tell us everything you remember about the incident',
                     maxLines: 5,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -129,8 +178,9 @@ class _ReportPageState extends State<ReportPage> {
                       Expanded(
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: colorScheme.tertiary,
+                            backgroundColor: colorScheme.primary,
                             minimumSize: const Size.fromHeight(50),
+                            foregroundColor: colorScheme.onPrimary,
                           ),
                           icon: const Icon(Icons.send),
                           label: const Text('Submit report'),
@@ -141,8 +191,9 @@ class _ReportPageState extends State<ReportPage> {
                       Expanded(
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: colorScheme.error,
+                            backgroundColor: colorScheme.secondary,
                             minimumSize: const Size.fromHeight(50),
+                            foregroundColor: colorScheme.onSecondary,
                           ),
                           icon: const Icon(Icons.local_police),
                           label: const Text('Send SOS'),
@@ -163,7 +214,9 @@ class _ReportPageState extends State<ReportPage> {
 
   Widget _buildInstructionsCard(BuildContext context) {
     return Card(
-      color: Theme.of(context).extension<AppColors>()?.cardBackground ?? Theme.of(context).colorScheme.surfaceContainerHighest,
+      color:
+          Theme.of(context).extension<AppColors>()?.cardBackground ??
+          Theme.of(context).colorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -181,7 +234,11 @@ class _ReportPageState extends State<ReportPage> {
             const SizedBox(height: 12),
             Text(
               'Please describe the incident from your perspective. Include what happened, where it happened, and who was involved.',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)),
+              style: TextStyle(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.8),
+              ),
             ),
           ],
         ),
@@ -191,7 +248,9 @@ class _ReportPageState extends State<ReportPage> {
 
   Widget _buildExamplesCard(BuildContext context) {
     return Card(
-      color: Theme.of(context).extension<AppColors>()?.cardBackground ?? Theme.of(context).colorScheme.surfaceContainerHighest,
+      color:
+          Theme.of(context).extension<AppColors>()?.cardBackground ??
+          Theme.of(context).colorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -207,11 +266,17 @@ class _ReportPageState extends State<ReportPage> {
               ),
             ),
             const SizedBox(height: 12),
-            _buildExampleRow('• I noticed an unknown person tailgating into the building after hours.'),
+            _buildExampleRow(
+              '• I noticed an unknown person tailgating into the building after hours.',
+            ),
             const SizedBox(height: 10),
-            _buildExampleRow('• My badge was declined at the secure door and then used by someone else.'),
+            _buildExampleRow(
+              '• My badge was declined at the secure door and then used by someone else.',
+            ),
             const SizedBox(height: 10),
-            _buildExampleRow('• I received a suspicious email asking for login details and clicked a link.'),
+            _buildExampleRow(
+              '• I received a suspicious email asking for login details and clicked a link.',
+            ),
           ],
         ),
       ),
@@ -222,12 +287,21 @@ class _ReportPageState extends State<ReportPage> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.check_circle_outline, size: 18, color: Theme.of(context).colorScheme.primary),
+        Icon(
+          Icons.check_circle_outline,
+          size: 18,
+          color: Theme.of(context).colorScheme.primary,
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7), height: 1.4),
+            style: TextStyle(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
+              height: 1.4,
+            ),
           ),
         ),
       ],
@@ -249,10 +323,18 @@ class _ReportPageState extends State<ReportPage> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,
-        hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55)),
-        labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+        hintStyle: TextStyle(
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: 0.55),
+        ),
+        labelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+        ),
         filled: true,
-        fillColor: Theme.of(context).extension<AppColors>()?.cardBackground ?? Theme.of(context).colorScheme.surfaceContainerHighest,
+        fillColor:
+            Theme.of(context).extension<AppColors>()?.cardBackground ??
+            Theme.of(context).colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,

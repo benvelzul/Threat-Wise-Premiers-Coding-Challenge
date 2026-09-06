@@ -78,7 +78,7 @@ import '../../models/enums.dart';
   } else if (phishingAns && !phishing) {
     msg.writeln('Incorrect, this scenario was a phishing attempt.');
   } else {
-    msg.writeln('Correct, this scenario was legitimate.\n+20 pts');
+    msg.writeln('Correct, this scenario was legitimate.\n+30 pts');
     score += 30;
     if (timeTaken < 5) {
       msg.writeln('You answered in under 5 seconds! +5 pts');
@@ -96,11 +96,10 @@ import '../../models/enums.dart';
   msg.writeln(
     'Total: $score x $scoreMultiplier = ${score * scoreMultiplier} points',
   );
-
-  final totalPossibleScore =
-      (20 + (threatTypes.length * 5) + (indicators.length * 7)) *
-          scoreMultiplier +
-      5;
+  final totalPossibleScore = phishing
+      ? (20 + (threatTypes.length * 5) + (indicators.length * 7) + 5) *
+            scoreMultiplier
+      : (30 + 5) * scoreMultiplier;
   final double percentageScore =
       (score * scoreMultiplier / totalPossibleScore) * 100;
   msg.writeln('Total possible score: $totalPossibleScore points');

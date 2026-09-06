@@ -257,8 +257,8 @@ class _SimulatorPageState extends State<SimulatorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Email Threat Quiz'),
-        backgroundColor: colorScheme.tertiary,
-        foregroundColor: colorScheme.onTertiary,
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
         actions: [
           Row(
             mainAxisSize: MainAxisSize.min,
