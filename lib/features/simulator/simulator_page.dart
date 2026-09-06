@@ -1,5 +1,4 @@
 ﻿import 'dart:async';
-
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import '../../models/email_scenario.dart';
@@ -25,6 +24,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
   String _feedbackMsg = '';
   int? _xpReward;
   bool _xpCollected = false;
+  bool _rewardDialogShown = false;
   int _correctStreak = 0;
   Timer? _emailTimer;
   int _elapsedSeconds = 0;
@@ -81,6 +81,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
       _userAnswer = null;
       _xpReward = null;
       _xpCollected = false;
+      _rewardDialogShown = false;
       _selectedThreatTypes.clear();
       _selectedIndicators.clear();
     });
@@ -91,7 +92,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
     });
   }
 
-  void _submitAnswer({
+  Future<void> _submitAnswer({
     required bool isThreat,
     required List<ThreatType> selectedThreatTypes,
     required List<Indicator> selectedIndicators,
@@ -124,17 +125,77 @@ class _SimulatorPageState extends State<SimulatorPage> {
       _userAnswered = true;
       _showAnswer = true;
     });
+
+    await _collectXp();
+    await _showRewardDialog();
   }
 
   Future<void> _collectXp() async {
     final xpReward = _xpReward;
     if (xpReward == null || _xpCollected) return;
 
-    await XpManager.instance.addXp(xpReward);
+    await XpManager.instance.addXp(xpReward, streak: _correctStreak);
     if (!mounted) return;
     setState(() {
       _xpCollected = true;
     });
+  }
+
+  Future<void> _showRewardDialog() async {
+    if (!mounted || _rewardDialogShown || !_xpCollected) return;
+
+    _rewardDialogShown = true;
+    final xpAmount = XpManager.instance.xpWithStreak(
+      _xpReward ?? 0,
+      _correctStreak,
+    );
+    final colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppColors>();
+    final accentColor = appColors?.xpText ?? colorScheme.primary;
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reward unlocked'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/images/Gargoyle.png', width: 150, height: 150),
+            const SizedBox(height: 16),
+            _buildRewardStat(
+              icon: Icons.bolt,
+              label: 'XP',
+              value: '+$xpAmount',
+              color: accentColor,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildRewardStat(
+                  icon: Icons.timer_outlined,
+                  label: 'Time',
+                  value: _formatElapsedTime(),
+                  color: colorScheme.secondary,
+                ),
+                _buildRewardStat(
+                  icon: Icons.local_fire_department_outlined,
+                  label: 'Streak',
+                  value: '$_correctStreak',
+                  color: colorScheme.error,
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
   }
 
   OverlayEntry? _transitionOverlay;
@@ -193,7 +254,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
       selectedThreatTypes: _selectedThreatTypes.toList(),
       selectedIndicators: _selectedIndicators.toList(),
     );
-    _collectXp();
   }
 
   void _toggleThreatType(ThreatType threatType) {
@@ -474,10 +534,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_userAnswered) ...[
-              _buildXpRewardPanel(xpAmount: _xpReward ?? 0),
-              const SizedBox(height: 24),
-            ],
             if (!_userAnswered) ...[
               Text(
                 'Is this email legitimate or phishing?',
@@ -776,80 +832,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
               ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildXpRewardPanel({required int xpAmount}) {
-    final appColors = Theme.of(context).extension<AppColors>();
-    final colorScheme = Theme.of(context).colorScheme;
-    final accentColor = appColors?.xpText ?? colorScheme.primary;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: accentColor.withValues(alpha: 0.45)),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Reward unlocked',
-            style: TextStyle(
-              color: colorScheme.onSurface,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            height: 120,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(Icons.auto_awesome, color: accentColor, size: 48),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildRewardStat(
-                  icon: Icons.bolt,
-                  label: 'XP',
-                  value: '+$xpAmount',
-                  color: accentColor,
-                ),
-              ),
-              Expanded(
-                child: _buildRewardStat(
-                  icon: Icons.timer_outlined,
-                  label: 'Time',
-                  value: _formatElapsedTime(),
-                  color: colorScheme.secondary,
-                ),
-              ),
-              Expanded(
-                child: _buildRewardStat(
-                  icon: Icons.local_fire_department_outlined,
-                  label: 'Streak',
-                  value: '$_correctStreak',
-                  color: colorScheme.error,
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

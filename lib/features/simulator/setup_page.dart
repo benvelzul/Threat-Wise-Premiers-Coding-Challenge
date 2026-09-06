@@ -48,7 +48,7 @@ class _StartSimulatorPageState extends State<StartSimulatorPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Are you ready for a test?',
+                      'CAN YOU SPOT THE THREAT?',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: colorScheme.onSurface,
@@ -58,7 +58,7 @@ class _StartSimulatorPageState extends State<StartSimulatorPage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Tap below to launch a hands-on security simulation experience in one clean screen. You will be presented with a series of scenarios that test your ability to identify and respond to potential security threats.',
+                      "You’ll be given a realistic email and your job is to decide whether it’s legitimate or dangerous. Look carefully through the email and identify the warning signs that reveal a potential threat.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: colorScheme.onSurface.withValues(alpha: 0.72),
@@ -84,7 +84,7 @@ class _StartSimulatorPageState extends State<StartSimulatorPage> {
                         ),
                       ),
                       child: Text(
-                        'Start Demo',
+                        'Start',
                         style: TextStyle(
                           color: colorScheme.onSecondary,
                           fontSize: 16,
@@ -126,6 +126,8 @@ class _StartSimulatorPageState extends State<StartSimulatorPage> {
                         Icons.insights_outlined,
                         'Interactive threat decision-making',
                       ),
+                      const SizedBox(height: 12),
+                      _buildFeatureRow(context, Icons.lightbulb_outline, ''),
                       const SizedBox(height: 12),
                       _buildFeatureRow(
                         context,
