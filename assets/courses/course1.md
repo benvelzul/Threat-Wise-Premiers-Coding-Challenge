@@ -18,7 +18,8 @@ These VoIP systems also allow many other features such as paging, intercom, prov
 
 **Written By:** Matthew Sutherland. 
 
-## Questions
+--- 
+# Quiz
 
 ### Question 1
 What does the acronym VoIP stand for?

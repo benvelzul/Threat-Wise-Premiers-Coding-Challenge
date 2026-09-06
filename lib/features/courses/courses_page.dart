@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../core/theme.dart';
+import 'course_divider.dart';
 
-class CourseDetailsPage extends StatelessWidget {
+class CourseDetailsPage extends StatefulWidget {
   static const routeName = '/courses';
   final String assetPath;
 
@@ -12,8 +13,24 @@ class CourseDetailsPage extends StatelessWidget {
     this.assetPath = 'assets/courses/course1.md',
   });
 
-  Future<String> _loadMarkdownData() async {
-    return await rootBundle.loadString(assetPath);
+  @override
+  State<CourseDetailsPage> createState() => _CourseDetailsPageState();
+}
+
+class _CourseDetailsPageState extends State<CourseDetailsPage> {
+  int _currentQuestionIndex = 0;
+
+  Future<Course> _loadCourse() async {
+    try {
+      final markdown = await rootBundle.loadString(widget.assetPath);
+
+      final parsedCourse = CourseParser().parse(markdown);
+
+      return parsedCourse;
+    } catch (e, stacktrace) {
+      debugPrint('Error loading course: $e\n$stacktrace');
+      rethrow;
+    }
   }
 
   @override
@@ -31,7 +48,7 @@ class CourseDetailsPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: colorScheme.primaryContainer,
         foregroundColor: colorScheme.onPrimaryContainer,
-        title: const Text('Course Overview'),
+        title: const Text("Course"),
         titleTextStyle: theme.textTheme.titleLarge?.copyWith(
           color: colorScheme.onPrimaryContainer,
           fontWeight: FontWeight.bold,
@@ -46,8 +63,8 @@ class CourseDetailsPage extends StatelessWidget {
           IconButton(icon: const Icon(Icons.share_outlined), onPressed: () {}),
         ],
       ),
-      body: FutureBuilder<String>(
-        future: _loadMarkdownData(),
+      body: FutureBuilder<Course>(
+        future: _loadCourse(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator(color: accentColor));
@@ -74,7 +91,7 @@ class CourseDetailsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Could not find '$assetPath'",
+                      "Could not find '${widget.assetPath}'",
                       style: TextStyle(color: subtitleColor),
                     ),
                   ],
@@ -82,117 +99,232 @@ class CourseDetailsPage extends StatelessWidget {
               ),
             );
           }
-
-          return Container(
-            margin: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          final course = snapshot.data!;
+          final courseContent = Container(
+            margin: const EdgeInsets.fromLTRB(16, 16, 8, 24),
             padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               color: cardColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: colorScheme.outline),
             ),
-            child: Markdown(
-              data: snapshot.data ?? '',
-              selectable: true,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
-                h1: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: accentColor,
-                  height: 1.4,
-                ),
-                h2: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
-                  height: 1.5,
-                ),
-                h3: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: subtitleColor,
-                ),
-                p: theme.textTheme.bodyMedium?.copyWith(
-                  height: 1.6,
-                  color: colorScheme.onSurface.withValues(alpha: 0.87),
-                ),
-                listBullet: theme.textTheme.bodyMedium?.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-                blockquoteDecoration: BoxDecoration(
-                  color: colorScheme.primaryContainer.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border(
-                    left: BorderSide(color: accentColor, width: 4),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+              child: MarkdownBody(
+                data: course.information.trim().isEmpty
+                    ? "# Markdown Content Was Empty\nCheck your parser logic or file content."
+                    : course.information,
+                selectable: true,
+                styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
+                  h1: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: accentColor,
+                    height: 1.4,
+                  ),
+                  h2: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                    height: 1.5,
+                  ),
+                  h3: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: subtitleColor,
+                  ),
+                  p: theme.textTheme.bodyMedium?.copyWith(
+                    height: 1.6,
+                    color: colorScheme.onSurface.withValues(alpha: 0.87),
+                  ),
+                  listBullet: theme.textTheme.bodyMedium?.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  blockquoteDecoration: BoxDecoration(
+                    color: colorScheme.primaryContainer.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border(
+                      left: BorderSide(color: accentColor, width: 4),
+                    ),
+                  ),
+                  blockquotePadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  code: theme.textTheme.bodySmall?.copyWith(
+                    backgroundColor: colorScheme.surfaceContainerHighest,
+                    fontFamily: 'monospace',
+                    color: accentColor,
+                  ),
+                  codeblockDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  codeblockPadding: const EdgeInsets.all(16),
+                  tableBorder: TableBorder.all(
+                    color: colorScheme.outlineVariant,
+                    width: 1,
+                  ),
+                  tableHead: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: accentColor,
                   ),
                 ),
-                blockquotePadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                code: theme.textTheme.bodySmall?.copyWith(
-                  backgroundColor: colorScheme.surfaceContainerHighest,
-                  fontFamily: 'monospace',
-                  color: accentColor,
-                ),
-                codeblockDecoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                codeblockPadding: const EdgeInsets.all(16),
-                tableBorder: TableBorder.all(
-                  color: colorScheme.outlineVariant,
-                  width: 1,
-                ),
-                tableHead: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: accentColor,
-                ),
+                onTapLink: (text, href, title) {
+                  if (href != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Link tapped: $href'),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+                },
               ),
-              onTapLink: (text, href, title) {
-                if (href != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Link tapped: $href'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                }
-              },
             ),
+          );
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: IntrinsicHeight(
+                    child: constraints.maxWidth >= 900
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: courseContent),
+                              Expanded(child: _buildQuizSection(course, theme)),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              courseContent,
+                              _buildQuizSection(course, theme),
+                            ],
+                          ),
+                  ),
+                ),
+              );
+            },
           );
         },
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: cardColor,
-          border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.shadow.withValues(alpha: 0.08),
-              blurRadius: 10,
-              offset: const Offset(0, -4),
-            ),
-          ],
+    );
+  }
+
+  Widget _buildQuizSection(Course course, ThemeData theme) {
+    if (course.questions.isEmpty) {
+      return const Center(
+        child: Text(
+          'No Questions Found',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
-        child: SafeArea(
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: accentColor,
-              foregroundColor: colorScheme.onPrimary,
-              minimumSize: const Size.fromHeight(52),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+      );
+    }
+
+    final colorScheme = theme.colorScheme;
+    final accentColor =
+        theme.extension<AppColors>()?.featureChat ?? colorScheme.primary;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colorScheme.outline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              "Quiz",
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: accentColor,
               ),
-              elevation: 0,
-            ),
-            onPressed: () {},
-            icon: const Icon(Icons.play_circle_fill_rounded),
-            label: const Text(
-              "Start Course",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Question ${_currentQuestionIndex + 1} of ${course.questions.length}',
+              style: theme.textTheme.bodyMedium,
+            ),
+          ),
+          _buildQuestionCard(course.questions[_currentQuestionIndex], theme),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: _currentQuestionIndex == 0
+                      ? null
+                      : () {
+                          setState(() => _currentQuestionIndex--);
+                        },
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Previous'),
+                ),
+                FilledButton.icon(
+                  onPressed:
+                      _currentQuestionIndex == course.questions.length - 1
+                      ? null
+                      : () {
+                          setState(() => _currentQuestionIndex++);
+                        },
+                  icon: const Icon(Icons.arrow_forward),
+                  label: const Text('Next'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuestionCard(QuizQuestion question, ThemeData theme) {
+    final colorScheme = theme.colorScheme;
+    final accentColor =
+        theme.extension<AppColors>()?.featureChat ?? colorScheme.primary;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceVariant,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            question.question,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: accentColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Difficulty: ${question.difficulty}",
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "Points: ${question.points}",
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }
