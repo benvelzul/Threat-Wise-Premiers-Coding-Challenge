@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../core/theme.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatbotPage extends StatefulWidget {
   static const routeName = '/chatbot';
@@ -16,7 +17,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
   final List<_ChatMessage> _messages = [
     const _ChatMessage(
       text:
-          'Hi there! I am your security assistant. Ask me anything about cyber safety.',
+          'Hi there! I am Ward your security assistant. Ask me anything about cyber safety.',
       isUser: false,
     ),
   ];
@@ -39,7 +40,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         model: 'gemini-3.5-flash',
         apiKey: apiKey,
         systemInstruction: Content.system(
-          'You are ThreatWise AI, an expert cybersecurity assistant for a cyber safety app. '
+          'You are Ward, ThreatWise AI, an expert cybersecurity assistant for a cyber safety app. '
           'Keep responses concise, clear, and focused on security tips, threat prevention, and safe habits.',
         ),
       );
@@ -159,13 +160,16 @@ class _ChatbotPageState extends State<ChatbotPage> {
                               ),
                             ),
                           ),
-                          child: Text(
-                            message.text,
-                            style: TextStyle(
-                              color: message.isUser
-                                  ? colorScheme.onSecondary
-                                  : colorScheme.onSurface,
-                              fontSize: 15,
+                          child: MarkdownBody(
+                            data: message.text,
+                            styleSheet: MarkdownStyleSheet(
+                              p: TextStyle(
+                                color: message.isUser
+                                    ? colorScheme.onSecondary
+                                    : colorScheme.onSurface,
+                                fontSize: 16,
+                                height: 1.4,
+                              ),
                             ),
                           ),
                         ),
