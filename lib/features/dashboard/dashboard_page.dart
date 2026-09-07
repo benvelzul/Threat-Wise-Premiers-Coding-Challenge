@@ -32,8 +32,9 @@ class _DashboardPageState extends State<DashboardPage>
       'assetPath': 'assets/courses/course1.md',
     },
     {
-      'title': 'Test',
-      'desc': 'Learn how to secure VoIP/SIP systems and prevent attacks.',
+      'title': 'Phishing detection essentials',
+      'desc':
+          'Learn the basics of phishing spotting and how to defend against them.',
       'icon': Icons.security_outlined,
       'progress': 0.0,
       'color': Colors.green,
