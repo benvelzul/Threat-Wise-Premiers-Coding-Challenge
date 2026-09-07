@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:threat_wise/core/streak_system/streak_manager.dart';
 import '../../core/theme.dart';
 import '../../core/xp_system/xp_manager.dart';
 import '../chatbot/chatbot_page.dart';
@@ -217,7 +218,7 @@ class _DashboardPageState extends State<DashboardPage>
           children: [
             _buildAnalyticsMetric(
               icon: Icons.local_fire_department,
-              value: '7 days',
+              value: '${StreakManager.instance.currentStreak} days',
               label: 'Streak',
               color: urgencyColor,
               colorScheme: colorScheme,
