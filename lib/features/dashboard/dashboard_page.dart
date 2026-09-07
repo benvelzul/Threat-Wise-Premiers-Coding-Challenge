@@ -10,6 +10,8 @@ import '../password_system/password_page.dart';
 import '../simulator/setup_page.dart';
 import '../incident_report/report_page.dart';
 import '../courses/courses_page.dart';
+import '../widgets/mascot_overlay.dart';
+import 'mascot_intro.dart';
 
 class DashboardPage extends StatefulWidget {
   static const routeName = '/';
@@ -22,6 +24,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage>
     with TickerProviderStateMixin {
+  static bool _hasShownStartupIntro = false;
   late final TabController _tabController;
 
   final List<Map<String, dynamic>> _courses = [
@@ -42,12 +45,41 @@ class _DashboardPageState extends State<DashboardPage>
       'color': Colors.green,
       'assetPath': 'assets/courses/course2.md',
     },
+    {
+      'title': 'Fundamentals of Networking',
+      'desc': 'Learn the basics of networking concepts and protocols.',
+      'icon': Icons.network_check_outlined,
+      'progress': 0.0,
+      'color': Colors.purple,
+      'assetPath': 'assets/courses/course3.md',
+    },
   ];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    if (_hasShownStartupIntro) return;
+    _hasShownStartupIntro = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          content: const MascotIntro(),
+          actions: [
+            TextButton(
+              onPressed: () {
+                mascotRouteObserver.dismissStartupIntro();
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   @override
