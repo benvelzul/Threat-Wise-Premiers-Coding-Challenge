@@ -7,6 +7,7 @@ import '../../models/enums.dart';
 import '../../core/xp_system/xp_manager.dart';
 import 'grading_engine.dart';
 import '../widgets/cinematic_band_anim.dart';
+import 'package:flutter_confetti/flutter_confetti.dart';
 
 class SimulatorPage extends StatefulWidget {
   const SimulatorPage({super.key});
@@ -98,6 +99,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
     required List<Indicator> selectedIndicators,
   }) async {
     _emailTimer?.cancel();
+    final bool isCorrect = (isThreat == currentScenario.isThreat);
     bool actualIsPhishing = currentScenario.isThreat;
     Difficulty scenarioDifficulty = currentScenario.difficulty;
     final List<ThreatType> actualThreatTypes =
@@ -125,6 +127,12 @@ class _SimulatorPageState extends State<SimulatorPage> {
       _userAnswered = true;
       _showAnswer = true;
     });
+    if (isCorrect) {
+      Confetti.launch(
+        context,
+        options: const ConfettiOptions(particleCount: 150, spread: 80, y: 0.6),
+      );
+    }
 
     await _collectXp();
     await _showRewardDialog();
@@ -152,6 +160,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
     final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppColors>();
     final accentColor = appColors?.xpText ?? colorScheme.primary;
+    final streak_mult = XpManager.instance.streakMultiplier(_correctStreak);
 
     await showDialog<void>(
       context: context,
@@ -183,6 +192,12 @@ class _SimulatorPageState extends State<SimulatorPage> {
                   label: 'Streak',
                   value: '$_correctStreak',
                   color: colorScheme.error,
+                ),
+                _buildRewardStat(
+                  icon: Icons.local_fire_department_outlined,
+                  label: 'Multiplier',
+                  value: '$streak_mult',
+                  color: appColors?.xpDark ?? colorScheme.tertiary,
                 ),
               ],
             ),
@@ -332,14 +347,18 @@ class _SimulatorPageState extends State<SimulatorPage> {
           IconButton(onPressed: _resetQuiz, icon: const Icon(Icons.refresh)),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 800) {
-            return _buildQuizLayout(constraints);
-          } else {
-            return _buildMobileLayout();
-          }
-        },
+      body: Stack(
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 800) {
+                return _buildQuizLayout(constraints);
+              } else {
+                return _buildMobileLayout();
+              }
+            },
+          ),
+        ],
       ),
     );
   }
@@ -406,7 +425,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Email Subject (Header)
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
                 child: Text(
@@ -422,13 +440,11 @@ class _SimulatorPageState extends State<SimulatorPage> {
                 ),
               ),
 
-              // 2. Sender / Recipient Metadata Row
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Sender Avatar / Monogram
                     CircleAvatar(
                       radius: 20,
                       backgroundColor: colorScheme.primaryContainer,
@@ -442,7 +458,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
                     ),
                     const SizedBox(width: 12),
 
-                    // Sender Name & Address
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,7 +501,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
                       ),
                     ),
 
-                    // Action Icon (e.g. Reply or Star)
                     IconButton(
                       icon: Icon(
                         Icons.more_vert,
@@ -504,7 +518,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
                 child: Divider(height: 1),
               ),
 
-              // 3. Email Body Text
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                 child: SelectableText(
@@ -611,7 +624,6 @@ class _SimulatorPageState extends State<SimulatorPage> {
                 }).toList(),
               ),
 
-              // Indicator selection
               const SizedBox(height: 24),
               Text(
                 'How did you get to this answer?',

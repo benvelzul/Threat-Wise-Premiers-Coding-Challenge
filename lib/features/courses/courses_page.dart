@@ -5,6 +5,7 @@ import '../../core/theme.dart';
 import '../../core/xp_system/xp_manager.dart';
 import 'course_divider.dart';
 import 'grade_course.dart';
+import 'package:flutter_confetti/flutter_confetti.dart';
 
 class CourseDetailsPage extends StatefulWidget {
   static const routeName = '/courses';
@@ -66,18 +67,73 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
 
     if (!mounted) return;
 
+    Confetti.launch(
+      context,
+      options: ConfettiOptions(
+        particleCount: completedPerfectly ? 300 : 150,
+        spread: completedPerfectly ? 160 : 80,
+        y: 0.6,
+      ),
+    );
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text(
             completedPerfectly ? 'Course Completed' : 'Quiz Completed',
+            textAlign: TextAlign.center,
           ),
-          content: Text(
-            completedPerfectly
-                ? 'Perfect score! You earned $totalPoints XP.'
-                : 'Next time you will do even better! \nYou scored $totalPoints out of $totalPossiblePoints points.',
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                completedPerfectly
+                    ? 'assets/images/Gargoyle.png' // Trophy or success illustration
+                    : 'assets/images/Gargoyle.png', // Secondary or default illustration
+                width: 150,
+                height: 150,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                completedPerfectly
+                    ? 'Perfect score!'
+                    : 'Next time you will do even better!',
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              if (completedPerfectly) ...[
+                _buildRewardStat(
+                  icon: Icons.bolt,
+                  label: 'XP Earned',
+                  value: '+$totalPoints*2',
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ] else ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildRewardStat(
+                      icon: Icons.star_outline_rounded,
+                      label: 'Score',
+                      value: '$totalPoints',
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
+                    _buildRewardStat(
+                      icon: Icons.flag_outlined,
+                      label: 'Total',
+                      value: '$totalPossiblePoints',
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ],
+                ),
+              ],
+            ],
           ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             if (!completedPerfectly)
               TextButton(
@@ -127,21 +183,75 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       _results.add(result);
     });
 
+    if (result.correct) {
+      Confetti.launch(
+        context,
+        options: const ConfettiOptions(particleCount: 150, spread: 80, y: 0.6),
+      );
+    }
+
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) {
+        final isCorrect = result.correct;
+        final primaryColor = isCorrect ? Colors.green : Colors.orangeAccent;
+
         return AlertDialog(
-          title: Text(result.correct ? 'Correct!' : 'Incorrect'),
-          content: Text(
-            result.correct
-                ? 'You earned ${result.pointsEarned} points.'
-                : 'The correct answer was option ${result.correctAnswer + 1}.',
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
+          titlePadding: const EdgeInsets.only(top: 24),
+          title: Column(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: primaryColor.withAlpha(30),
+                child: Icon(
+                  isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                  color: primaryColor,
+                  size: 36,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                isCorrect ? 'Awesome Job!' : 'Nice Try!',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isCorrect
+                      ? Colors.green.shade800
+                      : Colors.orange.shade900,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            isCorrect
+                ? 'You earned +${result.pointsEarned} points!'
+                : 'The correct answer was option ${result.correctAnswer + 1}.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16, height: 1.4),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsPadding: const EdgeInsets.only(bottom: 16),
           actions: [
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
+              ),
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+              child: const Text(
+                'Continue',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         );
@@ -522,6 +632,37 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
           }),
         ],
       ),
+    );
+  }
+
+  Widget _buildRewardStat({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 22),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: colorScheme.onSurface.withValues(alpha: 0.65),
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 }

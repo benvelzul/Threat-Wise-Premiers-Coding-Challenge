@@ -44,11 +44,12 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -90,63 +91,6 @@ class _DashboardPageState extends State<DashboardPage>
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActivity({
-    required IconData icon,
-    required String title,
-    required String detail,
-    required String xp,
-    required Color color,
-    required ColorScheme colorScheme,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 18),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  detail,
-                  style: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.62),
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            xp,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
             ),
           ),
         ],
@@ -278,20 +222,6 @@ class _DashboardPageState extends State<DashboardPage>
               colorScheme: colorScheme,
             ),
             _buildAnalyticsMetric(
-              icon: Icons.monetization_on,
-              value: '250',
-              label: 'Coins',
-              color: xpColor,
-              colorScheme: colorScheme,
-            ),
-            _buildAnalyticsMetric(
-              icon: Icons.bolt,
-              value: '85',
-              label: 'Energy',
-              color: colorScheme.primary,
-              colorScheme: colorScheme,
-            ),
-            _buildAnalyticsMetric(
               icon: Icons.emoji_events_outlined,
               value: 'A1',
               label: 'Rank',
@@ -299,52 +229,6 @@ class _DashboardPageState extends State<DashboardPage>
               colorScheme: colorScheme,
             ),
           ],
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Urgency activities',
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
-          decoration: BoxDecoration(
-            color: appColors?.cardBackground ?? colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: colorScheme.outline),
-          ),
-          child: Column(
-            children: [
-              _buildActivity(
-                icon: Icons.mark_email_unread_outlined,
-                title: 'Urgent email drills',
-                detail: '12 scenarios completed',
-                xp: '+120 XP',
-                color: urgencyColor,
-                colorScheme: colorScheme,
-              ),
-              _buildActivity(
-                icon: Icons.speed,
-                title: 'Fast response bonus',
-                detail: 'Best response: 18 seconds',
-                xp: '+50 XP',
-                color: colorScheme.primary,
-                colorScheme: colorScheme,
-              ),
-              _buildActivity(
-                icon: Icons.shield_outlined,
-                title: 'Threats identified',
-                detail: '9 of 10 correct this week',
-                xp: '+90 XP',
-                color: colorScheme.secondary,
-                colorScheme: colorScheme,
-              ),
-            ],
-          ),
         ),
       ],
     );

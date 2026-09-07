@@ -11,12 +11,14 @@ import 'features/tests.dart';
 import 'features/simulator/setup_page.dart';
 import 'features/courses/courses_page.dart';
 import 'core/xp_system/xp_manager.dart';
+import 'features/widgets/mascot_overlay.dart';
 
 void main() async {
-
   await XpManager.instance.loadXp();
   runApp(const MyApp());
 }
+
+final MascotRouteObserver mascotRouteObserver = MascotRouteObserver();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,6 +29,13 @@ class MyApp extends StatelessWidget {
       title: 'ThreatWise',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
+      navigatorObservers: [mascotRouteObserver],
+      builder: (context, child) => Stack(
+        children: [
+          child ?? const SizedBox.shrink(),
+          MascotOverlay(routeObserver: mascotRouteObserver),
+        ],
+      ),
       routes: {
         CourseDetailsPage.routeName: (context) => const CourseDetailsPage(),
         DashboardPage.routeName: (context) => const DashboardPage(),
