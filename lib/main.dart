@@ -11,10 +11,13 @@ import 'features/tests.dart';
 import 'features/simulator/setup_page.dart';
 import 'features/courses/courses_page.dart';
 import 'core/xp_system/xp_manager.dart';
+import 'core/streak_system/streak_manager.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
   await XpManager.instance.loadXp();
+  await StreakManager.instance.checkAndUpdateStreak();
   runApp(const MyApp());
 }
 
