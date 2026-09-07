@@ -1,13 +1,22 @@
 import 'dart:math' as math;
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'make_image.dart';
 
+final MascotRouteObserver mascotRouteObserver = MascotRouteObserver();
+
 class MascotRouteObserver extends NavigatorObserver with ChangeNotifier {
   final Set<Route<dynamic>> _popupRoutes = <Route<dynamic>>{};
+  bool _showOverlay = false;
 
   bool get isDialogVisible => _popupRoutes.isNotEmpty;
+  bool get showOverlay => _showOverlay;
+
+  void dismissStartupIntro() {
+    if (_showOverlay) return;
+    _showOverlay = true;
+    notifyListeners();
+  }
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
@@ -69,60 +78,38 @@ class _MascotOverlayState extends State<MascotOverlay>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.routeObserver.isDialogVisible) return const SizedBox.shrink();
-
     return AnimatedBuilder(
       animation: _floatController,
       builder: (context, child) {
+        if (!widget.routeObserver.showOverlay) {
+          return const SizedBox.shrink();
+        }
+
         final floatOffset = 10 * math.sin(_floatController.value * 2 * math.pi);
+        final screenSize = MediaQuery.sizeOf(context);
+        const mascotWidth = 92.0;
+        const mascotHeight = 112.0;
 
         return Positioned(
           left: _offset.dx,
           top: _offset.dy + floatOffset,
           child: GestureDetector(
             onPanUpdate: (details) {
-              final screenSize = MediaQuery.of(context).size;
               final newOffset = _offset + details.delta;
               setState(() {
                 _offset = Offset(
-                  newOffset.dx.clamp(0.0, screenSize.width - 100),
-                  newOffset.dy.clamp(0.0, screenSize.height - 100),
+                  newOffset.dx.clamp(12.0, screenSize.width - mascotWidth - 12),
+                  newOffset.dy.clamp(
+                    12.0,
+                    screenSize.height - mascotHeight - 12,
+                  ),
                 );
               });
             },
-            child: SizedBox(
-              width: 115,
-              height: 115,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(
-                    left: 5,
-                    top: 5,
-                    child: ImageFiltered(
-                      imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                      child: ColorFiltered(
-                        colorFilter: ColorFilter.mode(
-                          Colors.black.withValues(alpha: 0.4),
-                          BlendMode.srcIn,
-                        ),
-                        child: LocalImageWidget(
-                          imagePath: 'assets/images/Gargoyle.png',
-                          width: 100,
-                          height: 100,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    child: LocalImageWidget(
-                      imagePath: 'assets/images/Gargoyle.png',
-                      width: 100,
-                      height: 100,
-                    ),
-                  ),
-                ],
-              ),
+            child: const LocalImageWidget(
+              imagePath: 'assets/images/Gargoyle.png',
+              width: mascotWidth,
+              height: mascotHeight,
             ),
           ),
         );
