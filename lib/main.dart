@@ -3,7 +3,7 @@ import 'core/theme.dart';
 import 'features/chatbot/chatbot_page.dart';
 import 'features/dashboard/dashboard_page.dart';
 import 'features/stat_pages/leaderboard_page.dart';
-import 'features/minigames/quiz_page.dart';
+import 'features/minigames/minigames_menu.dart';
 import 'features/incident_report/report_page.dart';
 import 'features/password_system/password_page.dart';
 import 'features/simulator/simulator_page.dart';

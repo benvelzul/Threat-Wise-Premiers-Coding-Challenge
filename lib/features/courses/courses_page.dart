@@ -22,7 +22,7 @@ class CourseDetailsPage extends StatefulWidget {
 
 class _CourseDetailsPageState extends State<CourseDetailsPage> {
   int _currentQuestionIndex = 0;
-  List<QuestionResult> _results = [];
+  final List<QuestionResult> _results = [];
   final Set<int> _answeredQuestionIndexes = {};
   bool _isShowingAnswerFeedback = false;
 
@@ -578,7 +578,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colorScheme.outlineVariant),
       ),

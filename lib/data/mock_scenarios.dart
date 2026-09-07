@@ -37,11 +37,21 @@ String _getRandomSenderEmail(bool isPhishing) {
   final random = Random();
   if (isPhishing) {
     final domains = ['support@', 'admin@', 'verify@', 'security@'];
-    final fakes = ['fake-sec.com', 'phish-corp.net', 'verify-now.io', 'secure-check.co'];
+    final fakes = [
+      'fake-sec.com',
+      'phish-corp.net',
+      'verify-now.io',
+      'secure-check.co',
+    ];
     return '${domains[random.nextInt(domains.length)]}${fakes[random.nextInt(fakes.length)]}';
   } else {
     final domains = ['no-reply@', 'notifications@', 'alerts@'];
-    final legits = ['company.com', 'workspace.com', 'platform.io', 'service.co'];
+    final legits = [
+      'company.com',
+      'workspace.com',
+      'platform.io',
+      'service.co',
+    ];
     return '${domains[random.nextInt(domains.length)]}${legits[random.nextInt(legits.length)]}';
   }
 }
@@ -49,7 +59,14 @@ String _getRandomSenderEmail(bool isPhishing) {
 String _getRandomRecipient() {
   final random = Random();
   final firstNames = ['alex', 'jordan', 'casey', 'morgan', 'taylor', 'sam'];
-  final lastNames = ['smith', 'johnson', 'williams', 'brown', 'jones', 'miller'];
+  final lastNames = [
+    'smith',
+    'johnson',
+    'williams',
+    'brown',
+    'jones',
+    'miller',
+  ];
   final domains = ['company.com', 'work.io', 'org.net', 'corp.co'];
   final first = firstNames[random.nextInt(firstNames.length)];
   final last = lastNames[random.nextInt(lastNames.length)];
@@ -57,7 +74,11 @@ String _getRandomRecipient() {
   return '$first.$last@$domain';
 }
 
-String _getRandomSubject(bool isPhishing, Difficulty difficulty, ThreatType? threatType) {
+String _getRandomSubject(
+  bool isPhishing,
+  Difficulty difficulty,
+  ThreatType? threatType,
+) {
   final random = Random();
   if (isPhishing) {
     if (threatType == ThreatType.credentialHarvesting) {
@@ -110,7 +131,10 @@ String _getRandomSubject(bool isPhishing, Difficulty difficulty, ThreatType? thr
   }
 }
 
-EmailComponent _getRandomComponentFromMap<T>(Map<T, List<EmailComponent>> map, T key) {
+EmailComponent _getRandomComponentFromMap<T>(
+  Map<T, List<EmailComponent>> map,
+  T key,
+) {
   final random = Random();
   final list = map[key];
 
@@ -144,10 +168,15 @@ EmailScenario generateScenarioFor({
 }) {
   final random = Random();
 
-  final Difficulty selectedDifficulty = difficulty ?? _getRandomEnumValue(Difficulty.values);
-  final ThreatType selectedThreatType = threatType ?? _getRandomEnumValue(ThreatType.values);
+  final Difficulty selectedDifficulty =
+      difficulty ?? _getRandomEnumValue(Difficulty.values);
+  final ThreatType selectedThreatType =
+      threatType ?? _getRandomEnumValue(ThreatType.values);
   final ScenarioCategory selectedCategory =
-      category ?? (threatType != null ? ScenarioCategory.phishing : _getRandomEnumValue(ScenarioCategory.values));
+      category ??
+      (threatType != null
+          ? ScenarioCategory.phishing
+          : _getRandomEnumValue(ScenarioCategory.values));
   final bool isThreat = selectedCategory == ScenarioCategory.phishing;
 
   final ThreatType? threat = isThreat ? selectedThreatType : null;
@@ -180,12 +209,12 @@ EmailScenario generateScenarioFor({
     issue = issueComponent.text;
     cta = ctaComponent.text;
     signature = signatureComponent.text;
-    chosenIndicators = [
+    chosenIndicators = {
       ...greetingComponent.indicators,
       ...issueComponent.indicators,
       ...ctaComponent.indicators,
       ...signatureComponent.indicators,
-    ].toSet().toList();
+    }.toList();
   } else {
     final greetingComponent = _getRandomComponentFromMap(
       EmailComponents.legitimateGreetings,
@@ -211,14 +240,15 @@ EmailScenario generateScenarioFor({
     issue = issues[random.nextInt(issues.length)];
     cta = ctaComponent.text;
     signature = signatureComponent.text;
-    chosenIndicators = [
+    chosenIndicators = {
       ...greetingComponent.indicators,
       ...ctaComponent.indicators,
       ...signatureComponent.indicators,
-    ].toSet().toList();
+    }.toList();
   }
 
-  final fullBody = '$greeting\n\n$issue\n\n$cta\n${_getFakeCtaLink(isThreat)}\n\n$signature';
+  final fullBody =
+      '$greeting\n\n$issue\n\n$cta\n${_getFakeCtaLink(isThreat)}\n\n$signature';
 
   return EmailScenario(
     id: 'scen-${random.nextInt(999999)}',
@@ -242,5 +272,9 @@ EmailScenario generateScenarioFor({
 }
 
 EmailScenario generateScenario() {
-  return generateScenarioFor(threatType: _getRandomEnumValue(ThreatType.values), difficulty: _getRandomEnumValue(Difficulty.values), category: _getRandomEnumValue(ScenarioCategory.values));
+  return generateScenarioFor(
+    threatType: _getRandomEnumValue(ThreatType.values),
+    difficulty: _getRandomEnumValue(Difficulty.values),
+    category: _getRandomEnumValue(ScenarioCategory.values),
+  );
 }

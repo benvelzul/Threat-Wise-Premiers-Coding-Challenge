@@ -160,7 +160,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
     final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppColors>();
     final accentColor = appColors?.xpText ?? colorScheme.primary;
-    final streak_mult = XpManager.instance.streakMultiplier(_correctStreak);
+    final streakMult = XpManager.instance.streakMultiplier(_correctStreak);
 
     await showDialog<void>(
       context: context,
@@ -196,7 +196,7 @@ class _SimulatorPageState extends State<SimulatorPage> {
                 _buildRewardStat(
                   icon: Icons.local_fire_department_outlined,
                   label: 'Multiplier',
-                  value: '$streak_mult',
+                  value: '$streakMult',
                   color: appColors?.xpDark ?? colorScheme.tertiary,
                 ),
               ],

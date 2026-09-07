@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:threat_wise/core/streak_system/streak_manager.dart';
 import '../../core/theme.dart';
+import '../../core/xp_system/leaderboard_manager.dart';
 import '../../core/xp_system/xp_manager.dart';
 import '../chatbot/chatbot_page.dart';
 import '../stat_pages/leaderboard_page.dart';
-import '../minigames/quiz_page.dart';
+import '../minigames/minigames_menu.dart';
 import '../password_system/password_page.dart';
 import '../simulator/setup_page.dart';
 import '../incident_report/report_page.dart';
@@ -111,6 +112,10 @@ class _DashboardPageState extends State<DashboardPage>
     final xpInCurrentLevel = XpManager.instance.xpInCurrentLevel;
     final xpToNextLevel = XpManager.instance.xpToNextLevel;
     final progress = XpManager.instance.levelProgress;
+    final leaderboard = LeaderboardManager.instance.entriesFor(totalXp);
+    final currentUserRank =
+        leaderboard.indexWhere((entry) => entry.isCurrentUser) + 1;
+    final topEntry = leaderboard.first;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
@@ -225,12 +230,57 @@ class _DashboardPageState extends State<DashboardPage>
             ),
             _buildAnalyticsMetric(
               icon: Icons.emoji_events_outlined,
-              value: 'A1',
+              value: '#$currentUserRank',
               label: 'Rank',
               color: colorScheme.secondary,
               colorScheme: colorScheme,
             ),
           ],
+        ),
+        const SizedBox(height: 20),
+        InkWell(
+          onTap: () => Navigator.pushNamed(context, LeaderboardPage.routeName),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: appColors?.cardBackground ?? colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: colorScheme.outline),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.leaderboard_outlined, color: colorScheme.secondary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Leaderboard',
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${topEntry.name} leads with ${topEntry.points} XP',
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.65),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -276,13 +326,6 @@ class _DashboardPageState extends State<DashboardPage>
         'icon': Icons.smart_toy_outlined,
         'color': appColors?.featureChat ?? colorScheme.tertiary,
         'connectedPage': ChatbotPage.routeName,
-      },
-      {
-        'title': 'Leaderboard',
-        'subtitle': 'See top performers',
-        'icon': Icons.leaderboard_outlined,
-        'color': appColors?.featureDiv ?? colorScheme.primary,
-        'connectedPage': LeaderboardPage.routeName,
       },
     ];
 
