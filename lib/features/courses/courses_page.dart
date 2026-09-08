@@ -499,18 +499,19 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
     }
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colorScheme.outline),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 7),
             child: Text(
               "Quiz",
               style: theme.textTheme.titleLarge?.copyWith(

@@ -7,7 +7,7 @@ import 'features/minigames/minigames_menu.dart';
 import 'features/incident_report/report_page.dart';
 import 'features/password_system/password_page.dart';
 import 'features/simulator/simulator_page.dart';
-import 'features/tests.dart';
+import 'features/minigames/matching_pairs.dart';
 import 'features/simulator/setup_page.dart';
 import 'features/courses/courses_page.dart';
 import 'core/xp_system/xp_manager.dart';
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         PasswordPage.routeName: (context) => const PasswordPage(),
         SimulatorPage.routeName: (context) => const SimulatorPage(),
         ReportPage.routeName: (context) => const ReportPage(),
-        MyHomeScreen.routeName: (context) => const MyHomeScreen(),
+        MatchingGameScreen.routeName: (context) => const MatchingGameScreen(),
         StartSimulatorPage.routeName: (context) => const StartSimulatorPage(),
       },
       initialRoute: DashboardPage.routeName,

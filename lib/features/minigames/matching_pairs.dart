@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/xp_system/xp_manager.dart';
 
 class PhishingPair {
   final String term;
@@ -26,7 +27,7 @@ class GameCard {
 }
 
 class MatchingGameScreen extends StatefulWidget {
-  const MatchingGameScreen({Key? key}) : super(key: key);
+  const MatchingGameScreen({super.key});
   static const String routeName = '/matching pairs';
 
   @override
@@ -34,6 +35,9 @@ class MatchingGameScreen extends StatefulWidget {
 }
 
 class _MatchingGameScreenState extends State<MatchingGameScreen> {
+  static const int _roundPairCount = 8;
+  static const int _roundXpReward = 5;
+
   final List<PhishingPair> _pairsData = [
     PhishingPair(
       term: 'Spear Phishing',
@@ -121,9 +125,10 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
 
   void _startNewGame() {
     List<GameCard> loadedCards = [];
+    final selectedPairs = List<PhishingPair>.from(_pairsData)..shuffle();
 
-    for (int i = 0; i < _pairsData.length; i++) {
-      final pair = _pairsData[i];
+    for (int i = 0; i < _roundPairCount; i++) {
+      final pair = selectedPairs[i];
       final pairId = 'pair_$i';
 
       loadedCards.add(
@@ -195,6 +200,8 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
 
   void _checkWinCondition() {
     if (_cards.every((card) => card.isMatched)) {
+      XpManager.instance.addXp(_roundXpReward);
+
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -227,6 +234,7 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _startNewGame),
         ],
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: Column(
         children: [
@@ -246,7 +254,7 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
                   ),
                 ),
                 Text(
-                  'Matched: $matchedPairsCount / ${_pairsData.length}',
+                  'Matched: $matchedPairsCount / $_roundPairCount',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -258,8 +266,8 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.fromLTRB(50, 20, 50, 29),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
                 childAspectRatio: 1.1,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
