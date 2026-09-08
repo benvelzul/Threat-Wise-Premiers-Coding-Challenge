@@ -14,6 +14,7 @@ import 'core/xp_system/xp_manager.dart';
 import 'features/widgets/mascot_overlay.dart';
 import 'core/streak_system/streak_manager.dart';
 import 'features/minigames/url_game.dart';
+import 'features/minigames/access_control_matrix_drop.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +53,8 @@ class MyApp extends StatelessWidget {
         UrlSafetySwipeScreen.routeName: (context) =>
             const UrlSafetySwipeScreen(),
         StartSimulatorPage.routeName: (context) => const StartSimulatorPage(),
+        AccessControlMatrixDropPage.routeName: (context) => const AccessControlMatrixDropPage(),
+
       },
       initialRoute: UrlSafetySwipeScreen.routeName,
     );
