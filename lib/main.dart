@@ -13,6 +13,7 @@ import 'features/courses/courses_page.dart';
 import 'core/xp_system/xp_manager.dart';
 import 'features/widgets/mascot_overlay.dart';
 import 'core/streak_system/streak_manager.dart';
+import 'features/minigames/url_game.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,9 +49,11 @@ class MyApp extends StatelessWidget {
         SimulatorPage.routeName: (context) => const SimulatorPage(),
         ReportPage.routeName: (context) => const ReportPage(),
         MatchingGameScreen.routeName: (context) => const MatchingGameScreen(),
+        UrlSafetySwipeScreen.routeName: (context) =>
+            const UrlSafetySwipeScreen(),
         StartSimulatorPage.routeName: (context) => const StartSimulatorPage(),
       },
-      initialRoute: DashboardPage.routeName,
+      initialRoute: UrlSafetySwipeScreen.routeName,
     );
   }
 }

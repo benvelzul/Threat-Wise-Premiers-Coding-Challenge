@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import 'matching_pairs.dart';
+import 'url_game.dart';
 
 class MinigamesPage extends StatelessWidget {
   static const routeName = '/minigames';
@@ -15,6 +16,12 @@ class MinigamesPage extends StatelessWidget {
         'subtitle': 'Match the cards',
         'icon': Icons.grid_view,
         'connectedPage': MatchingGameScreen.routeName,
+      },
+      {
+        'title': 'URL Safety',
+        'subtitle': 'Swipe to identify safe URLs',
+        'icon': Icons.link,
+        'connectedPage': UrlSafetySwipeScreen.routeName,
       },
     ];
 
@@ -104,20 +111,6 @@ class MinigamesPage extends StatelessWidget {
                                   color: Theme.of(context).colorScheme.onSurface
                                       .withValues(alpha: 0.7),
                                   fontSize: 13,
-                                ),
-                              ),
-                              const Spacer(),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Text(
-                                  'Coming soon',
-                                  style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.55),
-                                    fontSize: 12,
-                                  ),
                                 ),
                               ),
                             ],

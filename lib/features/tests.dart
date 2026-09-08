@@ -1,320 +1,275 @@
 import 'package:flutter/material.dart';
 
-class PhishingPair {
-  final String term;
-  final String definition;
+class UrlItem {
+  final String url;
+  final bool isLegit;
+  final String explanation;
 
-  PhishingPair({required this.term, required this.definition});
-}
-
-class GameCard {
-  final String id;
-  final String pairId;
-  final String text;
-  final bool isTerm;
-  bool isFlipped;
-  bool isMatched;
-
-  GameCard({
-    required this.id,
-    required this.pairId,
-    required this.text,
-    required this.isTerm,
-    this.isFlipped = false,
-    this.isMatched = false,
+  UrlItem({
+    required this.url,
+    required this.isLegit,
+    required this.explanation,
   });
 }
 
-class MatchingGameScreen extends StatefulWidget {
-  const MatchingGameScreen({Key? key}) : super(key: key);
-  static const String routeName = '/matching pairs';
+class UrlSafetySwipeScreen extends StatefulWidget {
+  const UrlSafetySwipeScreen({Key? key}) : super(key: key);
+  static const String routeName = '/url-safety-swipe';
 
   @override
-  State<MatchingGameScreen> createState() => _MatchingGameScreenState();
+  State<UrlSafetySwipeScreen> createState() => _UrlSafetySwipeScreenState();
 }
 
-class _MatchingGameScreenState extends State<MatchingGameScreen> {
-  final List<PhishingPair> _pairsData = [
-    PhishingPair(
-      term: 'Spear Phishing',
-      definition: 'Targeted attack using personal info like name or title.',
+class _UrlSafetySwipeScreenState extends State<UrlSafetySwipeScreen> {
+  final List<UrlItem> _urlList = [
+    UrlItem(
+      url: 'https://accounts.google.com/signin',
+      isLegit: true,
+      explanation: '✅ Official Google login domain using HTTPS.',
     ),
-    PhishingPair(
-      term: 'Whaling',
-      definition: 'Phishing aimed specifically at high-level executives.',
+    UrlItem(
+      url: 'http://security-update-google.net/login',
+      isLegit: false,
+      explanation:
+          '❌ Phishing! Google uses google.com, not google.net or HTTP.',
     ),
-    PhishingPair(
-      term: 'Smishing',
-      definition: 'A phishing attempt carried out over SMS text messages.',
+    UrlItem(
+      url: 'https://www.paypal.com/myaccount/transfer',
+      isLegit: true,
+      explanation: '✅ Genuine PayPal address.',
     ),
-    PhishingPair(
-      term: 'Vishing',
-      definition: 'Voice call scam impersonating a trusted authority.',
+    UrlItem(
+      url: 'https://paypa1.com-security-check.info',
+      isLegit: false,
+      explanation:
+          '❌ Typosquatting! Notice the "1" instead of "l" and extra subdomains.',
     ),
-    PhishingPair(
-      term: 'Clone Phishing',
-      definition: 'Resending a real email with malicious links or attachments.',
+    UrlItem(
+      url: 'https://www.amazon.com/gp/css/homepage.html',
+      isLegit: true,
+      explanation: '✅ Official Amazon account management page.',
     ),
-    PhishingPair(
-      term: 'Angler Phishing',
-      definition:
-          'Targeting social media users via fake customer support accounts.',
-    ),
-    PhishingPair(
-      term: 'Barrel Phishing',
-      definition:
-          'Sending a harmless email first to build trust before attacking.',
-    ),
-    PhishingPair(
-      term: 'Quishing',
-      definition: 'Using malicious QR codes to trick users into bad websites.',
-    ),
-    PhishingPair(
-      term: 'Watering Hole',
-      definition: 'Infecting a site frequented by a specific targeted group.',
-    ),
-    PhishingPair(
-      term: 'Pretexting',
-      definition:
-          'Creating a fake scenario to trick targets into sharing data.',
-    ),
-    PhishingPair(
-      term: 'Typosquatting',
-      definition:
-          'Registering misspelled web domains to fool unsuspecting visitors.',
-    ),
-    PhishingPair(
-      term: 'BEC Scam',
-      definition:
-          'Impersonating executives to trick employees into sending funds.',
-    ),
-    PhishingPair(
-      term: 'Baiting',
-      definition: 'Luring victims with free items or physical media like USBs.',
-    ),
-    PhishingPair(
-      term: 'Domain Spoofing',
-      definition:
-          'Falsifying an email header or web address to appear legitimate.',
-    ),
-    PhishingPair(
-      term: 'Pharming',
-      definition:
-          'Redirecting website traffic to a fake site without user knowledge.',
-    ),
-    PhishingPair(
-      term: 'Tabnabbing',
-      definition: 'Rewriting unattended browser tabs to mimic login pages.',
+    UrlItem(
+      url: 'http://amazon-prime-refund-claim.org',
+      isLegit: false,
+      explanation:
+          '❌ Suspicious domain attempting to trick users expecting a refund.',
     ),
   ];
 
-  List<GameCard> _cards = [];
-  GameCard? _firstSelectedCard;
-  bool _isProcessing = false;
-  int _movesCount = 0;
+  int _currentIndex = 0;
+  int _score = 0;
+  String? _feedback;
+  bool? _lastAnswerCorrect;
 
-  @override
-  void initState() {
-    super.initState();
-    _startNewGame();
-  }
+  void _answer(bool userThoughtLegit) {
+    if (_feedback != null)
+      return; // Prevent double taps during feedback display
 
-  void _startNewGame() {
-    List<GameCard> loadedCards = [];
-
-    for (int i = 0; i < _pairsData.length; i++) {
-      final pair = _pairsData[i];
-      final pairId = 'pair_$i';
-
-      loadedCards.add(
-        GameCard(
-          id: '${pairId}_term',
-          pairId: pairId,
-          text: pair.term,
-          isTerm: true,
-        ),
-      );
-
-      loadedCards.add(
-        GameCard(
-          id: '${pairId}_def',
-          pairId: pairId,
-          text: pair.definition,
-          isTerm: false,
-        ),
-      );
-    }
-
-    loadedCards.shuffle();
+    final currentUrl = _urlList[_currentIndex];
+    final isCorrect = userThoughtLegit == currentUrl.isLegit;
 
     setState(() {
-      _cards = loadedCards;
-      _firstSelectedCard = null;
-      _isProcessing = false;
-      _movesCount = 0;
-    });
-  }
-
-  void _onCardTapped(GameCard selectedCard) {
-    if (_isProcessing || selectedCard.isFlipped || selectedCard.isMatched) {
-      return;
-    }
-
-    setState(() {
-      selectedCard.isFlipped = true;
-    });
-
-    if (_firstSelectedCard == null) {
-      _firstSelectedCard = selectedCard;
-    } else {
-      _movesCount++;
-      _isProcessing = true;
-
-      if (_firstSelectedCard!.pairId == selectedCard.pairId) {
-        setState(() {
-          _firstSelectedCard!.isMatched = true;
-          selectedCard.isMatched = true;
-          _firstSelectedCard = null;
-          _isProcessing = false;
-        });
-        _checkWinCondition();
-      } else {
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          if (mounted) {
-            setState(() {
-              _firstSelectedCard!.isFlipped = false;
-              selectedCard.isFlipped = false;
-              _firstSelectedCard = null;
-              _isProcessing = false;
-            });
-          }
-        });
+      _lastAnswerCorrect = isCorrect;
+      _feedback = currentUrl.explanation;
+      if (isCorrect) {
+        _score += 10;
       }
-    }
+    });
+
+    // Pause briefly so the player can read the feedback before moving to the next URL
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (!mounted) return;
+
+      if (_currentIndex < _urlList.length - 1) {
+        setState(() {
+          _currentIndex++;
+          _feedback = null;
+          _lastAnswerCorrect = null;
+        });
+      } else {
+        _showEndDialog();
+      }
+    });
   }
 
-  void _checkWinCondition() {
-    if (_cards.every((card) => card.isMatched)) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: const Text('Great Job!'),
-          content: Text(
-            'You matched all phishing terms in $_movesCount moves.',
+  void _showEndDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('🎉 Game Complete!'),
+        content: Text('Your Score: $_score / ${_urlList.length * 10}'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _currentIndex = 0;
+                _score = 0;
+                _feedback = null;
+                _lastAnswerCorrect = null;
+              });
+            },
+            child: const Text('Play Again'),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _startNewGame();
-              },
-              child: const Text('Play Again'),
-            ),
-          ],
-        ),
-      );
-    }
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final matchedPairsCount = _cards.where((c) => c.isMatched).length ~/ 2;
+    final currentItem = _urlList[_currentIndex];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Phishing Match'),
+        title: const Text('URL Safety Check'),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _startNewGame),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Text(
+                'Score: $_score',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 12.0,
-              horizontal: 16.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Moves: $_movesCount',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'Matched: $matchedPairsCount / ${_pairsData.length}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.fromLTRB(50, 20, 50, 29),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 1.1,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'URL ${_currentIndex + 1} of ${_urlList.length}',
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
               ),
-              itemCount: _cards.length,
-              itemBuilder: (context, index) {
-                final card = _cards[index];
-                return GestureDetector(
-                  onTap: () => _onCardTapped(card),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    decoration: BoxDecoration(
-                      color: card.isMatched
-                          ? Colors.green.shade100
-                          : (card.isFlipped
-                                ? Colors.blue.shade50
-                                : Colors.indigo),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: card.isMatched
-                            ? Colors.green
-                            : (card.isFlipped
-                                  ? Colors.blue
-                                  : Colors.indigoAccent),
-                        width: 2,
+              const SizedBox(height: 20),
+
+              // URL Display Card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.language,
+                        size: 48,
+                        color: Colors.indigo,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        currentItem.url,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Feedback Container
+              SizedBox(
+                height: 70,
+                child: _feedback != null
+                    ? Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _lastAnswerCorrect == true
+                              ? Colors.green.shade100
+                              : Colors.red.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: _lastAnswerCorrect == true
+                                ? Colors.green
+                                : Colors.red,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            _feedback!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: _lastAnswerCorrect == true
+                                  ? Colors.green.shade900
+                                  : Colors.red.shade900,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              const SizedBox(height: 24),
+
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade600,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: _feedback == null
+                          ? () => _answer(false)
+                          : null,
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      label: const Text(
+                        'FAKE / PHISHING',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    padding: const EdgeInsets.all(8),
-                    child: Center(
-                      child: card.isFlipped || card.isMatched
-                          ? Text(
-                              card.text,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: card.isTerm ? 16 : 12,
-                                fontWeight: card.isTerm
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: card.isMatched
-                                    ? Colors.green.shade900
-                                    : Colors.black87,
-                              ),
-                            )
-                          : const Icon(
-                              Icons.security,
-                              color: Colors.white,
-                              size: 36,
-                            ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade600,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: _feedback == null ? () => _answer(true) : null,
+                      icon: const Icon(Icons.check, color: Colors.white),
+                      label: const Text(
+                        'LEGIT / SAFE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

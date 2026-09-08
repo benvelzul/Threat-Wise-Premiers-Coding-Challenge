@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/xp_system/xp_manager.dart';
+import 'package:flutter_confetti/flutter_confetti.dart';
 
 class PhishingPair {
   final String term;
@@ -201,6 +202,10 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
   void _checkWinCondition() {
     if (_cards.every((card) => card.isMatched)) {
       XpManager.instance.addXp(_roundXpReward);
+      Confetti.launch(
+        context,
+        options: const ConfettiOptions(particleCount: 150, spread: 80, y: 0.6),
+      );
 
       showDialog(
         context: context,
