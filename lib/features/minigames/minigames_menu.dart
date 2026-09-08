@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import 'matching_pairs.dart';
 import 'url_game.dart';
+import 'access_control_matrix_drop.dart';
 
 class MinigamesPage extends StatelessWidget {
   static const routeName = '/minigames';
@@ -22,6 +23,12 @@ class MinigamesPage extends StatelessWidget {
         'subtitle': 'Swipe to identify safe URLs',
         'icon': Icons.link,
         'connectedPage': UrlSafetySwipeScreen.routeName,
+      },
+      {
+        'title': 'Access Control Matrix',
+        'subtitle': 'Drag and drop to manage access control',
+        'icon': Icons.security,
+        'connectedPage': AccessControlMatrixDropPage.routeName,
       },
     ];
 

@@ -53,10 +53,10 @@ class MyApp extends StatelessWidget {
         UrlSafetySwipeScreen.routeName: (context) =>
             const UrlSafetySwipeScreen(),
         StartSimulatorPage.routeName: (context) => const StartSimulatorPage(),
-        AccessControlMatrixDropPage.routeName: (context) => const AccessControlMatrixDropPage(),
-
+        AccessControlMatrixDropPage.routeName: (context) =>
+            const AccessControlMatrixDropPage(),
       },
-      initialRoute: UrlSafetySwipeScreen.routeName,
+      initialRoute: DashboardPage.routeName,
     );
   }
 }
