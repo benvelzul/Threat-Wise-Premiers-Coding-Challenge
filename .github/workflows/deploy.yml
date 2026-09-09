@@ -43,7 +43,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Web App
-        run: flutter build web --base-href "/YOUR_REPOSITORY_NAME/" --release --dart-define-from-file=env.json
+        run: flutter build web --base-href "/Threat-Wise-Premiers-Coding-Challenge/" --release --dart-define-from-file=env.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
