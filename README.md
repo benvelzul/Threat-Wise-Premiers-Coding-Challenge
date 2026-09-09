@@ -11,7 +11,7 @@ The internet can be a dangerous place, but learning about cybersecurity shouldn'
 ### Challenge Alignment & Problem Statement
 * **The Problem:** Traditional cybersecurity advice is often delivered via long, text-heavy articles that younger audiences find disengaging, leading to poor online safety habits.
 * **Our Solution:** We gamified the learning process. By turning security concepts into interactive simulators and mini-games, we increase user retention and build practical, real-world reflexes.
-* **Target Audience:** Developed primarily for Queensland school students and young adults navigating an increasingly digital world.
+* **Target Audience:** Developed primarily for Queensland school students navigating an increasingly digital world.
 
 ---
 
@@ -155,14 +155,17 @@ To run this project locally, make sure you have the Flutter SDK installed on you
     ```Bash
     flutter run
     ```
+
+But if you just want to test it out here is the link: https://benvelzul.github.io/Threat-Wise-Premiers-Coding-Challenge/ 
+
 ---
 
 ## Team & Acknowledgments
 Developed by:
 
-**Benjamin Velez Zuluaga** - UI/UX & Architecture
+**Benjamin Velez Zuluaga**
 
-**Zander Setiawan** - Backend & Cloud Dev
+**Zander Setiawan**
 
 Submitted for the Premier's Coding Challenge (QLD).
 
@@ -172,12 +175,15 @@ Submitted for the Premier's Coding Challenge (QLD).
 * Tracey Iki
 * Belinda Bretherton 
 * Matthew Sutherland
+* Rosario Velez Zuluaga
+* Tatiana Zuluaga Garcia
+* Thiago Servidoni Dominguez
+* Alexander Sabariz
 
-### Extra Credits 
+### Extra Special Credits 
 
-* ChatGPT - personal instructr on how Flutter works
 * Matthew Sutherland - Writer of cybersecurity courses
-
+* Tracey Iki - Coordinator of co-curricular activites
 
 ## AI usage
 
