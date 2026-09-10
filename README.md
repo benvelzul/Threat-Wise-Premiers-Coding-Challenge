@@ -98,6 +98,14 @@ lib/
 
 ## Feature description and facts
 
+## ChatBot Challenges with Gemini Flash
+
+Integrating the Gemini Flash API Key into the code proved quite difficult. At first, I had to create a local file called env.json with the API Key inside it, but it could not be comitted to GitHub because it would publically release the key. Later on, we found out that you could create a secret variable in Github, and when deployed, the ChatBot would work perfectly. I gave the ChatBot a systeminstruction to be purely cybersecurity based, which contributes further to the cub security and learning aspect of the project
+
+## Password checker system
+
+The password checker's logic is quite simple, as it calculates the strength bases off of the amount of characters, whether it has upper or lowercase letters, numbers, and special characters. The time system for a computer hacking the password is for interactiveness, and provides a hint to how long a computer may crack the password, but is not completely true. It is based off of the length of the password divided by the hashes per second, and further rounding to the nearest secondor year through mathermatical algorithms. 
+
 ### Email and Phishing Scenario Generator
 
 Our phishing simulator uses a **component-based scenario generator** rather than relying on hardcoded emails. Each email is dynamically assembled from four independent components:
