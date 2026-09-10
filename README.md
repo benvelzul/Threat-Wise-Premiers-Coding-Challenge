@@ -127,6 +127,34 @@ This modular approach allows the simulator to generate a huge number of unique e
 
 Overall, the simulator can generate **approximately 45,000 unique email scenarios**, with a different combination being created each time a user plays. This provides a highly varied experience while making it difficult for players to memorize answers, encouraging them to identify phishing attempts based on the email's content rather than repetition.
 
+### Course Engine
+
+The course engine works by reading .md files that have titles like `### course` or `### quiz` and then the algorythm divides it into course content and questions. 
+
+The course is displayed by using the MarkDown viewer library in flutter making it really easy to display this. 
+
+The question structure in markdown is: 
+```md
+### Question {num}
+{Question Title}
+**Difficulty:** {easy, medium, hard, or expert}
+**Points:** {points}
+- [] Ans 1
+- [] Ans 2
+- [x] Correct ans 
+- [] Ans 4
+```
+As you can see in the example above the correct ans is recognized by having the cross mark in it. 
+and this is divided intro variables in list/dictionary and then you access them and show the Question UI and animations. 
+
+### Animations
+
+The animations made the app completly change its interactivity and look. 
+The main animations include the **Confetti**, and the **Sliding animation** on the email simulator. 
+The sliding animation had to be coded by scartch but it only took around 2-3 hours to finish and made a really good image. 
+
+The confetti was a lot easier because of the confetti library and it just required some testing but it was done in around 15 minutes. And it took like 5 lines of code and then it generated an amazing feeling and looks. 
+
 ## Future Roadmap
 If we continue developing this platform, our next steps include:
 
